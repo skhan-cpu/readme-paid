@@ -1,5 +1,5 @@
 ---
-title: Welcome to Tappbank
+title: Welcome to TappCash
 hidden: false
 ---
 <Callout icon="📘" theme="info">
