@@ -1,0 +1,4 @@
+---
+title: Individual
+hidden: false
+---
