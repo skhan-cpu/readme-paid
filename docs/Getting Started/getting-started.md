@@ -1,26 +1,25 @@
 ---
 title: Welcome to TappCash
 excerpt: >-
-  TappCash is a modern banking platform that lets you embed financial
-  accounts,   transfers, and KYC into your product. These docs cover everything
-  your engineering team needs to integrate the TappCash API — from inviting a
-  user all the way through   daily banking operations.    ## What you can
-  build    - **Onboard individuals** — invite users via email, guide them
-  through KYC, and     issue them live financial accounts automatically   -
-  **Move money** — internal transfers between accounts (TBA) and ACH
-  pulls/pushes     to external bank accounts   - **Show account activity** —
-  real-time balances, transaction history, and     notifications   - **Manage
-  your portfolio** — as an account manager, view and invite all individuals    
-  under your branch    ## How to use these docs      | Section | What it covers
-  |   |---------|---------------|   | **Guide** | Step-by-step walkthrough of
-  the full user journey with code examples |   | **Recipes** | Copy-paste curl
-  commands for every common task |   | **API Reference** | Full endpoint specs —
-  parameters, request bodies, and responses |    ## Getting started    Start
-  with the [Guide](link-to-guide) — it walks through the complete flow from  
-  the account manager sending an invitation to the user completing onboarding
-  and   making their first transfer.    **Base URL:**
-  `https://api-test.stage2.tappbank.com` (staging)    > All requests must
-  include `Content-Type: application/json`. Authenticated   > endpoints require
+  TappCash is a modern banking platform that lets you embed financial accounts,
+  transfers, and KYC into your product. These docs cover everything your
+  engineering team needs to integrate the   TappCash API — from inviting a user
+  all the way through daily banking operations.      ## What you can build     
+  - **Onboard individuals** — Invite users via email, guide them through KYC,
+  and issue them live financial accounts automatically   - **Move money** —
+  Internal transfers between accounts (TBA) and ACH pulls/pushes to external
+  bank accounts   - **Show account activity** — Real-time balances, transaction
+  history, and notifications   - **Manage your portfolio** — As an account
+  manager, view and invite all individuals under your branch      ## How to use
+  these docs      | Section | What it covers |   |---------|----------------|  
+  | **Guide** | Step-by-step walkthrough of the full user journey with code
+  examples |   | **Recipes** | Copy-paste curl commands for every common task
+  |   | **API Reference** | Full endpoint specs — parameters, request bodies,
+  and responses |      ## Getting started      Start with the **Guide** — it
+  walks through the complete flow from the account manager sending an invitation
+  to the user completing onboarding and making their first transfer.      **Base
+  URL:** `https://api-test.stage2.tappbank.com` (staging)      > All requests
+  must include `Content-Type: application/json`. Authenticated endpoints require
   `Authorization: Bearer <token>` in the header.
 hidden: false
 ---
