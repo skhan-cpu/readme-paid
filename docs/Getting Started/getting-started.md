@@ -1,6 +1,10 @@
 ---
 title: Welcome to TappCash
-excerpt: '## Application Flow Overview  ### Full Journey (Manager → Individual User)'
+excerpt: >-
+  TappCash is a modern banking platform that lets you embed financial accounts,
+  transfers, and KYC into your product. These docs cover everything your
+  engineering team needs to integrate the TappCash API — from inviting a user
+  all the way through daily banking operations.
 hidden: false
 ---
 # Individual User Integration Guide
