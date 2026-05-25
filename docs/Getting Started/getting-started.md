@@ -37,36 +37,36 @@ This guide walks you through the complete lifecycle of an individual user on the
 
 ```mermaid
 flowchart TD
-    AM0["Account Manager: Sign in\nPOST /users/public/v1/auth/signin\nroles: advisor"]
-    AM0 --> AM1["Account Manager: Invite new individual\nPOST /branches/private/v1/individual\nbody: firstName, lastName, email, phoneNumber"]
+    AM0[Account Manager: Sign in]
+    AM0 --> AM1[Account Manager: Invite new individual]
     AM1 --> A([User receives invitation email])
 
-    A --> B[User clicks invite link\ntoken extracted from URL]
+    A --> B[User clicks invite link]
 
-    B --> C["Step 1 — Validate token\nGET /branches/public/v1/common/invites/check?token=..."]
+    B --> C[Step 1 — Validate token]
     C -->|invalid / expired| ERR1([Show error — ask manager to re-send])
-    C -->|valid| D["Step 2 — Fetch platform agreements\nGET /branches/public/v1/common/agreements"]
+    C -->|valid| D[Step 2 — Fetch platform agreements]
 
     D --> E[User reads and accepts each agreement]
-    E --> F["Step 3 — Accept invitation + set password\nPOST /branches/public/v1/individual/invites/accept"]
+    E --> F[Step 3 — Accept invitation and set password]
 
-    F -->|HTTP 403 + temporaryAccessToken| G{{Store temporaryAccessToken\nUse for all /limited/ calls}}
+    F -->|HTTP 403 + temporaryAccessToken| G{{Store temporaryAccessToken}}
 
-    G --> H["Step 4 — Review W9 terms\nGET /branches/private/v1/limited/w9/terms"]
+    G --> H[Step 4 — Review W9 terms]
     H --> I[User acknowledges W9 certification]
 
-    I --> J["Step 5 — List security questions\nGET /users/private/v1/limited/security-questions"]
-    J --> K["Step 6 — User picks and answers 3 questions\nPOST /users/private/v1/limited/security-questions/answers"]
+    I --> J[Step 5 — List security questions]
+    J --> K[Step 6 — Submit security answers]
 
-    K --> L["Step 7 — Send phone OTP\nPOST /users/private/v1/limited/generate-new-phone-code"]
-    L --> M["Step 8 — User enters OTP\nPUT /users/private/v1/limited/check-phone-code"]
+    K --> L[Step 7 — Send phone OTP]
+    L --> M[Step 8 — Verify phone OTP]
 
-    M --> N["Step 9 — Submit KYC information\nPOST /branches/private/v1/limited/individual/signup"]
-    N -->|400 – field errors| ERR2[Show validation errors\nlet user correct and resubmit]
+    M --> N[Step 9 — Submit KYC information]
+    N -->|400 – field errors| ERR2[Show validation errors and let user correct]
     ERR2 --> N
 
-    N -->|200 – KYC pending| O["Step 10 — Exchange for full access token\nPUT /users/private/v1/limited/token-exchange"]
-    O --> P{{Store accessToken + refreshToken}}
+    N -->|200 – KYC pending| O[Step 10 — Exchange for full access token]
+    O --> P{{Store accessToken and refreshToken}}
     P --> Q([Onboarding complete — accounts are live])
 ```
 
