@@ -1,4 +1,0 @@
----
-title: Auth
-hidden: false
----

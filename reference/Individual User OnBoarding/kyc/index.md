@@ -1,4 +1,0 @@
----
-title: KYC
-hidden: false
----
