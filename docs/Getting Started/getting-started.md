@@ -80,62 +80,62 @@ flowchart LR
 
     subgraph AUTH[Authentication]
         direction TB
-        A1["Sign in\nPOST /auth/signin"]
-        A2["Refresh token\nPOST /auth/refresh"]
-        A3["Get profile\nGET /auth/me"]
-        A4["Change password\nPOST /auth/change_password"]
+        A1[Sign in]
+        A2[Refresh token]
+        A3[Get profile]
+        A4[Change password]
     end
 
     subgraph ACCTS[Accounts]
         direction TB
-        B1["List accounts\nGET /accounts"]
-        B2["Account detail\nGET /accounts/{id}"]
-        B3["Balance\nGET /accounts/{id}/balance"]
-        B4["Transactions\nGET /accounts/{id}/transactions"]
+        B1[List accounts]
+        B2[Account detail]
+        B3[Total balance]
+        B4[Transaction history]
     end
 
     subgraph TBA[Internal Transfers]
         direction TB
-        C1["Preview TBA\nPOST /tba-requests/preview"]
-        C2["Create TBA\nPOST /tba-requests"]
+        C1[Preview transfer]
+        C2[Create transfer]
         C1 -->|user confirms| C2
     end
 
     subgraph EXT[External Accounts - ACH]
         direction TB
-        D1["Get BaaS token\nPOST /baas/auth-token"]
-        D2["List external accounts\nGET /accounts"]
-        D3["Preview EXT\nPOST /ext-requests/preview"]
-        D4["Create EXT\nPOST /ext-requests"]
+        D1[Get BaaS token]
+        D2[List linked accounts]
+        D3[Preview ACH transfer]
+        D4[Create ACH transfer]
         D1 -->|link via BaaS SDK| D2
         D3 -->|user confirms| D4
     end
 
     subgraph NOTIF[Notifications]
         direction TB
-        E1["List\nGET /notifications"]
-        E2["Mark all read\nPOST /mark-all-read"]
-        E3["Mark one read\nDELETE /notifications/{id}"]
+        E1[List notifications]
+        E2[Mark all read]
+        E3[Mark one read]
     end
 
     subgraph KYC[KYC]
         direction TB
-        F1["Latest request\nGET /kyc/private/v1/requests/last"]
+        F1[Check KYC status]
     end
 
     subgraph CLOSE[Account Closure]
         direction TB
-        G1["Send OTP\nPOST /delete-profile-otp"]
-        G2["Confirm deletion\nDELETE /delete-profile"]
+        G1[Request OTP]
+        G2[Confirm deletion]
         G1 -->|OTP received| G2
     end
 
+    START --> AUTH
     START --> ACCTS
     START --> TBA
     START --> EXT
     START --> NOTIF
     START --> KYC
-    START --> AUTH
     START --> CLOSE
 ```
 
