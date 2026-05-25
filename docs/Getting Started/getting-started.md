@@ -34,8 +34,6 @@ Start with the **Guide** — it walks through the complete flow from the account
 
 This guide walks you through the complete lifecycle of an individual user on the TaPP platform — from the account manager sending the first invitation through onboarding, daily banking, and account closure. Follow the sections in order for a first integration; jump to any section once you are familiar with the flow.
 
-**Base URL:** `https://api-test.stage2.tappbank.com`
-
 ***
 
 ## Application Flow Overview
