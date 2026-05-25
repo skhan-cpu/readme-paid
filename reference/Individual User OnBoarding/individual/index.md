@@ -1,4 +1,0 @@
----
-title: Individual
-hidden: false
----
