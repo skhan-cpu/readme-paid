@@ -1,5 +1,5 @@
 ---
-title: Welcome to TappCash
+title: TappCash
 excerpt: >-
   TappCash is a modern banking platform that lets you embed financial accounts,
   transfers, and KYC into your product. These docs cover everything your
