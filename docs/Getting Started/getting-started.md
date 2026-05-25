@@ -7,6 +7,29 @@ excerpt: >-
   all the way through daily banking operations.
 hidden: false
 ---
+## What you can build
+
+- **Onboard individuals** — Invite users via email, guide them through KYC, and issue them live financial accounts automatically
+- **Move money** — Internal transfers between accounts (TBA) and ACH pulls/pushes to external bank accounts
+- **Show account activity** — Real-time balances, transaction history, and notifications
+- **Manage your portfolio** — As an account manager, view and invite all individuals under your branch
+
+## How to use these docs
+
+| Section           | What it covers                                                       |
+| ----------------- | -------------------------------------------------------------------- |
+| **Guide**         | Step-by-step walkthrough of the full user journey with code examples |
+| **Recipes**       | Copy-paste curl commands for every common task                       |
+| **API Reference** | Full endpoint specs — parameters, request bodies, and responses      |
+
+## Getting started
+
+Start with the **Guide** — it walks through the complete flow from the account manager sending an invitation to the user completing onboarding and making their first transfer.
+
+**Base URL:** `https://api-test.stage2.tappbank.com` (staging)
+
+> All requests must include `Content-Type: application/json`. Authenticated endpoints require `Authorization: Bearer <token>` in the header.
+
 # Individual User Integration Guide
 
 This guide walks you through the complete lifecycle of an individual user on the TaPP platform — from the account manager sending the first invitation through onboarding, daily banking, and account closure. Follow the sections in order for a first integration; jump to any section once you are familiar with the flow.
@@ -163,7 +186,7 @@ sequenceDiagram
 
 ***
 
-## Part 0 — Account Manager
+## Account Manager
 
 The journey starts with the account manager (advisor), not the individual user. The manager signs in, optionally reviews their portfolio of individuals, then sends an invitation email that starts the onboarding flow.
 
