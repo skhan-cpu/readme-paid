@@ -6,7 +6,7 @@ excerpt: >-
   and account closure. Follow the sections in order for a first integration;
   jump to any section once you are familiar with the flow.
 deprecated: false
-hidden: true
+hidden: false
 metadata:
   robots: index
 ---
