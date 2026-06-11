@@ -3,7 +3,7 @@ title: Account Manager
 excerpt: >-
   The journey starts with the account manager (advisor), not the individual
   user. The manager signs in, reviews their portfolio of individuals, and sends
-  invitation emails that start the onboarding flow.
+  invitation emails that start the onboarding flow..
 deprecated: false
 hidden: false
 metadata:
