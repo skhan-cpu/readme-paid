@@ -7,10 +7,6 @@ excerpt: >-
   all the way through daily banking operations.
 hidden: false
 ---
-TaPP (The App Platform) is a white-label financial platform for account managers and their individual users. The API gives you programmatic control over the full user lifecycle — from sending the first invitation and guiding KYC through daily banking, money movement, and account closure.
-
-***
-
 ## What can you build?
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
