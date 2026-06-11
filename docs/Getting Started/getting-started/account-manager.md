@@ -5,7 +5,7 @@ excerpt: >-
   user. The manager signs in, reviews their portfolio of individuals, and sends
   invitation emails that start the onboarding flow.
 deprecated: false
-hidden: true
+hidden: false
 metadata:
   robots: index
 ---
