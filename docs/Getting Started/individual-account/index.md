@@ -1,10 +1,48 @@
 ---
 title: Individual Account
-excerpt: Complete guide for individual users — onboarding, accounts, transfers, notifications, KYC, and account closure.
+excerpt: Complete guide for individual users — onboarding, accounts, balances, transfers, notifications, KYC, and account closure.
 hidden: false
 ---
 
 This section covers everything an individual user can do after receiving an account manager's invitation — from completing onboarding through daily banking operations.
+
+---
+
+## What can you do?
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+<strong>Onboarding</strong><br/><br/>
+Complete the 10-step flow: validate invite token, accept agreements, set password, W9, security questions, phone OTP, KYC, and token exchange.
+</div>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+<strong>Accounts &amp; Balances</strong><br/><br/>
+List all accounts, view available and pending balances per account, get total balance across accounts, and download monthly statements.
+</div>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+<strong>Transactions</strong><br/><br/>
+Full paginated transaction history with status filtering. View individual transaction details and download balance or transaction charts.
+</div>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+<strong>Move Money</strong><br/><br/>
+Internal transfers between the user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts via Plaid.
+</div>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+<strong>Notifications</strong><br/><br/>
+Unread count badge, full notification list, mark all as read, and mark individual notifications as read.
+</div>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+<strong>KYC &amp; Account Closure</strong><br/><br/>
+Check KYC verification status and handle the two-step OTP-confirmed account deletion flow.
+</div>
+
+</div>
 
 ---
 
@@ -44,20 +82,6 @@ flowchart TD
     O --> P{{Store accessToken and refreshToken}}
     P --> Q([Onboarding complete — accounts are live])
 ```
-
----
-
-## Post-Onboarding Features
-
-Once onboarding is complete the individual has access to the full feature set:
-
-| Feature | What it does | Section |
-|---------|--------------|---------|
-| Accounts & Transactions | View balances, account details, transaction history | Below |
-| Move Money | TBA (internal) and ACH (external) transfers | [Move Money](./move-money) |
-| Notifications | Unread count, list, mark as read | [Notifications](./notifications) |
-| KYC Status | Check verification status | [KYC](./kyc) |
-| Account Closure | Two-step OTP-confirmed deletion | [Account Closure](./account-closure) |
 
 ---
 
@@ -225,31 +249,121 @@ Store both tokens. Onboarding is complete and the user's accounts are immediatel
 
 ---
 
-## Accounts & Transactions
+## Accounts & Balances
 
-### List accounts
+### List all accounts
 
 `GET /accounts/private/v1/account`
 
-Returns all accounts owned by the authenticated user. Accounts are created automatically during onboarding.
+- **Auth**: Individual access token
+- Returns all accounts owned by the authenticated user. Accounts are created automatically during onboarding and are immediately available after token exchange.
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": 1001,
+      "name": "Checking Account",
+      "type": "checking",
+      "status": "active",
+      "currency": "USD",
+      "availableBalance": "2450.00",
+      "pendingBalance": "150.00"
+    },
+    {
+      "id": 1002,
+      "name": "Savings Account",
+      "type": "savings",
+      "status": "active",
+      "currency": "USD",
+      "availableBalance": "8800.00",
+      "pendingBalance": "0.00"
+    }
+  ]
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `id` | Account ID used in transfer requests |
+| `name` | Display name shown to the user |
+| `type` | Account type: `checking`, `savings` |
+| `status` | `active`, `frozen`, or `closed` |
+| `availableBalance` | Funds available for immediate use |
+| `pendingBalance` | Funds held from pending transactions |
+
+---
 
 ### Get account details
 
 `GET /accounts/private/v1/account/{id}`
 
-Returns the full account object including available balance, account type, and interest configuration.
+Returns the full account object including available balance, account type, interest configuration, and account number details.
 
-### Total balance
+---
+
+### Total balance across all accounts
 
 `GET /accounts/private/v1/balance/total`
 
-Returns total available balance across accounts, plus pending incoming and outgoing amounts. Pass optional `accountIds` query param to filter to specific accounts.
+- **Auth**: Individual access token
+- Returns the combined balance across all accounts, including pending amounts.
+
+**Response:**
+
+```json
+{
+  "data": {
+    "totalAvailableBalance": "11250.00",
+    "pendingIncoming": "500.00",
+    "pendingOutgoing": "150.00",
+    "currency": "USD"
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `totalAvailableBalance` | Sum of available balances across all accounts |
+| `pendingIncoming` | Total funds incoming but not yet settled |
+| `pendingOutgoing` | Total funds outgoing but not yet settled |
+
+Pass `?accountIds=1001,1002` to filter to specific accounts.
+
+---
 
 ### Transaction history
 
 `GET /accounts/private/v1/transactions`
 
-Returns a paginated list of transactions with status, amount, and counterparty information.
+- **Auth**: Individual access token
+- Returns a paginated list of transactions with status, amount, and counterparty.
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": "txn_abc123",
+      "type": "tba",
+      "status": "executed",
+      "amount": "100.00",
+      "currency": "USD",
+      "description": "Savings top-up",
+      "createdAt": "2024-03-15T14:22:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecord": 45,
+    "totalPage": 3,
+    "pageNumber": 1,
+    "limit": 20
+  }
+}
+```
 
 **Filter by status:**
 
@@ -257,3 +371,17 @@ Returns a paginated list of transactions with status, amount, and counterparty i
 ?filter[status:eq]=executed
 ?filter[status:in]=pending,executed
 ```
+
+| Status | Meaning |
+|--------|---------|
+| `pending` | Submitted, awaiting processing |
+| `executed` | Completed successfully |
+| `rejected` | Failed — see transaction details |
+
+---
+
+### Monthly statement
+
+`GET /accounts/private/v1/account/{id}/statement/{year}/{month}`
+
+Generates and returns a downloadable monthly statement PDF for the specified account and month.
