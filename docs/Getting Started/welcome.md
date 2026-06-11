@@ -10,30 +10,21 @@ TAPP Cash is a modern banking platform that lets you embed financial accounts, t
 
 ## Quickstart
 
-**1. Request credentials**
+**1. Get Credentials**
 
-Contact **[support@tappcash.com](mailto:support@tappcash.com)** to get your account manager credentials. See [Onboarding](./onboarding) for the full request process.
+Contact **[support@tappcash.com](mailto:support@tappcash.com)** to request your account manager credentials. Include your name, organization, environment (staging or production), and a brief description of your integration. All API requests require a Bearer token.
 
-**2. Sign in**
+**2. Sign In & Invite**
 
-```bash
-curl -X POST "https://api-test.stage2.tappbank.com/users/public/v1/auth/signin" \
-  -H "Content-Type: application/json" \
-  -d '{ "login": "manager@example.com", "password": "YourPassword123!", "roles": ["advisor"] }'
-```
+Authenticate as an advisor and send your first invitation in two API calls — sign in to get your `accessToken`, then invite an individual by email. See [Onboarding](./onboarding) for the full flow.
 
-Store the `accessToken` (30 min) and `refreshToken` (30 days) from the response.
+**3. Complete Onboarding**
 
-**3. Invite an individual**
+The invited user follows a guided 10-step flow: validate invite token, accept agreements, set password, W9 certification, security questions, phone OTP, KYC submission, and token exchange. See [Individual Account](./individual-account).
 
-```bash
-curl -X POST "https://api-test.stage2.tappbank.com/branches/private/v1/individual" \
-  -H "Authorization: Bearer <accessToken>" \
-  -H "Content-Type: application/json" \
-  -d '{ "firstName": "Jane", "lastName": "Doe", "email": "jane@example.com", "phoneNumber": "+12025550191" }'
-```
+**4. Explore the Reference**
 
-The user receives an invitation email and follows the onboarding steps in [Individual Account](./individual-account).
+Browse all endpoints with full request schemas, response shapes, and live try-it-out in the **[API Reference](https://developers.tappcash.com/reference)**.
 
 ---
 
@@ -78,6 +69,8 @@ Step-by-step guides for common integration patterns.
 | **External account linking (ACH)** | BaaS token → Plaid link → pull or push funds |
 | **Notifications** | Unread count, list, mark read |
 | **Account closure** | Two-step OTP-confirmed deletion |
+
+> **Available Soon** — detailed recipe pages with full curl examples and step-by-step walkthroughs are coming shortly.
 
 ---
 
