@@ -1,10 +1,10 @@
 ---
 title: Onboarding
-excerpt: How to request API access, sign in as an account manager, and invite your first individual user.
+excerpt: How to request API access, sign in as an account manager, manage your portfolio of individual users, and invite new ones.
 hidden: false
 ---
 
-The TAPP Cash journey starts with the account manager. The manager requests credentials, signs in, and sends invitation emails that start each individual user's onboarding flow.
+The TAPP Cash journey starts with the account manager. The manager requests credentials, signs in, manages their portfolio of individual users and accounts, and sends invitation emails that kick off each individual's onboarding flow.
 
 ---
 
@@ -34,8 +34,7 @@ The team will review your request, create your account, and reply with your `log
 ```json
 {
   "login": "manager@example.com",
-  "password": "YourPassword123!",
-  "roles": ["advisor"]
+  "password": "YourPassword123!"
 }
 ```
 
@@ -52,8 +51,6 @@ The team will review your request, create your account, and reply with your `log
 
 Store both tokens. The `accessToken` expires after **30 minutes**. The `refreshToken` is valid for **30 days**.
 
-> Pass `"roles": ["advisor"]` only when signing in as an account manager. Do not include it for individual user sign-ins.
-
 ---
 
 ## Step 3 — Refresh an Expired Token
@@ -64,7 +61,26 @@ Pass the `refreshToken` in the request body to obtain a new `accessToken` withou
 
 ---
 
-## Step 4 — List Your Managed Individuals
+## Step 4 — Invite a New Individual
+
+`POST /branches/private/v1/individual`
+
+- **Auth**: Account manager access token
+
+```json
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@example.com",
+  "phoneNumber": "+12025550191"
+}
+```
+
+On success (`200`) the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](./individual-account) onboarding steps 1–10.
+
+---
+
+## Step 5 — List Your Managed Individuals
 
 `GET /branches/private/v1/individual`
 
@@ -100,31 +116,12 @@ Authorization: Bearer <manager_token>
 
 ---
 
-## Step 5 — View an Individual's Profile
+## Step 6 — View an Individual's Profile
 
 `GET /branches/private/v1/individual/{id}`
 
 - **Auth**: Account manager access token
 - `{id}` is the individual's UUID returned by the list endpoint.
-
----
-
-## Step 6 — Invite a New Individual
-
-`POST /branches/private/v1/individual`
-
-- **Auth**: Account manager access token
-
-```json
-{
-  "firstName": "Jane",
-  "lastName": "Doe",
-  "email": "jane.doe@example.com",
-  "phoneNumber": "+12025550191"
-}
-```
-
-On success (`200`) the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](./individual-account) onboarding steps 1–10.
 
 ---
 
@@ -134,4 +131,4 @@ On success (`200`) the individual record is created with `status: "invited"` and
 |--------|-------|-----|
 | `401` | Missing or expired `accessToken` | Call `POST /users/public/v1/auth/refresh` with your `refreshToken` |
 | `401` | Invalid credentials | Verify `login` and `password`; contact support if locked out |
-| `403` | Valid token but wrong role | Ensure you are signing in with `"roles": ["advisor"]` |
+| `403` | Valid token but wrong role | Ensure you are using an account manager token for advisor endpoints |

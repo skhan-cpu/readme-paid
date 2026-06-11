@@ -31,12 +31,9 @@ TAPP Cash uses two token types depending on where the user is in the flow.
 ```json
 {
   "login": "user@example.com",
-  "password": "YourPassword123!",
-  "roles": ["individual"]
+  "password": "YourPassword123!"
 }
 ```
-
-Use `"roles": ["advisor"]` for account managers. Omit `roles` or use `["individual"]` for individual users.
 
 **Response:**
 
