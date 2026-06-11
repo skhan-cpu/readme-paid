@@ -10,21 +10,37 @@ TAPP Cash is a modern banking platform that lets you embed financial accounts, t
 
 ## Quickstart
 
-**1. Get Credentials**
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
 
-Contact **[support@tappcash.com](mailto:support@tappcash.com)** to request your account manager credentials. Include your name, organization, environment (staging or production), and a brief description of your integration. All API requests require a Bearer token.
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:24px">
+<span style="display:inline-block;background:#2563eb;color:white;width:32px;height:32px;border-radius:50%;text-align:center;line-height:32px;font-weight:700;font-size:14px;margin-bottom:16px">1</span>
+<br/>
+<strong style="font-size:15px">Get Credentials</strong><br/><br/>
+Contact <a href="mailto:support@tappcash.com">support@tappcash.com</a> to request your account manager credentials. Include your name, organization, environment, and use case. All API requests require a Bearer token.
+</div>
 
-**2. Sign In & Invite**
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:24px">
+<span style="display:inline-block;background:#2563eb;color:white;width:32px;height:32px;border-radius:50%;text-align:center;line-height:32px;font-weight:700;font-size:14px;margin-bottom:16px">2</span>
+<br/>
+<strong style="font-size:15px">Sign In &amp; Invite</strong><br/><br/>
+Authenticate as an advisor and send your first invitation in two API calls — sign in to get your <code>accessToken</code>, then invite an individual by email. See <a href="./onboarding">Onboarding</a> for the full flow.
+</div>
 
-Authenticate as an advisor and send your first invitation in two API calls — sign in to get your `accessToken`, then invite an individual by email. See [Onboarding](./onboarding) for the full flow.
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:24px">
+<span style="display:inline-block;background:#2563eb;color:white;width:32px;height:32px;border-radius:50%;text-align:center;line-height:32px;font-weight:700;font-size:14px;margin-bottom:16px">3</span>
+<br/>
+<strong style="font-size:15px">Complete Onboarding</strong><br/><br/>
+The invited user follows a guided 10-step flow — invite token, agreements, password, W9, security questions, phone OTP, KYC, and token exchange. See <a href="./individual-account">Individual Account</a>.
+</div>
 
-**3. Complete Onboarding**
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:24px">
+<span style="display:inline-block;background:#2563eb;color:white;width:32px;height:32px;border-radius:50%;text-align:center;line-height:32px;font-weight:700;font-size:14px;margin-bottom:16px">4</span>
+<br/>
+<strong style="font-size:15px">Explore the Reference</strong><br/><br/>
+Browse all endpoints with full request schemas, response shapes, and live try-it-out in the <a href="https://developers.tappcash.com/reference">API Reference</a>.
+</div>
 
-The invited user follows a guided 10-step flow: validate invite token, accept agreements, set password, W9 certification, security questions, phone OTP, KYC submission, and token exchange. See [Individual Account](./individual-account).
-
-**4. Explore the Reference**
-
-Browse all endpoints with full request schemas, response shapes, and live try-it-out in the **[API Reference](https://developers.tappcash.com/reference)**.
+</div>
 
 ---
 
