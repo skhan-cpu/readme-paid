@@ -1,9 +1,9 @@
 ---
-title: TappCash
+title: TAPP Cash
 excerpt: >-
-  TappCash is a modern banking platform that lets you embed financial accounts,
+  TAPP Cash is a modern banking platform that lets you embed financial accounts,
   transfers, and KYC into your product. These docs cover everything your
-  engineering team needs to integrate the TappCash API — from inviting a user
+  engineering team needs to integrate the TAPP Cash API — from inviting a user
   all the way through daily banking operations.
 hidden: false
 ---
