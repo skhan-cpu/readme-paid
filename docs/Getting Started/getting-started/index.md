@@ -7,45 +7,37 @@ excerpt: >-
   all the way through daily banking operations.
 hidden: false
 ---
-TaPP (The App Platform) is a white-label financial platform for account managers and their individual users. The API gives you programmatic control over the full user lifecycle — from sending the first invitation and guiding KYC through daily banking, money movement, and account closure.
-
-***
-
 ## What can you build?
 
-<div class="CardsGrid" style="--CardsGrid-cardWidth: 200px; --CardsGrid-columns: auto-fit;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
 
-<a class="Card Card_card" href="/docs/account-manager">
-<i class="Card-icon fa-duotone fa-solid fa-user-tie"></i>
-<div class="Card-content">
-<div class="Card-title">Account Manager Workflows<i aria-hidden="true" class="Card-arrow fa-regular fa-arrow-right"></i></div>
-<p>Sign in as an advisor, manage your portfolio of individuals, send invitations, and track onboarding status across your branch.</p>
-</div>
-</a>
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
 
-<a class="Card Card_card" href="/docs/individual-user">
-<i class="Card-icon fa-duotone fa-solid fa-id-card"></i>
-<div class="Card-content">
-<div class="Card-title">Individual Onboarding<i aria-hidden="true" class="Card-arrow fa-regular fa-arrow-right"></i></div>
-<p>Guide users through invitation acceptance, W9 certification, security setup, phone verification, and KYC submission — all via API.</p>
-</div>
-</a>
+<strong>Account Manager Workflows</strong><br /><br />
+Sign in as an advisor, manage your portfolio of individuals, send invitations, and track onboarding status across your branch.
 
-<a class="Card Card_card" href="/docs/individual-user#money-movement">
-<i class="Card-icon fa-duotone fa-solid fa-money-bill-transfer"></i>
-<div class="Card-content">
-<div class="Card-title">Money Movement<i aria-hidden="true" class="Card-arrow fa-regular fa-arrow-right"></i></div>
-<p>Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.</p>
 </div>
-</a>
 
-<a class="Card Card_card" href="/docs/individual-user#account-activity">
-<i class="Card-icon fa-duotone fa-solid fa-chart-line"></i>
-<div class="Card-content">
-<div class="Card-title">Account Activity<i aria-hidden="true" class="Card-arrow fa-regular fa-arrow-right"></i></div>
-<p>Real-time balances, full transaction history with status filtering, and a notification system with unread-count badges.</p>
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+
+<strong>Individual Onboarding</strong><br /><br />
+Guide users through invitation acceptance, W9 certification, security setup, phone verification, and KYC submission — all via API.
+
 </div>
-</a>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+
+<strong>Money Movement</strong><br /><br />
+Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.
+
+</div>
+
+<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
+
+<strong>Account Activity</strong><br /><br />
+Real-time balances, full transaction history with status filtering, and a notification system with unread-count badges.
+
+</div>
 
 </div>
 
