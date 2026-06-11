@@ -1,6 +1,6 @@
 ---
 title: FAQ
-excerpt: Frequently asked questions about integrating with the TaPP Cash API.
+excerpt: Frequently asked questions about integrating with the TAPP Cash API.
 hidden: false
 ---
 
@@ -40,7 +40,7 @@ The `meta.fields` array in the step 3 response lists the outstanding steps: `"ph
 
 **What is the difference between TBA and ACH?**
 
-TBA (Transfer Between Accounts) moves funds between two accounts belonging to the same individual user — both accounts are internal to TaPP. ACH moves funds between a TaPP account and an external bank account linked via Plaid or another BaaS provider.
+TBA (Transfer Between Accounts) moves funds between two accounts belonging to the same individual user — both accounts are internal to TAPP Cash. ACH moves funds between a TAPP Cash account and an external bank account linked via Plaid or another BaaS provider.
 
 **Why should I always call the preview endpoint before submitting a transfer?**
 

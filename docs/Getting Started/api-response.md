@@ -1,10 +1,10 @@
 ---
 title: API Response Format
-excerpt: The standard JSON envelope used by all TaPP Cash API responses — success, error, and paginated.
+excerpt: The standard JSON envelope used by all TAPP Cash API responses — success, error, and paginated.
 hidden: false
 ---
 
-Every TaPP Cash API response follows the same envelope structure, whether it succeeds or fails.
+Every TAPP Cash API response follows the same envelope structure, whether it succeeds or fails.
 
 ---
 

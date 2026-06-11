@@ -1,6 +1,6 @@
 ---
 title: Authentication
-excerpt: How Bearer tokens work in TaPP Cash — issuing, using, refreshing, and the full token lifecycle.
+excerpt: How Bearer tokens work in TAPP Cash — issuing, using, refreshing, and the full token lifecycle.
 hidden: false
 ---
 
@@ -14,7 +14,7 @@ Authorization: Bearer <your_token>
 
 ## Token Types
 
-TaPP Cash uses two token types depending on where the user is in the flow.
+TAPP Cash uses two token types depending on where the user is in the flow.
 
 | Token | Lifetime | Used for |
 |-------|----------|----------|

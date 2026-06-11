@@ -1,10 +1,10 @@
 ---
 title: Getting Started
-excerpt: Everything you need to integrate the TaPP Cash API — from your first sign-in to daily banking operations.
+excerpt: Everything you need to integrate the TAPP Cash API — from your first sign-in to daily banking operations.
 hidden: false
 ---
 
-TaPP Cash is a white-label financial platform for account managers and their individual users. This guide gives you programmatic control over the full user lifecycle — from sending the first invitation through KYC, banking, and account closure.
+TAPP Cash is a white-label financial platform for account managers and their individual users. This guide gives you programmatic control over the full user lifecycle — from sending the first invitation through KYC, banking, and account closure.
 
 ---
 
@@ -41,7 +41,7 @@ The user receives an invitation email and follows the onboarding flow documented
 
 | Section | What it covers |
 |---------|----------------|
-| [Welcome to TaPP Cash](./welcome) | Platform overview and what you can build |
+| [Welcome to TAPP Cash](./welcome) | Platform overview and what you can build |
 | [Platform Overview](./platform-overview) | Roles, base URLs, and key concepts |
 | [Onboarding](./onboarding) | Request API access, sign in, and invite users |
 | [Authentication](./authentication) | Bearer tokens, refresh flow, and token lifecycle |

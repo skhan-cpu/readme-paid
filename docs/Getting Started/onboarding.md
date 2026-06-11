@@ -4,13 +4,13 @@ excerpt: How to request API access, sign in as an account manager, and invite yo
 hidden: false
 ---
 
-The TaPP Cash journey starts with the account manager. The manager requests credentials, signs in, and sends invitation emails that start each individual user's onboarding flow.
+The TAPP Cash journey starts with the account manager. The manager requests credentials, signs in, and sends invitation emails that start each individual user's onboarding flow.
 
 ---
 
 ## Step 1 — Request an API Key
 
-Account manager credentials are provisioned by the TaPP platform team — they are not self-service.
+Account manager credentials are provisioned by the TAPP Cash platform team — they are not self-service.
 
 Email **[support@tappcash.com](mailto:support@tappcash.com)** with the following details:
 

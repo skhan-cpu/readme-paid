@@ -1,10 +1,10 @@
 ---
 title: Platform Overview
-excerpt: Understand the TaPP Cash platform architecture, roles, environments, and key concepts before you start integrating.
+excerpt: Understand the TAPP Cash platform architecture, roles, environments, and key concepts before you start integrating.
 hidden: false
 ---
 
-TaPP Cash is a multi-tenant financial platform. Every integration involves two distinct roles working together: an **Account Manager** who administers a portfolio of individuals, and **Individual Users** who hold accounts and move money.
+TAPP Cash is a multi-tenant financial platform. Every integration involves two distinct roles working together: an **Account Manager** who administers a portfolio of individuals, and **Individual Users** who hold accounts and move money.
 
 ---
 
@@ -77,4 +77,4 @@ The staging environment enforces standard rate limits. If you receive `429 Too M
 
 **Staging** is for development and testing. Use test credentials and dummy data — no real money moves. Staging credentials will not work against the production base URL.
 
-**Production** requires separate credentials issued by the TaPP platform team. Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.
+**Production** requires separate credentials issued by the TAPP Cash platform team. Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.

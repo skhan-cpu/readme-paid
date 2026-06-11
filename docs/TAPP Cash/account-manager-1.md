@@ -7,9 +7,9 @@ metadata:
 ---
 ## Request an API Key
 
-Account manager credentials are provisioned by the TaPP platform team — they are not self-service. To request access:
+Account manager credentials are provisioned by the TAPP Cash platform team — they are not self-service. To request access:
 
-1. Email **[support@tappcash.com](mailto:support@tappbank.com)** with the following details:
+1. Email **[support@tappcash.com](mailto:support@tappcash.com)** with the following details:
 
    | Field        | Description                                   |
    | ------------ | --------------------------------------------- |
@@ -24,7 +24,7 @@ Account manager credentials are provisioned by the TaPP platform team — they a
 
 > Credentials are environment-specific — staging credentials will not work against the production base URL.
 
-For key rotations or access issues, contact **[support@tappcash.com](mailto:support@tappbank.com)**.
+For key rotations or access issues, contact **[support@tappcash.com](mailto:support@tappcash.com)**.
 
 ***
 

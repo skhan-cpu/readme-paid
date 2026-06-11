@@ -1,10 +1,10 @@
 ---
-title: Welcome to TaPP Cash
-excerpt: TaPP Cash is a white-label financial platform for embedding accounts, transfers, and KYC into your product.
+title: Welcome to TAPP Cash
+excerpt: TAPP Cash is a white-label financial platform for embedding accounts, transfers, and KYC into your product.
 hidden: false
 ---
 
-TaPP Cash is a modern banking platform that lets you embed financial accounts, transfers, and KYC into your product via API. These docs cover everything your engineering team needs to integrate — from inviting a user all the way through daily banking operations.
+TAPP Cash is a modern banking platform that lets you embed financial accounts, transfers, and KYC into your product via API. These docs cover everything your engineering team needs to integrate — from inviting a user all the way through daily banking operations.
 
 ---
 

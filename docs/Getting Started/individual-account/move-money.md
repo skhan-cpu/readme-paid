@@ -4,13 +4,13 @@ excerpt: Internal transfers between a user's own accounts (TBA) and ACH pulls/pu
 hidden: false
 ---
 
-TaPP Cash supports two transfer types for individual users: **TBA** (internal, between the user's own accounts) and **ACH** (external, to/from linked bank accounts).
+TAPP Cash supports two transfer types for individual users: **TBA** (internal, between the user's own accounts) and **ACH** (external, to/from linked bank accounts).
 
 ---
 
 ## Internal Transfers (TBA)
 
-Use TBA to move funds between two of the same user's internal TaPP accounts. Both accounts must belong to the authenticated user.
+Use TBA to move funds between two of the same user's internal TAPP Cash accounts. Both accounts must belong to the authenticated user.
 
 ### 1. Preview the transfer
 
