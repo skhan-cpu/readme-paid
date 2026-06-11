@@ -4,7 +4,7 @@ excerpt: >-
   This guide walks through the complete lifecycle of an individual user — from
   receiving the account manager's invitation through onboarding, daily banking,
   and account closure. Follow the sections in order for a first integration;
-  jump to any section once you are familiar with the flow.
+  jump to any section once you are familiar with the flow..
 deprecated: false
 hidden: false
 metadata:
