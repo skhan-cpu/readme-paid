@@ -14,7 +14,7 @@ This section covers everything an individual user can do after receiving an acco
 
 <div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
 <strong>Onboarding</strong><br/><br/>
-Complete the 10-step flow: validate invite token, accept agreements, set password, W9, security questions, phone OTP, KYC, and token exchange. See <a href="./onboarding">Onboarding</a>.
+Complete the 10-step flow: validate invite token, accept agreements, set password, W9, security questions, phone OTP, KYC, and token exchange. See <a href="./registration">Registration</a>.
 </div>
 
 <div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">

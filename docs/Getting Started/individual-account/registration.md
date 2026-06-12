@@ -1,6 +1,6 @@
 ---
-title: Onboarding
-excerpt: The 10-step flow for individual users — from invitation acceptance through KYC submission and full token exchange.
+title: Registration
+excerpt: The 10-step registration flow for individual users — from invitation acceptance through KYC submission and full token exchange.
 hidden: false
 ---
 
