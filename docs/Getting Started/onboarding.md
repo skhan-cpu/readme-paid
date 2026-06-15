@@ -1,27 +1,27 @@
 ---
 title: Onboarding
-excerpt: How to request API access, sign in as an account manager, manage your portfolio of individual users, and invite new ones.
+excerpt: How to request API access, set up your organization, and begin inviting clients.
 hidden: false
 ---
 
-The TAPP Cash journey starts with the account manager. The manager requests credentials, signs in, manages their portfolio of individual users and accounts, and sends invitation emails that kick off each individual's onboarding flow.
+Getting started with TappCash involves three phases: requesting credentials for your organization, signing in and configuring your environment, and then setting up your admin hierarchy to begin inviting clients.
 
 ---
 
-## Step 1 — Request an API Key
+## Step 1 — Request Credentials
 
-Account manager credentials are provisioned by the TAPP Cash platform team — they are not self-service.
+Organization credentials are provisioned by the TappCash team — they are not self-service.
 
 Email **[support@tappcash.com](mailto:support@tappcash.com)** with the following details:
 
-| Field | Description |
-|-------|-------------|
-| Full name | Your full name |
-| Organization | Your company or institution name |
-| Environment | Staging or Production |
-| Use case | Brief description of what you are integrating |
+| Field         | Description                                       |
+|---------------|---------------------------------------------------|
+| Organization  | Your company or institution name                  |
+| Contact name  | Full name of the primary technical contact        |
+| Environment   | Staging or Production                             |
+| Use case      | Brief description of what you are integrating     |
 
-The team will review your request, create your account, and reply with your `login` (email) and a temporary password. On first sign-in you will be prompted to change it.
+The team will review your request, create your Root Advisor account, and reply with your `login` (email) and a temporary password.
 
 > Credentials are environment-specific — staging credentials will not work against the production base URL.
 
@@ -33,8 +33,8 @@ The team will review your request, create your account, and reply with your `log
 
 ```json
 {
-  "login": "manager@example.com",
-  "password": "YourPassword123!"
+  "login": "admin@yourorg.com",
+  "password": "TemporaryPassword123!"
 }
 ```
 
@@ -51,21 +51,51 @@ The team will review your request, create your account, and reply with your `log
 
 Store both tokens. The `accessToken` expires after **30 minutes**. The `refreshToken` is valid for **30 days**.
 
+On first sign-in you will be prompted to change your temporary password via `POST /users/private/v1/auth/change_password`.
+
 ---
 
 ## Step 3 — Refresh an Expired Token
 
 `POST /users/public/v1/auth/refresh`
 
-Pass the `refreshToken` in the request body to obtain a new `accessToken` without requiring the manager to re-login. Call this automatically whenever you receive a `401` on a private endpoint.
+Pass the `refreshToken` in the request body to obtain a new `accessToken` without re-login. Call this automatically whenever you receive a `401` on a private endpoint.
+
+```json
+{
+  "refreshToken": "LUF..."
+}
+```
 
 ---
 
-## Step 4 — Invite a New Individual
+## Step 4 — Set Up Your Admin Hierarchy
+
+Once signed in as Root Advisor, build out your organization's admin structure before inviting clients. The hierarchy flows downward:
+
+```mermaid
+flowchart LR
+    Root["Root Advisor"] --> HBM["Head Branch Manager"]
+    Root --> BM["Branch Manager"]
+    HBM --> Advisor["Advisor"]
+    BM --> Advisor
+```
+
+Each **Advisor** is the front-line role that directly invites and manages client users. Depending on your organization's size, you may operate with a single Advisor or a full hierarchy of Head Branch Managers, Branch Managers, and Advisors.
+
+> Detailed steps for creating and managing each admin tier are covered in the Admin Roles guide.
+
+---
+
+## Step 5 — Invite Your First Client
+
+Advisors can invite two types of clients: **Individual** users and **Business Owner** users. Both follow an invitation-based flow — the client receives an email and completes their own onboarding steps.
+
+**Invite an Individual**
 
 `POST /branches/private/v1/individual`
 
-- **Auth**: Account manager access token
+- **Auth**: Advisor access token
 
 ```json
 {
@@ -76,20 +106,26 @@ Pass the `refreshToken` in the request body to obtain a new `accessToken` withou
 }
 ```
 
-On success (`200`) the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](./individual-account) onboarding steps 1–10.
+On success, the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](./individual-account) onboarding steps.
+
+**Invite a Business Owner**
+
+Business Owner invitations follow the same pattern. The Business Owner receives an email, accepts the invite, completes KYB verification, and their business accounts become active. They can then invite Operators to manage their accounts on their behalf.
+
+> See the Business Owner guide for the full KYB and Operator management flow.
 
 ---
 
-## Step 5 — List Your Managed Individuals
+## Step 6 — List and Monitor Clients
 
 `GET /branches/private/v1/individual`
 
-- **Auth**: Account manager access token
-- Returns a paginated list of all individuals under this manager's branch.
+- **Auth**: Advisor access token
+- Returns a paginated list of all Individual clients under this Advisor's branch.
 
 ```
 GET /branches/private/v1/individual?page[number]=1&page[size]=20
-Authorization: Bearer <manager_token>
+Authorization: Bearer <advisor_token>
 ```
 
 **Response (abbreviated):**
@@ -114,21 +150,14 @@ Authorization: Bearer <manager_token>
 }
 ```
 
----
-
-## Step 6 — View an Individual's Profile
-
-`GET /branches/private/v1/individual/{id}`
-
-- **Auth**: Account manager access token
-- `{id}` is the individual's UUID returned by the list endpoint.
+`GET /branches/private/v1/individual/{id}` returns the full profile for a single individual. Use the `id` returned by the list endpoint.
 
 ---
 
 ## Authentication Errors
 
-| Status | Cause | Fix |
-|--------|-------|-----|
-| `401` | Missing or expired `accessToken` | Call `POST /users/public/v1/auth/refresh` with your `refreshToken` |
-| `401` | Invalid credentials | Verify `login` and `password`; contact support if locked out |
-| `403` | Valid token but wrong role | Ensure you are using an account manager token for advisor endpoints |
+| Status | Cause                            | Fix                                                                     |
+|--------|----------------------------------|-------------------------------------------------------------------------|
+| `401`  | Missing or expired `accessToken` | Call `POST /users/public/v1/auth/refresh` with your `refreshToken`      |
+| `401`  | Invalid credentials              | Verify `login` and `password`; contact support if locked out            |
+| `403`  | Valid token but wrong role       | Ensure you are using the correct token for the endpoint's required role |

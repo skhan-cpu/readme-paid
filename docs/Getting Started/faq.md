@@ -8,7 +8,7 @@ hidden: false
 
 **How do I get an API key?**
 
-Contact [support@tappcash.com](mailto:support@tappcash.com) with your name, organization, environment (staging or production), and a brief description of your use case. The team will provision your account manager credentials and reply with your login email and a temporary password.
+Contact [support@tappcash.com](mailto:support@tappcash.com) with your name, organization, environment (staging or production), and a brief description of your use case. The team will provision your organization's credentials and reply with your login email and a temporary password.
 
 **My access token expired. What do I do?**
 
@@ -24,7 +24,7 @@ No. Credentials are environment-specific. Staging credentials will not work agai
 
 **The invitation token I'm trying to validate is returning 400. What happened?**
 
-The invite token has expired or was already used. The account manager must send a new invitation via `POST /branches/private/v1/individual`.
+The invite token has expired or was already used. The Advisor must send a new invitation via `POST /branches/private/v1/individual`.
 
 **Step 3 returns HTTP 403 — is that an error?**
 

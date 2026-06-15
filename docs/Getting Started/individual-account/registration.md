@@ -4,7 +4,7 @@ excerpt: The 10-step registration flow for individual users — from invitation 
 hidden: false
 ---
 
-After an account manager sends an invitation, the individual user completes a guided 10-step flow to activate their accounts.
+After an Advisor sends an invitation, the individual user completes a guided 10-step flow to activate their accounts.
 
 ---
 
@@ -12,8 +12,8 @@ After an account manager sends an invitation, the individual user completes a gu
 
 ```mermaid
 flowchart TD
-    AM0[Account Manager: Sign in]
-    AM0 --> AM1[Account Manager: Invite new individual]
+    AM0[Advisor: Sign in]
+    AM0 --> AM1[Advisor: Invite new individual]
     AM1 --> A([User receives invitation email])
 
     A --> B[User clicks invite link]

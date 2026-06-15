@@ -3,19 +3,20 @@ title: Welcome to TAPP Cash
 hidden: false
 ---
 
-TAPP Cash is a modern banking platform that lets you embed financial accounts, transfers, and KYC into your product via
-API. These docs cover everything your engineering team needs to integrate — from inviting a user all the way through
-daily banking operations.
+TappCash is a financial platform API that lets organizations embed banking capabilities into their products. With TappCash, you can build and manage the full client lifecycle — from inviting users and verifying their identity through daily banking operations including transfers, account management, and reporting.
+
+These docs are for engineering teams integrating the TappCash API on behalf of your organization.
 
 ---
 
 ## What can you build?
 
 <Cards>
-  <Card title="Account Manager Workflows" href="./onboarding" icon="fa-duotone fa-briefcase">Sign in as an advisor, manage your portfolio of individuals, send invitations, and track onboarding status across your branch.</Card>
-  <Card title="Individual Onboarding" href="./individual-account" icon="fa-duotone fa-user-check">Guide users through invitation acceptance, W9 certification, security setup, phone verification, and KYC submission — all via API.</Card>
-  <Card title="Money Movement" href="./individual-account/move-money" icon="fa-duotone fa-arrow-right-arrow-left">Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.</Card>
-  <Card title="Account Activity" href="./individual-account/accounts" icon="fa-duotone fa-chart-line">Real-time balances, full transaction history with status filtering, and a notification system with unread-count badges.</Card>
+  <Card title="Admin Operations" href="./platform-overview" icon="fa-duotone fa-sitemap">Manage your organization's admin hierarchy — branches, Head Branch Managers, Branch Managers, and Advisors — and oversee all client portfolios, transfers, and reports from a single API.</Card>
+  <Card title="Individual Client Onboarding" href="./individual-account" icon="fa-duotone fa-user-check">Guide individual users through invitation acceptance, KYC verification, account setup, and full banking access.</Card>
+  <Card title="Business Client Onboarding" href="./onboarding" icon="fa-duotone fa-building">Onboard Business Owner clients through KYB verification, manage their accounts, and enable Operator access for their team.</Card>
+  <Card title="Money Movement" href="./individual-account/move-money" icon="fa-duotone fa-arrow-right-arrow-left">Internal transfers between accounts (TBA), ACH pulls and pushes to external bank accounts, and automated recurring payments.</Card>
+  <Card title="Account Activity" href="./individual-account/accounts" icon="fa-duotone fa-chart-line">Real-time balances, full transaction history with filtering, account statements, and notifications with unread-count badges.</Card>
 </Cards>
 
 ---
@@ -23,9 +24,9 @@ daily banking operations.
 ## Quickstart
 
 <Cards>
-  <Card title="Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Contact support@tappcash.com to request your account manager credentials. Include your name, organization, environment, and use case.</Card>
-  <Card title="Sign In & Invite" href="./onboarding" icon="fa-duotone fa-right-to-bracket">Authenticate as an advisor and send your first invitation — sign in to get your `accessToken`, then invite an individual by email.</Card>
-  <Card title="Complete Onboarding" href="./individual-account" icon="fa-duotone fa-list-check">The invited user follows a guided 10-step flow — invite token, agreements, password, W9, security questions, phone OTP, KYC, and token exchange.</Card>
+  <Card title="Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Contact support@tappcash.com to request your organization's API credentials. Include your organization name, environment, and use case.</Card>
+  <Card title="Sign In & Configure" href="./onboarding" icon="fa-duotone fa-right-to-bracket">Authenticate as the Root Advisor, change your temporary password, and begin setting up your admin hierarchy.</Card>
+  <Card title="Invite Your First Client" href="./onboarding" icon="fa-duotone fa-envelope">Once an Advisor is set up, send your first client invitation — Individual or Business Owner — to kick off their onboarding flow.</Card>
   <Card title="Move Money" href="./individual-account/move-money" icon="fa-duotone fa-money-bill-transfer">Transfer funds between a user's own internal accounts (TBA) or pull/push to linked external bank accounts via ACH.</Card>
 </Cards>
 
@@ -36,11 +37,11 @@ daily banking operations.
 Step-by-step guides for common integration patterns.
 
 <Cards>
-  <Card title="Account Manager: Sign In & Invite" href="./onboarding" icon="fa-duotone fa-user-tie">Authenticate as advisor, list managed individuals, and send an invitation.</Card>
+  <Card title="Advisor: Sign In & Invite" href="./onboarding" icon="fa-duotone fa-user-tie">Authenticate as an Advisor and send your first invitation to an Individual or Business Owner client.</Card>
   <Card title="Individual Registration" href="./individual-account/registration" icon="fa-duotone fa-id-card">Steps 1–10: validate token → accept invite → KYC → token exchange.</Card>
-  <Card title="Sign In as Returning User" href="./authentication" icon="fa-duotone fa-arrow-right-to-bracket">Standard login flow and token refresh for individual users.</Card>
+  <Card title="Sign In as Returning User" href="./authentication" icon="fa-duotone fa-arrow-right-to-bracket">Standard login flow and token refresh for client users.</Card>
   <Card title="Internal Transfer (TBA)" href="./individual-account/move-money" icon="fa-duotone fa-shuffle">Preview fees and move funds between a user's own accounts.</Card>
-  <Card title="External Account Linking (ACH)" href="./individual-account/move-money" icon="fa-duotone fa-building-columns">BaaS token → Plaid link → pull or push funds.</Card>
+  <Card title="External Account Linking (ACH)" href="./individual-account/move-money" icon="fa-duotone fa-building-columns">BaaS token → Plaid link → pull or push funds to external bank accounts.</Card>
   <Card title="Notifications" href="./individual-account/notifications" icon="fa-duotone fa-bell">Unread count, list notifications, mark as read.</Card>
   <Card title="Account Closure" href="./individual-account/account-closure" icon="fa-duotone fa-circle-xmark">Two-step OTP-confirmed deletion flow.</Card>
 </Cards>
@@ -132,10 +133,15 @@ Every response — success or error — follows the same envelope.
 
 Your token is scoped to a role. Calling an endpoint outside your role returns `403 Forbidden`.
 
-| Role                          | Access                                                                                |
-|-------------------------------|---------------------------------------------------------------------------------------|
-| **Advisor** (Account Manager) | Manage individuals, send invitations, view branch portfolio                           |
-| **Individual**                | Banking features — accounts, balances, transfers, notifications, KYC, account closure |
+| Role                    | Access                                                                                                            |
+|-------------------------|-------------------------------------------------------------------------------------------------------------------|
+| **Root Advisor**        | Full organizational management — branches, admin tiers, all client portfolios, and reports                        |
+| **Head Branch Manager** | Manage Advisors, oversee all client activity — transfers, transfer requests, auto-payments, and reports           |
+| **Branch Manager**      | Manage Advisors, review client portfolios, transfer requests, reports, and configure approval settings            |
+| **Advisor**             | Invite and manage Individual and Business Owner clients — transfers, transfer requests, auto-payments, and reports |
+| **Business Owner**      | Hold business accounts, complete KYB, invite and manage Operators, initiate transfers and auto-payments           |
+| **Individual**          | Hold personal accounts, complete KYC, initiate transfers (TBA and ACH), and view account activity                 |
+| **Operator**            | Manage a Business Owner's accounts with granted permissions — transfer funds and set up auto-payments             |
 
 ---
 

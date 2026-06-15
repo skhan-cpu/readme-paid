@@ -69,7 +69,7 @@ Every TAPP Cash error response uses a consistent envelope. Parse the `errors` ar
 ```
 
 **Cause:** Using an individual token on an advisor endpoint, or a temporary token on a full-access endpoint.
-**Fix:** Check the token type. Account manager endpoints require an advisor token; individual endpoints require an individual token.
+**Fix:** Check the token type. Advisor endpoints require an Advisor token; Individual endpoints require an Individual token. Verify you are using the correct role token for the endpoint.
 
 ---
 
@@ -89,7 +89,7 @@ Every TAPP Cash error response uses a consistent envelope. Parse the `errors` ar
 { "errors": [{ "code": "INVITE_TOKEN_EXPIRED", "title": "Invitation token has expired" }] }
 ```
 
-**Fix:** The account manager must send a new invitation. The original invite link is no longer valid.
+**Fix:** The Advisor must send a new invitation. The original invite link is no longer valid.
 
 ---
 

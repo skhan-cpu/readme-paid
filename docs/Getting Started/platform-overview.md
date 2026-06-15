@@ -1,36 +1,75 @@
 ---
 title: Platform Overview
-excerpt: Understand the TAPP Cash platform architecture, roles, environments, and key concepts before you start integrating.
+excerpt: The TappCash role hierarchy, user types, environments, and key concepts — everything you need to understand before you start integrating.
 hidden: false
 ---
 
-TAPP Cash is a multi-tenant financial platform. Every integration involves two distinct roles working together: an *
-*Account Manager** who administers a portfolio of individuals, and **Individual Users** who hold accounts and move
-money.
+TappCash is a financial platform API that gives organizations programmatic control over the full banking lifecycle — from building out an admin hierarchy and onboarding clients through daily operations including transfers, account management, and reporting.
 
 ---
 
-## User Roles
+## Role Hierarchy
 
-| Role | What they do |
-|------|--------------|
-| **Account Manager** *(also called Root Advisor)* | Signs in, manages a branch portfolio, sends invitations, monitors onboarding status |
-| **Individual User** *(also called Individual)* | Holds financial accounts, completes onboarding, initiates transfers, views transactions |
-
-Your API credentials are scoped to one role. Calling an endpoint outside your role returns `403 Forbidden`.
-
----
-
-## The User Lifecycle
+TappCash organizes users into two groups: **admin roles** that manage the organization and its clients, and **client-facing roles** that hold and operate financial accounts.
 
 ```mermaid
 flowchart TD
-    A[Account Manager: Sign in]
-    A --> B[Account Manager: Invite individual]
-    B --> C([Individual receives invitation email])
-    C --> D[Individual: Complete onboarding — Steps 1–10]
-    D --> E[Individual: Exchange temporary token for full access token]
-    E --> F([Accounts live — transfers, balances, notifications available])
+    Root["Root Advisor"]
+    HBM["Head Branch Manager"]
+    BM["Branch Manager"]
+    Advisor["Advisor"]
+    Ind["Individual"]
+    BO["Business Owner"]
+    Op["Operator"]
+
+    Root --> HBM
+    Root --> BM
+    HBM --> Advisor
+    BM --> Advisor
+    Advisor -->|invites| Ind
+    Advisor -->|invites| BO
+    BO -->|invites| Op
+```
+
+---
+
+## Admin Roles
+
+<Cards>
+  <Card title="Root Advisor" href="./onboarding" icon="fa-duotone fa-crown">The highest admin tier. Manages the organization's entire structure — branches, Head Branch Managers, Branch Managers, and Advisors — and has full visibility across all client portfolios and reports.</Card>
+  <Card title="Head Branch Manager" href="./onboarding" icon="fa-duotone fa-user-shield">Manages Advisors across branches and oversees all client activity — transfers, transfer requests, auto-payments, and reports. Has access to the chat module.</Card>
+  <Card title="Branch Manager" href="./onboarding" icon="fa-duotone fa-user-gear">Manages Advisors within a branch. Reviews client portfolios, transfer requests, and reports. Configures approval settings for the branch.</Card>
+  <Card title="Advisor" href="./onboarding" icon="fa-duotone fa-user-tie">The front-line admin role. Invites and manages Individual and Business Owner clients. Handles transfers, transfer requests, auto-payments, and client reports. Has access to the chat module.</Card>
+</Cards>
+
+---
+
+## Client-Facing Roles
+
+<Cards>
+  <Card title="Individual" href="./individual-account" icon="fa-duotone fa-user">Holds personal financial accounts (checking and savings). Completes KYC verification, initiates internal transfers and ACH transactions, and views account activity and statements.</Card>
+  <Card title="Business Owner" href="./onboarding" icon="fa-duotone fa-building">Holds business financial accounts. Completes KYB verification. Invites and manages Operators to act on their behalf.</Card>
+  <Card title="Operator" href="./onboarding" icon="fa-duotone fa-user-lock">Manages a Business Owner's accounts with granted permissions. Can initiate transfers and set up auto-payments based on the access the Business Owner assigns.</Card>
+</Cards>
+
+---
+
+## User Lifecycle
+
+```mermaid
+flowchart TD
+    A["Advisor signs in"]
+    A --> B{"Invite client"}
+    B -->|Individual| C["Individual accepts invite"]
+    B -->|Business Owner| D["Business Owner accepts invite"]
+    C --> E["Individual completes KYC"]
+    D --> F["Business Owner completes KYB"]
+    E --> G(["Individual accounts active"])
+    F --> H(["Business accounts active"])
+    H --> I["Business Owner invites Operators"]
+    G --> J["Transfers, balances, notifications"]
+    H --> J
+    I --> J
 ```
 
 ---
@@ -69,8 +108,6 @@ Endpoints follow a versioned path pattern:
 
 ## Environments
 
-**Staging** is for development and testing. Use test credentials and dummy data — no real money moves. Staging
-credentials will not work against the production base URL.
+**Staging** is for development and testing. Use test credentials and dummy data — no real money moves. Staging credentials will not work against the production base URL.
 
-**Production** requires separate credentials issued by the TAPP Cash platform team.
-Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.
+**Production** requires separate credentials issued by the TappCash platform team. Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.

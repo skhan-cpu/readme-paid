@@ -4,7 +4,7 @@ excerpt: Complete guide for individual users — onboarding, accounts, balances,
 hidden: false
 ---
 
-This section covers everything an individual user can do after receiving an account manager's invitation — from completing onboarding through daily banking operations.
+This section covers everything an Individual user can do after receiving an Advisor's invitation — from completing onboarding through daily banking operations.
 
 ---
 
@@ -27,8 +27,8 @@ This section covers everything an individual user can do after receiving an acco
 
 ```mermaid
 flowchart TD
-    AM0[Account Manager: Sign in]
-    AM0 --> AM1[Account Manager: Invite new individual]
+    AM0[Advisor: Sign in]
+    AM0 --> AM1[Advisor: Invite new individual]
     AM1 --> A([User receives invitation email])
 
     A --> B[User clicks invite link]
