@@ -1,0 +1,1129 @@
+openapi: 3.0.0
+info:
+  title: TappCash Operator API
+  version: 1.0.0
+  description: >
+    The **Operator API** covers the lifecycle of an Operator user — invited by
+    a Business Owner to manage business accounts on their behalf.
+
+
+    Operators complete the same KYC onboarding as Individual users (phone OTP +
+    identity verification). After activation, their access is limited to
+    business accounts they have been granted permissions for.
+
+
+    It spans four microservices:
+
+
+    | Service | Prefix | Responsibility |
+
+    |---------|--------|----------------|
+
+    | `tapp-branches` | `/branches/` | Invite acceptance, KYC signup, profile
+    access |
+
+    | `tapp-users` | `/users/` | Authentication, tokens, security questions |
+
+    | `tapp-accounts` | `/accounts/` | Business accounts, transfers,
+    auto-payments |
+
+    | `tapp-external-accounts` | `/external-accounts/` | External bank account
+    linking |
+
+
+    ---
+
+
+    ## Authentication
+
+
+    Operators authenticate with `POST /users/public/v1/auth/signin` using role
+    `"businessoperator"`.
+
+
+    | Token | Lifetime | Use |
+
+    |-------|----------|-----|
+
+    | Temporary access token | Session | `/limited/` onboarding endpoints only |
+
+    | Full access token | 30 minutes | All authenticated endpoints |
+
+    | Refresh token | 30 days | Renew via `POST /users/public/v1/auth/refresh` |
+
+
+    Required header on all private requests:
+
+    ```
+
+    Authorization: Bearer <accessToken>
+
+    V-Client-Device-Id: <device-uuid>
+
+    ```
+
+
+    ---
+
+
+    ## Permission Gating
+
+
+    All transfer and auto-payment operations check the Operator's permissions
+    before executing. The Business Owner sets permissions when inviting and can
+    update them at any time.
+
+
+    | Permission | Enables |
+
+    |------------|---------|
+
+    | `transferFunds` | TBA and TBU internal transfers |
+
+    | `transferACH` | ACH external transfers |
+
+    | `autoPay` | Create and manage auto-payments |
+
+
+    Attempting an operation without the required permission returns `403
+    Forbidden`.
+
+servers:
+  - url: https://api.tappcash.com
+    description: Production
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Address:
+      type: object
+      required: [address, city, state, zipCode, country]
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+          default: "US"
+
+    Employment:
+      type: object
+      properties:
+        isCurrentlyEmployed:
+          type: boolean
+        occupation:
+          type: string
+        employer:
+          type: string
+        annualIncome:
+          type: string
+          format: decimal
+        employmentStartDate:
+          type: string
+          description: "MM/DD/YYYY"
+        incomeSources:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              amount:
+                type: string
+                format: decimal
+              frequency:
+                type: string
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        typeId:
+          type: integer
+        description:
+          type: string
+        balance:
+          type: string
+          format: decimal
+        availableBalance:
+          type: string
+          format: decimal
+        isActive:
+          type: boolean
+
+    TransferRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        accountIdFrom:
+          type: string
+        accountIdTo:
+          type: string
+        outgoingAmount:
+          type: string
+          format: decimal
+        incomingAmount:
+          type: string
+          format: decimal
+        status:
+          type: string
+          enum: [pending, executed, cancelled, rejected]
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    AutoPayment:
+      type: object
+      properties:
+        id:
+          type: string
+        accountIdFrom:
+          type: string
+        accountIdTo:
+          type: string
+        amount:
+          type: string
+          format: decimal
+        period:
+          type: string
+          enum: [weekly, biweekly, monthly, one_time]
+        type:
+          type: string
+          enum: [end_date, until_cancel, limit_amount]
+        startDate:
+          type: string
+        endDate:
+          type: string
+        limitAmount:
+          type: string
+          format: decimal
+        status:
+          type: string
+        description:
+          type: string
+
+    ACHAccountIdentifiers:
+      type: object
+      required: [accountNumber, routingNumber, accountOwnerName, bankCountry, bankName]
+      properties:
+        accountNumber:
+          type: string
+          minLength: 8
+          maxLength: 17
+        routingNumber:
+          type: string
+          minLength: 9
+          maxLength: 9
+        accountOwnerName:
+          type: string
+        bankCountry:
+          type: string
+        bankName:
+          type: string
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+  parameters:
+    DeviceId:
+      name: V-Client-Device-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PageNumber:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+        default: 1
+    PageSize:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        default: 20
+
+paths:
+
+  # ─────────────────────────────────────────────
+  # Onboarding — Public (no auth)
+  # ─────────────────────────────────────────────
+
+  /branches/public/v1/common/invites/check:
+    get:
+      operationId: opCheckInviteToken
+      summary: Step 1 — Validate invite token
+      description: >
+        Validates the invite token from the invitation email. Returns `role:
+        "businessoperator"` and the Operator's phone number.
+      tags: [Onboarding]
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        example: "businessoperator"
+                      phoneNumber:
+                        type: string
+        '400':
+          description: Token expired or invalid
+
+  /branches/public/v1/common/agreements:
+    get:
+      operationId: opGetAgreements
+      summary: Step 2 — Fetch platform agreements
+      description: >
+        Returns the platform agreements for Operator onboarding. Pass
+        `type=Person`.
+      tags: [Onboarding]
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [Person]
+      responses:
+        '200':
+          description: Agreements list
+
+  /branches/public/v1/operator/invites/accept:
+    post:
+      operationId: opAcceptInvite
+      summary: Step 3 — Accept invitation and set password
+      description: >
+        Accepts the invitation and sets the Operator's password. Returns HTTP
+        **403** on success (intentional — not an error). Extract
+        `data.temporaryAccessToken` from the response body for steps 4–9.
+      tags: [Onboarding]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '403':
+          description: >
+            **Success** — Extract `data.temporaryAccessToken` from body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      temporaryAccessToken:
+                        type: string
+                  meta:
+                    type: object
+                    properties:
+                      fields:
+                        type: array
+                        items:
+                          type: string
+
+  /branches/private/v1/limited/w9/terms:
+    get:
+      operationId: opGetW9Terms
+      summary: Step 4 — Get W9 terms
+      description: >
+        Returns the W9 certification terms the Operator must review and
+        acknowledge.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: W9 terms
+
+  /users/private/v1/limited/security-questions:
+    get:
+      operationId: opListSecurityQuestions
+      summary: Step 5 — List security questions
+      description: >
+        Returns the security questions for the Operator to answer.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Security questions list
+
+  /users/private/v1/limited/security-questions/answers:
+    post:
+      operationId: opSubmitSecurityAnswers
+      summary: Step 6 — Submit security answers
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    required: [questionId, answer]
+                    properties:
+                      questionId:
+                        type: string
+                      answer:
+                        type: string
+      responses:
+        '200':
+          description: Answers accepted
+
+  /users/private/v1/limited/generate-new-phone-code:
+    post:
+      operationId: opSendPhoneOTP
+      summary: Step 7 — Send phone OTP
+      description: >
+        Sends a one-time verification code to the Operator's registered phone
+        number.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: OTP sent
+
+  /users/private/v1/limited/check-phone-code:
+    put:
+      operationId: opVerifyPhoneOTP
+      summary: Step 8 — Verify phone OTP
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+      responses:
+        '200':
+          description: Phone verified
+        '400':
+          description: Incorrect or expired OTP
+
+  /branches/private/v1/limited/operator/signup:
+    post:
+      operationId: opSubmitKYC
+      summary: Step 9 — Submit KYC information
+      description: >
+        Submits the Operator's identity verification (KYC) information.
+        Verification is processed asynchronously. Poll
+        `GET /kyc/private/v1/requests/last` after token exchange to check
+        status.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, dateOfBirth, socialSecurityNumber, citizenship, address, employment]
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                middleName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  example: "05/10/1992"
+                  description: "MM/DD/YYYY"
+                socialSecurityNumber:
+                  type: string
+                citizenship:
+                  type: string
+                  enum: [Citizen, PermanentResident, NonResident]
+                address:
+                  $ref: '#/components/schemas/Address'
+                employment:
+                  $ref: '#/components/schemas/Employment'
+                w9:
+                  type: object
+                  properties:
+                    isSubjectToBackupWithholding:
+                      type: boolean
+                    accepted:
+                      type: boolean
+                    timestamp:
+                      type: string
+                      format: date-time
+            example:
+              firstName: "Alex"
+              lastName: "Johnson"
+              dateOfBirth: "05/10/1992"
+              socialSecurityNumber: "123-45-6789"
+              citizenship: "Citizen"
+              address:
+                address: "789 Team St"
+                city: "Austin"
+                state: "TX"
+                zipCode: "78703"
+                country: "US"
+              employment:
+                isCurrentlyEmployed: true
+                occupation: "Operations Manager"
+                employer: "Acme Corp"
+                annualIncome: "60000.00"
+                employmentStartDate: "01/15/2020"
+                incomeSources:
+                  - name: "Salary"
+                    amount: "60000.00"
+                    frequency: "Annually"
+              w9:
+                isSubjectToBackupWithholding: false
+                accepted: true
+                timestamp: "2024-01-15T10:30:00Z"
+      responses:
+        '200':
+          description: KYC submitted — review processing asynchronously
+        '400':
+          description: Validation error
+
+  /users/private/v1/limited/token-exchange:
+    put:
+      operationId: opTokenExchange
+      summary: Step 10 — Exchange for full access token
+      description: >
+        Exchanges the temporary token for a full `accessToken` and
+        `refreshToken`. Onboarding is complete after this step.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Full access token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+
+  # ─────────────────────────────────────────────
+  # Authentication (returning users)
+  # ─────────────────────────────────────────────
+
+  /users/public/v1/auth/signin:
+    post:
+      operationId: opSignIn
+      summary: Sign in as Operator
+      description: >
+        Authenticates a returning Operator. Pass `"businessoperator"` in the
+        `roles` array.
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, roles]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  example: ["businessoperator"]
+      responses:
+        '200':
+          description: Signed in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+
+  /users/public/v1/auth/refresh:
+    post:
+      operationId: opRefreshToken
+      summary: Refresh access token
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: New access token issued
+        '401':
+          description: Refresh token expired — user must sign in again
+
+  # ─────────────────────────────────────────────
+  # KYC Status
+  # ─────────────────────────────────────────────
+
+  /kyc/private/v1/requests/last:
+    get:
+      operationId: opGetKYCStatus
+      summary: Get KYC verification status
+      description: >
+        Returns the Operator's most recent KYC request status. Poll after
+        token exchange to know when the account is fully active.
+
+
+        | Status | Meaning |
+
+        |--------|---------|
+
+        | `pending` | KYC submitted and under review |
+
+        | `approved` | Identity verified — full account access |
+
+        | `rejected` | KYC failed — check `errors` for rejection reasons |
+      tags: [KYC Status]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: KYC status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        enum: [pending, approved, rejected]
+                      errors:
+                        type: array
+                        items:
+                          type: string
+
+  # ─────────────────────────────────────────────
+  # My Profile & Permissions
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/limited/operator/details:
+    get:
+      operationId: opGetMyProfile
+      summary: Get Operator profile and permissions
+      description: >
+        Returns the Operator's own profile including the permissions granted by
+        the Business Owner. Use this to determine which transfer features to
+        enable in your UI.
+      tags: [Profile]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Operator profile with permissions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      permissions:
+                        type: object
+                        properties:
+                          transferFunds:
+                            type: boolean
+                          transferACH:
+                            type: boolean
+                          autoPay:
+                            type: boolean
+
+  # ─────────────────────────────────────────────
+  # Accounts (Business Owner's accounts)
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/account:
+    get:
+      operationId: opListAccounts
+      summary: List business accounts
+      description: >
+        Returns all accounts belonging to the Business Owner this Operator
+        manages. Operators can view all accounts regardless of their transfer
+        permissions.
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: List of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+
+  /accounts/private/v1/account/{accountId}:
+    get:
+      operationId: opGetAccount
+      summary: Get account details
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Account details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Account'
+
+  /accounts/private/v1/balance/total:
+    get:
+      operationId: opGetTotalBalance
+      summary: Get total balance
+      description: >
+        Returns the aggregate balance across all the Business Owner's accounts.
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Total balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: string
+                        format: decimal
+                      available:
+                        type: string
+                        format: decimal
+                      pending:
+                        type: string
+                        format: decimal
+
+  # ─────────────────────────────────────────────
+  # Transfers (requires transferFunds permission)
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/tba-requests/preview:
+    post:
+      operationId: opPreviewTBATransfer
+      summary: Preview internal transfer (TBA)
+      description: >
+        Calculates the fee for a Transfer Between Accounts. Requires the
+        `transferFunds` permission.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, accountIdTo]
+              properties:
+                accountIdFrom:
+                  type: integer
+                accountIdTo:
+                  type: integer
+                outgoingAmount:
+                  type: string
+                  format: decimal
+                incomingAmount:
+                  type: string
+                  format: decimal
+      responses:
+        '200':
+          description: Transfer preview
+        '403':
+          description: Missing transferFunds permission
+
+  /accounts/private/v1/tba-requests:
+    post:
+      operationId: opCreateTBATransfer
+      summary: Create internal transfer (TBA)
+      description: >
+        Initiates a Transfer Between Accounts. Requires `transferFunds`
+        permission. If branch approval is enabled, the request moves to
+        pending-approval before executing.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, accountIdTo, outgoingAmount, incomingAmount]
+              properties:
+                accountIdFrom:
+                  type: integer
+                accountIdTo:
+                  type: integer
+                outgoingAmount:
+                  type: string
+                  format: decimal
+                incomingAmount:
+                  type: string
+                  format: decimal
+                description:
+                  type: string
+                  maxLength: 255
+      responses:
+        '201':
+          description: Transfer created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TransferRequest'
+        '403':
+          description: Missing transferFunds permission
+
+  /accounts/private/v1/ext-requests/preview:
+    post:
+      operationId: opPreviewACHTransfer
+      summary: Preview ACH transfer
+      description: >
+        Calculates fees for an ACH transfer. Requires `transferACH` permission.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromAccountId, toAccountId, amount]
+              properties:
+                fromAccountId:
+                  type: string
+                toAccountId:
+                  type: string
+                amount:
+                  type: string
+                  format: decimal
+      responses:
+        '200':
+          description: Transfer preview
+        '403':
+          description: Missing transferACH permission
+
+  /accounts/private/v1/ext-requests:
+    post:
+      operationId: opCreateACHTransfer
+      summary: Create ACH transfer
+      description: >
+        Executes an ACH pull or push. Requires `transferACH` permission.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromAccountId, toAccountId, amount]
+              properties:
+                fromAccountId:
+                  type: string
+                toAccountId:
+                  type: string
+                amount:
+                  type: string
+                  format: decimal
+                description:
+                  type: string
+                  maxLength: 255
+      responses:
+        '201':
+          description: ACH transfer initiated
+        '403':
+          description: Missing transferACH permission
+
+  # ─────────────────────────────────────────────
+  # Auto-Payments (requires autoPay permission)
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/auto-payment/preview:
+    post:
+      operationId: opPreviewAutoPayment
+      summary: Preview auto-payment
+      description: >
+        Returns a fee preview for a scheduled payment. Requires `autoPay`
+        permission.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, amount]
+              properties:
+                accountIdFrom:
+                  type: string
+                accountIdTo:
+                  type: string
+                amount:
+                  type: string
+                  format: decimal
+                accountToACH:
+                  $ref: '#/components/schemas/ACHAccountIdentifiers'
+      responses:
+        '200':
+          description: Auto-payment preview
+        '403':
+          description: Missing autoPay permission
+
+  /accounts/private/v1/auto-payment:
+    post:
+      operationId: opCreateAutoPayment
+      summary: Create auto-payment
+      description: >
+        Sets up a recurring scheduled payment on behalf of the Business Owner.
+        Requires `autoPay` permission.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, amount, period, type, startDate]
+              properties:
+                accountIdFrom:
+                  type: string
+                accountIdTo:
+                  type: string
+                amount:
+                  type: string
+                  format: decimal
+                period:
+                  type: string
+                  enum: [weekly, biweekly, monthly, one_time]
+                type:
+                  type: string
+                  enum: [end_date, until_cancel, limit_amount]
+                startDate:
+                  type: string
+                  description: "MM/DD/YYYY — must be at least the next calendar day"
+                endDate:
+                  type: string
+                limitAmount:
+                  type: string
+                  format: decimal
+                description:
+                  type: string
+                  maxLength: 255
+                accountToACH:
+                  $ref: '#/components/schemas/ACHAccountIdentifiers'
+      responses:
+        '201':
+          description: Auto-payment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutoPayment'
+        '403':
+          description: Missing autoPay permission
+    get:
+      operationId: opListAutoPayments
+      summary: List auto-payments
+      description: >
+        Returns auto-payments created by or for the Business Owner. Requires
+        `autoPay` permission.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paginated auto-payments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutoPayment'
+
+  /accounts/private/v1/auto-payment/{autoPaymentId}/cancel:
+    put:
+      operationId: opCancelAutoPayment
+      summary: Cancel auto-payment
+      description: >
+        Cancels a scheduled auto-payment. Requires `autoPay` permission.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: autoPaymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Auto-payment cancelled
+        '403':
+          description: Missing autoPay permission

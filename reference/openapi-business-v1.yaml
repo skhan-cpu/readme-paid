@@ -1,0 +1,2207 @@
+openapi: 3.0.0
+info:
+  title: TappCash Business Owner API
+  version: 1.0.0
+  description: >
+    The **Business Owner API** covers the complete lifecycle of a Business Owner
+    user — from accepting the Advisor's invitation and completing KYB, through
+    daily business banking operations and managing Operators.
+
+
+    It spans five microservices:
+
+
+    | Service | Prefix | Responsibility |
+
+    |---------|--------|----------------|
+
+    | `tapp-branches` | `/branches/` | Invitations, KYB signup, Operator
+    management |
+
+    | `tapp-users` | `/users/` | Authentication, tokens, security questions |
+
+    | `tapp-accounts` | `/accounts/` | Accounts, balances, transfers,
+    auto-payments |
+
+    | `tapp-external-accounts` | `/external-accounts/` | External bank account
+    linking (BaaS/Plaid) |
+
+    | `tapp-notifications` | `/notifications/` | Notifications |
+
+
+    ---
+
+
+    ## Two-Phase Authentication
+
+
+    Business Owner onboarding uses two token types:
+
+
+    **Phase 1 — Temporary access token** (steps 3–9):
+
+    Returned by `POST /branches/public/v1/businessowner/invites/accept` as
+    `data.temporaryAccessToken`. Use only on `/limited/` endpoints.
+
+
+    **Phase 2 — Full access token** (after token exchange):
+
+    Returned by `PUT /users/private/v1/limited/token-exchange`. Use on all
+    `/private/v1/` endpoints going forward.
+
+
+    | Token | Lifetime | Use |
+
+    |-------|----------|-----|
+
+    | Temporary access token | Session | `/limited/` onboarding endpoints only |
+
+    | Full access token | 30 minutes | All authenticated business endpoints |
+
+    | Refresh token | 30 days | Renew via `POST /users/public/v1/auth/refresh` |
+
+
+    Required header on all private requests:
+
+    ```
+
+    Authorization: Bearer <accessToken>
+
+    V-Client-Device-Id: <device-uuid>
+
+    ```
+
+servers:
+  - url: https://api.tappcash.com
+    description: Production
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Address:
+      type: object
+      required: [address, city, state, zipCode, country]
+      properties:
+        address:
+          type: string
+          example: "123 Business Ave"
+        city:
+          type: string
+          example: "Austin"
+        state:
+          type: string
+          example: "TX"
+        zipCode:
+          type: string
+          example: "78701"
+        country:
+          type: string
+          example: "US"
+
+    Employment:
+      type: object
+      properties:
+        isCurrentlyEmployed:
+          type: boolean
+        occupation:
+          type: string
+        employer:
+          type: string
+        annualIncome:
+          type: string
+          format: decimal
+          example: "75000.00"
+        employmentStartDate:
+          type: string
+          example: "01/15/2020"
+          description: "MM/DD/YYYY"
+        incomeSources:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Salary"
+              amount:
+                type: string
+                format: decimal
+              frequency:
+                type: string
+                example: "Monthly"
+
+    W9Certification:
+      type: object
+      required: [accepted, timestamp]
+      properties:
+        isSubjectToBackupWithholding:
+          type: boolean
+        accepted:
+          type: boolean
+          description: "User acknowledges and accepts W9 certification terms"
+        timestamp:
+          type: string
+          format: date-time
+
+    TransferActivity:
+      type: object
+      properties:
+        internationalTransferExpected:
+          type: boolean
+        internationalTransferFrequency:
+          type: string
+          enum: [Never, OncePerMonth, SeveralPerMonth, SeveralPerWeek, Daily]
+        internationalTransferAmountRange:
+          type: string
+          example: "from_10000_to_49999"
+        internationalTransferCountries:
+          type: array
+          items:
+            type: string
+          description: "ISO 3166-1 alpha-3 country codes"
+        cryptocurrencyTransactionExpected:
+          type: boolean
+        cashTransactionExpected:
+          type: boolean
+        cashTransactionFrequency:
+          type: string
+        cashTransactionAmountRange:
+          type: string
+
+    BusinessActivity:
+      type: object
+      properties:
+        isHempOrCbdRelated:
+          type: boolean
+        isMarijuanaRelated:
+          type: boolean
+        isLotteryTicketSales:
+          type: boolean
+        isCheckCashingService:
+          type: boolean
+        isMoneyTransferForOthers:
+          type: boolean
+        isNoneOfTheAbove:
+          type: boolean
+        isMoneyServiceBusinessRegulatedByFinCen:
+          type: boolean
+        isOperatingPrivateAtm:
+          type: boolean
+        isProcessingInternationalTransfers:
+          type: boolean
+        consent:
+          type: boolean
+          description: "Business owner consents to the compliance disclosure"
+
+    BusinessOwnerSignupPerson:
+      type: object
+      required: [firstName, lastName, dateOfBirth, socialSecurityNumber, phoneNumber, email, address, employment, usCitizenshipStatus]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        dateOfBirth:
+          type: string
+          example: "01/15/1985"
+          description: "MM/DD/YYYY"
+        socialSecurityNumber:
+          type: string
+          example: "478-37-4837"
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+        email:
+          type: string
+          format: email
+        ownershipPercentage:
+          type: string
+          description: "Required for Business Owner role"
+          example: "51"
+        businessTitle:
+          type: string
+          description: "Required for Controlling Party and Authorized Signer roles"
+        isBeneficialOwner:
+          type: boolean
+        address:
+          $ref: '#/components/schemas/Address'
+        isSameAddress:
+          type: boolean
+          description: "If true, mailing address equals primary address"
+        mailingAddress:
+          $ref: '#/components/schemas/Address'
+        employment:
+          $ref: '#/components/schemas/Employment'
+        usCitizenshipStatus:
+          type: string
+          enum: [Citizen, PermanentResident, NonResident]
+        w9:
+          $ref: '#/components/schemas/W9Certification'
+          description: "Required for Business Owner role"
+
+    BusinessSignupInfo:
+      type: object
+      required: [businessLegalName, employerIdentificationNumber, legalStructure, phoneNumber, email, address, transferActivity, businessActivity, taxIdentificationNumberType]
+      properties:
+        businessLegalName:
+          type: string
+          example: "Acme Corporation LLC"
+        natureOfBusiness:
+          type: string
+          example: "Retail sales of automotive parts and accessories"
+        tradeName:
+          type: string
+          description: "DBA (doing business as) name, if different from legal name"
+        employerIdentificationNumber:
+          type: string
+          example: "37-2837283"
+          description: "EIN format: XX-XXXXXXX"
+        taxIdentificationNumberType:
+          type: string
+          enum: [EIN, SSN]
+        hasEmployees:
+          type: boolean
+        legalStructure:
+          type: string
+          enum: [CORPORATION, LLC, PARTNERSHIP, SOLE_PROPRIETORSHIP, NON_PROFIT]
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+        email:
+          type: string
+          format: email
+        stateOfIncorporation:
+          type: string
+          example: "TX"
+        naicsCode:
+          type: string
+          example: "441222"
+          description: "NAICS industry classification code"
+        website:
+          type: string
+          format: uri
+        address:
+          $ref: '#/components/schemas/Address'
+        isSameAddress:
+          type: boolean
+        mailingAddress:
+          $ref: '#/components/schemas/Address'
+        transferActivity:
+          $ref: '#/components/schemas/TransferActivity'
+        businessActivity:
+          $ref: '#/components/schemas/BusinessActivity'
+
+    BusinessOwnerSignupRequest:
+      type: object
+      required: [businessOwner, controllingParty, business]
+      description: >
+        Complete KYB signup request. Requires at minimum one Business Owner,
+        one Controlling Party, and a Business entity. The Authorized Signer is
+        optional.
+      properties:
+        businessOwner:
+          $ref: '#/components/schemas/BusinessOwnerSignupPerson'
+          description: "Primary business owner (must include ownershipPercentage and w9)"
+        controllingParty:
+          $ref: '#/components/schemas/BusinessOwnerSignupPerson'
+          description: "Person with control over business operations (must include businessTitle)"
+        authorizedSigner:
+          $ref: '#/components/schemas/BusinessOwnerSignupPerson'
+          description: "Optional — person authorized to sign business transactions"
+        business:
+          $ref: '#/components/schemas/BusinessSignupInfo'
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        typeId:
+          type: integer
+        description:
+          type: string
+        balance:
+          type: string
+          format: decimal
+        availableBalance:
+          type: string
+          format: decimal
+        isActive:
+          type: boolean
+        allowWithdrawals:
+          type: boolean
+        allowDeposits:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ExternalAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        accountNumber:
+          type: string
+        routingNumber:
+          type: string
+        accountOwnerName:
+          type: string
+        bankName:
+          type: string
+        bankCountry:
+          type: string
+        isActive:
+          type: boolean
+
+    TBARequest:
+      type: object
+      properties:
+        id:
+          type: string
+        accountIdFrom:
+          type: string
+        accountIdTo:
+          type: string
+        outgoingAmount:
+          type: string
+          format: decimal
+        incomingAmount:
+          type: string
+          format: decimal
+        status:
+          type: string
+          enum: [pending, executed, cancelled, rejected]
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    AutoPayment:
+      type: object
+      properties:
+        id:
+          type: string
+        accountIdFrom:
+          type: string
+        accountIdTo:
+          type: string
+        amount:
+          type: string
+          format: decimal
+        period:
+          type: string
+          enum: [weekly, biweekly, monthly, one_time]
+        type:
+          type: string
+          enum: [end_date, until_cancel, limit_amount]
+        startDate:
+          type: string
+        endDate:
+          type: string
+        limitAmount:
+          type: string
+          format: decimal
+        status:
+          type: string
+        description:
+          type: string
+
+    ACHAccountIdentifiers:
+      type: object
+      required: [accountNumber, routingNumber, accountOwnerName, bankCountry, bankName]
+      properties:
+        accountNumber:
+          type: string
+          minLength: 8
+          maxLength: 17
+          description: "Numeric, 8–17 digits"
+        routingNumber:
+          type: string
+          minLength: 9
+          maxLength: 9
+          description: "Numeric, exactly 9 digits"
+        accountOwnerName:
+          type: string
+        bankCountry:
+          type: string
+          example: "US"
+        bankName:
+          type: string
+
+    OperatorPermissions:
+      type: object
+      properties:
+        transferFunds:
+          type: boolean
+          description: "Can initiate TBA and TBU transfers"
+        transferACH:
+          type: boolean
+          description: "Can initiate ACH external transfers"
+        autoPay:
+          type: boolean
+          description: "Can set up and manage auto-payments"
+
+    Operator:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        status:
+          type: string
+          enum: [invited, onboarding, pending, active, dormant]
+        permissions:
+          $ref: '#/components/schemas/OperatorPermissions'
+        createdAt:
+          type: string
+          format: date-time
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+  parameters:
+    DeviceId:
+      name: V-Client-Device-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PageNumber:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+        default: 1
+    PageSize:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        default: 20
+
+paths:
+
+  # ─────────────────────────────────────────────
+  # Onboarding — Public (no auth)
+  # ─────────────────────────────────────────────
+
+  /branches/public/v1/common/invites/check:
+    get:
+      operationId: boCheckInviteToken
+      summary: Step 1 — Validate invite token
+      description: >
+        Validates the invite token from the invitation email. Returns the
+        invitee's role and pre-filled phone number.
+
+
+        Call this first to confirm the token is valid before showing the
+        onboarding UI.
+      tags: [Onboarding]
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "Token from the invitation email link"
+      responses:
+        '200':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        example: "businessowner"
+                      phoneNumber:
+                        type: string
+                        example: "+12025550104"
+        '400':
+          description: Token expired or invalid
+
+  /branches/public/v1/common/agreements:
+    get:
+      operationId: boGetAgreements
+      summary: Step 2 — Fetch platform agreements
+      description: >
+        Returns the platform agreements the Business Owner must review and
+        accept before proceeding. Pass `type=Business` for business-specific
+        agreement content.
+      tags: [Onboarding]
+      parameters:
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [Business]
+          example: "Business"
+      responses:
+        '200':
+          description: List of agreements
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        content:
+                          type: string
+
+  /branches/public/v1/businessowner/invites/accept:
+    post:
+      operationId: boAcceptInvite
+      summary: Step 3 — Accept invitation and set password
+      description: >
+        Accepts the invitation and sets the Business Owner's password. Returns
+        HTTP **403** on success (this is by design — not an error).
+
+
+        The response body contains `data.temporaryAccessToken`. Extract and
+        store it for use in steps 4–9.
+
+
+        The `meta.fields` array lists remaining required steps:
+
+        - `"phoneNumber"` — phone OTP steps (7–8) are required
+
+        - `"kyc"` — KYB signup (step 9) is required
+      tags: [Onboarding]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token:
+                  type: string
+                  description: "Invite token from the email link"
+                password:
+                  type: string
+                  description: "New password the Business Owner is setting"
+      responses:
+        '403':
+          description: >
+            **Success response** — HTTP 403 is intentional. Extract
+            `data.temporaryAccessToken` from the body.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      temporaryAccessToken:
+                        type: string
+                  meta:
+                    type: object
+                    properties:
+                      fields:
+                        type: array
+                        items:
+                          type: string
+                        example: ["phoneNumber", "kyc"]
+
+  # ─────────────────────────────────────────────
+  # Onboarding — Limited (temporary token)
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/limited/w9/terms:
+    get:
+      operationId: boGetW9Terms
+      summary: Step 4 — Get W9 terms
+      description: >
+        Returns the W9 certification terms. The Business Owner must review and
+        acknowledge these terms as part of onboarding.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: W9 terms content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      content:
+                        type: string
+
+  /users/private/v1/limited/security-questions:
+    get:
+      operationId: boListSecurityQuestions
+      summary: Step 5 — List security questions
+      description: >
+        Returns the list of security questions the Business Owner must answer.
+        Display these and collect answers for step 6.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Security questions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        question:
+                          type: string
+
+  /users/private/v1/limited/security-questions/answers:
+    post:
+      operationId: boSubmitSecurityAnswers
+      summary: Step 6 — Submit security answers
+      description: >
+        Submits the Business Owner's answers to the security questions selected
+        in step 5.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: object
+                    required: [questionId, answer]
+                    properties:
+                      questionId:
+                        type: string
+                      answer:
+                        type: string
+      responses:
+        '200':
+          description: Answers accepted
+        '400':
+          description: Validation error
+
+  /users/private/v1/limited/generate-new-phone-code:
+    post:
+      operationId: boSendPhoneOTP
+      summary: Step 7 — Send phone OTP
+      description: >
+        Sends a one-time verification code to the Business Owner's phone number
+        on file.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OTP sent
+
+  /users/private/v1/limited/check-phone-code:
+    put:
+      operationId: boVerifyPhoneOTP
+      summary: Step 8 — Verify phone OTP
+      description: >
+        Verifies the one-time code sent to the Business Owner's phone. Must be
+        completed before submitting KYB information.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  description: "OTP received via SMS"
+      responses:
+        '200':
+          description: Phone verified
+        '400':
+          description: Incorrect or expired OTP
+
+  /branches/private/v1/limited/businessowner/signup:
+    post:
+      operationId: submitKYB
+      summary: Step 9 — Submit KYB information
+      description: >
+        Submits the complete KYB (Know Your Business) package — business entity
+        details, Business Owner personal information, Controlling Party, and
+        optionally an Authorized Signer.
+
+
+        After submission the KYB review is processed asynchronously. The status
+        moves from `pending` to `approved` or `rejected`. Poll
+        `GET /kyc/private/v1/requests/last` after token exchange (step 10) to
+        monitor the result.
+
+
+        **Required parties:**
+
+        - **businessOwner** — at least one beneficial owner with ≥25%
+        ownership (must include `ownershipPercentage` and `w9`)
+
+        - **controllingParty** — person with authority over business operations
+        (must include `businessTitle`)
+
+        - **authorizedSigner** — optional, person authorized to sign for
+        transactions
+
+
+        **Required business fields:** `businessLegalName`,
+        `employerIdentificationNumber`, `legalStructure`, `transferActivity`,
+        `businessActivity`, `taxIdentificationNumberType`
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessOwnerSignupRequest'
+            example:
+              businessOwner:
+                firstName: "John"
+                lastName: "Smith"
+                dateOfBirth: "01/15/1980"
+                socialSecurityNumber: "478-37-4837"
+                phoneNumber: "+12025550104"
+                email: "john.smith@acmecorp.com"
+                ownershipPercentage: "51"
+                usCitizenshipStatus: "Citizen"
+                address:
+                  address: "123 Business Ave"
+                  city: "Austin"
+                  state: "TX"
+                  zipCode: "78701"
+                  country: "US"
+                isSameAddress: true
+                employment:
+                  isCurrentlyEmployed: true
+                  occupation: "CEO"
+                  employer: "Acme Corp"
+                  annualIncome: "150000.00"
+                  employmentStartDate: "01/01/2010"
+                  incomeSources:
+                    - name: "Business income"
+                      amount: "150000.00"
+                      frequency: "Annually"
+                w9:
+                  isSubjectToBackupWithholding: false
+                  accepted: true
+                  timestamp: "2024-01-15T10:30:00Z"
+              controllingParty:
+                firstName: "Jane"
+                lastName: "Smith"
+                dateOfBirth: "03/22/1982"
+                socialSecurityNumber: "378-27-3827"
+                phoneNumber: "+12025550105"
+                email: "jane.smith@acmecorp.com"
+                businessTitle: "CFO"
+                isBeneficialOwner: false
+                usCitizenshipStatus: "Citizen"
+                address:
+                  address: "123 Business Ave"
+                  city: "Austin"
+                  state: "TX"
+                  zipCode: "78701"
+                  country: "US"
+                isSameAddress: true
+                employment:
+                  isCurrentlyEmployed: true
+                  occupation: "CFO"
+                  employer: "Acme Corp"
+                  annualIncome: "120000.00"
+                  employmentStartDate: "06/01/2012"
+                  incomeSources:
+                    - name: "Salary"
+                      amount: "120000.00"
+                      frequency: "Annually"
+              business:
+                businessLegalName: "Acme Corporation LLC"
+                natureOfBusiness: "Software development and consulting"
+                employerIdentificationNumber: "12-3456789"
+                taxIdentificationNumberType: "EIN"
+                hasEmployees: true
+                legalStructure: "LLC"
+                phoneNumber: "+12025550100"
+                email: "info@acmecorp.com"
+                stateOfIncorporation: "TX"
+                naicsCode: "541512"
+                website: "https://acmecorp.com"
+                address:
+                  address: "456 Corporate Blvd"
+                  city: "Austin"
+                  state: "TX"
+                  zipCode: "78702"
+                  country: "US"
+                isSameAddress: true
+                transferActivity:
+                  internationalTransferExpected: false
+                  cryptocurrencyTransactionExpected: false
+                  cashTransactionExpected: false
+                businessActivity:
+                  isHempOrCbdRelated: false
+                  isMarijuanaRelated: false
+                  isLotteryTicketSales: false
+                  isCheckCashingService: false
+                  isMoneyTransferForOthers: false
+                  isNoneOfTheAbove: true
+                  consent: true
+      responses:
+        '200':
+          description: KYB submission accepted — review is processing asynchronously
+        '400':
+          description: Validation error — see errors array for field-level details
+        '401':
+          description: Temporary token missing or expired
+        '403':
+          description: Signup already completed for this account
+
+  /users/private/v1/limited/token-exchange:
+    put:
+      operationId: boTokenExchange
+      summary: Step 10 — Exchange for full access token
+      description: >
+        Exchanges the temporary access token for a full `accessToken` and
+        `refreshToken`. After this step onboarding is complete and the Business
+        Owner can access all business banking features.
+      tags: [Onboarding]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Full access token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+
+  # ─────────────────────────────────────────────
+  # Authentication (returning users)
+  # ─────────────────────────────────────────────
+
+  /users/public/v1/auth/signin:
+    post:
+      operationId: boSignIn
+      summary: Sign in as Business Owner
+      description: >
+        Authenticates a returning Business Owner. Pass `"businessowner"` in the
+        `roles` array.
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, roles]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  example: ["businessowner"]
+      responses:
+        '200':
+          description: Signed in — returns accessToken and refreshToken
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+
+  /users/public/v1/auth/refresh:
+    post:
+      operationId: boRefreshToken
+      summary: Refresh access token
+      description: >
+        Issues a new `accessToken` using a valid `refreshToken`. Call this when
+        the access token expires (30-minute lifetime) to avoid requiring the
+        user to re-login.
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: New access token issued
+        '401':
+          description: Refresh token expired — user must sign in again
+
+  # ─────────────────────────────────────────────
+  # KYB Status
+  # ─────────────────────────────────────────────
+
+  /kyc/private/v1/requests/last:
+    get:
+      operationId: boGetKYBStatus
+      summary: Get KYB verification status
+      description: >
+        Returns the most recent KYB request and its verification status. Poll
+        this after completing onboarding step 10 to know when the Business
+        Owner's account is fully verified and active.
+
+
+        | Status | Meaning |
+
+        |--------|---------|
+
+        | `pending` | KYB submitted and under review |
+
+        | `approved` | Business verified — full account access active |
+
+        | `rejected` | KYB failed — see `errors` for reasons |
+      tags: [KYB Status]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Most recent KYB request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      status:
+                        type: string
+                        enum: [pending, approved, rejected]
+                      errors:
+                        type: array
+                        items:
+                          type: string
+
+  # ─────────────────────────────────────────────
+  # Accounts
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/account:
+    get:
+      operationId: boListAccounts
+      summary: List business accounts
+      description: >
+        Returns all accounts belonging to the authenticated Business Owner.
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: List of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /accounts/private/v1/account/{accountId}:
+    get:
+      operationId: boGetAccount
+      summary: Get account details
+      description: >
+        Returns details for a specific account — balance, available balance,
+        and account settings.
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Account details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Account'
+
+  /accounts/private/v1/account/{accountId}/bank-details:
+    get:
+      operationId: boGetAccountBankDetails
+      summary: Get account bank details
+      description: >
+        Returns routing number, account number, IBAN, and SWIFT code. Use to
+        display account details for incoming wire transfers.
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bank details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      accountNumber:
+                        type: string
+                      routingNumber:
+                        type: string
+                      iban:
+                        type: string
+                      swiftCode:
+                        type: string
+
+  /accounts/private/v1/balance/total:
+    get:
+      operationId: boGetTotalBalance
+      summary: Get total balance
+      description: >
+        Returns the aggregate balance across all of the Business Owner's
+        accounts, including available and pending amounts.
+      tags: [Accounts]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Total balance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      total:
+                        type: string
+                        format: decimal
+                      available:
+                        type: string
+                        format: decimal
+                      pending:
+                        type: string
+                        format: decimal
+
+  # ─────────────────────────────────────────────
+  # Transfers — TBA (between own accounts)
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/tba-requests/preview:
+    post:
+      operationId: boPreviewTBATransfer
+      summary: Preview internal transfer (TBA)
+      description: >
+        Calculates the fee and final amounts for a Transfer Between Accounts
+        (TBA). Always call preview before submitting — show the fee breakdown
+        to the user for confirmation.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, accountIdTo]
+              properties:
+                accountIdFrom:
+                  type: integer
+                  description: "Source account ID"
+                accountIdTo:
+                  type: integer
+                  description: "Destination account ID (must differ from accountIdFrom)"
+                outgoingAmount:
+                  type: string
+                  format: decimal
+                  description: "Amount to send (must be > 0)"
+                incomingAmount:
+                  type: string
+                  format: decimal
+                  description: "Amount to receive (specify either outgoing or incoming)"
+      responses:
+        '200':
+          description: Transfer preview with fees
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      outgoingAmount:
+                        type: string
+                        format: decimal
+                      incomingAmount:
+                        type: string
+                        format: decimal
+                      fee:
+                        type: string
+                        format: decimal
+
+  /accounts/private/v1/tba-requests:
+    post:
+      operationId: boCreateTBATransfer
+      summary: Create internal transfer (TBA)
+      description: >
+        Executes a Transfer Between Accounts — moves funds between two accounts
+        belonging to this Business Owner. Confirm amounts from the preview
+        response before calling.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, accountIdTo, outgoingAmount, incomingAmount]
+              properties:
+                accountIdFrom:
+                  type: integer
+                accountIdTo:
+                  type: integer
+                outgoingAmount:
+                  type: string
+                  format: decimal
+                  description: "Must be > 0"
+                incomingAmount:
+                  type: string
+                  format: decimal
+                  description: "Must be > 0"
+                description:
+                  type: string
+                  maxLength: 255
+      responses:
+        '201':
+          description: Transfer created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TBARequest'
+
+  # ─────────────────────────────────────────────
+  # Transfers — ACH (external accounts)
+  # ─────────────────────────────────────────────
+
+  /external-accounts/private/v1/baas/auth-token:
+    post:
+      operationId: boGetBaaSToken
+      summary: Get BaaS auth token (for Plaid)
+      description: >
+        Step 1 of ACH setup — retrieves a BaaS authentication token used to
+        initialize the Plaid Link SDK session. Display the Plaid Link UI to
+        the user to select and connect their external bank account.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: BaaS token for Plaid SDK initialization
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+
+  /external-accounts/private/v1/account:
+    get:
+      operationId: boListExternalAccounts
+      summary: List linked external accounts
+      description: >
+        Returns all external bank accounts linked by the Business Owner via
+        Plaid.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Linked external accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExternalAccount'
+
+  /accounts/private/v1/ext-requests/preview:
+    post:
+      operationId: boPreviewACHTransfer
+      summary: Preview ACH transfer
+      description: >
+        Calculates fees for an ACH transfer between a TappCash account and a
+        linked external bank account. Always preview before executing.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromAccountId, toAccountId, amount]
+              properties:
+                fromAccountId:
+                  type: string
+                  description: "Source account ID (internal or external)"
+                toAccountId:
+                  type: string
+                  description: "Destination account ID (internal or external)"
+                amount:
+                  type: string
+                  format: decimal
+                  description: "Amount to transfer (must be > 0)"
+      responses:
+        '200':
+          description: Transfer preview with fee breakdown
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      amount:
+                        type: string
+                        format: decimal
+                      fee:
+                        type: string
+                        format: decimal
+                      totalDeducted:
+                        type: string
+                        format: decimal
+
+  /accounts/private/v1/ext-requests:
+    post:
+      operationId: boCreateACHTransfer
+      summary: Create ACH transfer
+      description: >
+        Executes an ACH pull or push between a TappCash account and a linked
+        external bank account. Confirm amounts from the preview before calling.
+      tags: [Transfers]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fromAccountId, toAccountId, amount]
+              properties:
+                fromAccountId:
+                  type: string
+                toAccountId:
+                  type: string
+                amount:
+                  type: string
+                  format: decimal
+                description:
+                  type: string
+                  maxLength: 255
+      responses:
+        '201':
+          description: ACH transfer initiated
+        '400':
+          description: Validation error or transfer limit exceeded
+
+  # ─────────────────────────────────────────────
+  # Auto-Payments
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/auto-payment/preview:
+    post:
+      operationId: boPreviewAutoPayment
+      summary: Preview auto-payment
+      description: >
+        Returns a preview of a recurring payment — fee breakdown and the net
+        amount that will be sent each period. Preview before creating.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, amount]
+              properties:
+                accountIdFrom:
+                  type: string
+                accountIdTo:
+                  type: string
+                  description: "TappCash account ID (use this or accountToACH, not both)"
+                amount:
+                  type: string
+                  format: decimal
+                accountToACH:
+                  $ref: '#/components/schemas/ACHAccountIdentifiers'
+                  description: "External bank account (use this or accountIdTo, not both)"
+      responses:
+        '200':
+          description: Auto-payment preview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      amount:
+                        type: string
+                        format: decimal
+                      fee:
+                        type: string
+                        format: decimal
+
+  /accounts/private/v1/auto-payment:
+    post:
+      operationId: boCreateAutoPayment
+      summary: Create auto-payment
+      description: >
+        Sets up a recurring scheduled payment. Choose a period (weekly,
+        biweekly, monthly, or one-time) and a stop condition (end date, cancel
+        manually, or limit reached).
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountIdFrom, amount, period, type, startDate]
+              properties:
+                accountIdFrom:
+                  type: string
+                accountIdTo:
+                  type: string
+                amount:
+                  type: string
+                  format: decimal
+                period:
+                  type: string
+                  enum: [weekly, biweekly, monthly, one_time]
+                type:
+                  type: string
+                  enum: [end_date, until_cancel, limit_amount]
+                startDate:
+                  type: string
+                  example: "01/20/2025"
+                  description: "MM/DD/YYYY — must be at least the next calendar day"
+                endDate:
+                  type: string
+                  description: "Required when type=end_date. MM/DD/YYYY, must be >= startDate"
+                limitAmount:
+                  type: string
+                  format: decimal
+                  description: "Required when type=limit_amount — total amount cap"
+                description:
+                  type: string
+                  maxLength: 255
+                accountToACH:
+                  $ref: '#/components/schemas/ACHAccountIdentifiers'
+      responses:
+        '201':
+          description: Auto-payment created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutoPayment'
+    get:
+      operationId: boListAutoPayments
+      summary: List auto-payments
+      description: >
+        Returns all auto-payments created by or for the Business Owner,
+        including their status and next scheduled run date.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Paginated auto-payments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutoPayment'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /accounts/private/v1/auto-payment/{autoPaymentId}:
+    get:
+      operationId: boGetAutoPayment
+      summary: Get auto-payment details
+      description: >
+        Returns full details for a specific auto-payment including preview of
+        the next scheduled payment.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: autoPaymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Auto-payment details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutoPayment'
+
+  /accounts/private/v1/auto-payment/{autoPaymentId}/cancel:
+    put:
+      operationId: boCancelAutoPayment
+      summary: Cancel auto-payment
+      description: >
+        Cancels a scheduled auto-payment. The cancellation takes effect
+        immediately — no further payments will be processed.
+      tags: [Auto-Payments]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: autoPaymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Auto-payment cancelled
+
+  # ─────────────────────────────────────────────
+  # Operator Management
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/operator:
+    post:
+      operationId: boInviteOperator
+      summary: Invite an Operator
+      description: >
+        Invites a team member as an Operator. The invited person receives an
+        email with onboarding instructions to complete KYC verification and
+        activate their account.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [firstName, lastName, dateOfBirth, phoneNumber, email, address]
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  example: "05/10/1992"
+                  description: "MM/DD/YYYY"
+                phoneNumber:
+                  type: string
+                  pattern: "^\\+1\\d{10}$"
+                email:
+                  type: string
+                  format: email
+                address:
+                  $ref: '#/components/schemas/Address'
+                permissions:
+                  $ref: '#/components/schemas/OperatorPermissions'
+            example:
+              firstName: "Alex"
+              lastName: "Johnson"
+              dateOfBirth: "05/10/1992"
+              phoneNumber: "+12025550106"
+              email: "alex.johnson@acmecorp.com"
+              address:
+                address: "789 Team St"
+                city: "Austin"
+                state: "TX"
+                zipCode: "78703"
+                country: "US"
+              permissions:
+                transferFunds: true
+                transferACH: false
+                autoPay: true
+      responses:
+        '201':
+          description: Operator invitation sent
+        '400':
+          description: Validation error
+
+  /branches/private/v1/operator/{operatorId}:
+    get:
+      operationId: boGetOperator
+      summary: Get Operator details
+      description: >
+        Returns the Operator's profile and current permissions.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: operatorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operator details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Operator'
+    put:
+      operationId: boUpdateOperatorPermissions
+      summary: Update Operator permissions
+      description: >
+        Updates the permissions granted to an Operator. Send the full
+        permissions object — any permission not included is revoked.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: operatorId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [permissions]
+              properties:
+                permissions:
+                  $ref: '#/components/schemas/OperatorPermissions'
+      responses:
+        '200':
+          description: Permissions updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Operator'
+
+  /branches/private/v1/operator/details:
+    get:
+      operationId: boListOperators
+      summary: List Operators
+      description: >
+        Returns all Operators associated with the authenticated Business Owner's
+        account.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: List of Operators
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Operator'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  # ─────────────────────────────────────────────
+  # Transactions
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/transactions:
+    get:
+      operationId: boListTransactions
+      summary: List transactions
+      description: >
+        Returns a paginated transaction history for all of the Business Owner's
+        accounts. Transactions represent processed debits and credits (card
+        activity, fees). Use `filter[accountId]` to scope to a specific
+        account.
+      tags: [Transactions]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - name: filter[accountId]
+          in: query
+          schema:
+            type: string
+          description: "Filter to a specific account"
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            example: "-createdAt"
+      responses:
+        '200':
+          description: Paginated transaction list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        type:
+                          type: string
+                        amount:
+                          type: string
+                          format: decimal
+                        status:
+                          type: string
+                        description:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /accounts/private/v1/transactions/{transactionId}:
+    get:
+      operationId: boGetTransaction
+      summary: Get transaction details
+      description: >
+        Returns full details for a specific transaction including sender and
+        recipient account information.
+      tags: [Transactions]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: include
+          in: query
+          schema:
+            type: string
+          description: "Comma-separated list: sender, recipient, requestData"
+      responses:
+        '200':
+          description: Transaction details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      type:
+                        type: string
+                      amount:
+                        type: string
+                        format: decimal
+                      status:
+                        type: string
+                      sender:
+                        type: object
+                        properties:
+                          accountId:
+                            type: string
+                          userId:
+                            type: string
+                      recipient:
+                        type: object
+                        properties:
+                          accountId:
+                            type: string
+                          userId:
+                            type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+
+  /accounts/private/v1/transactions/balance-chart:
+    get:
+      operationId: boGetBalanceChart
+      summary: Get balance chart data
+      description: >
+        Returns time-series balance data for charting. Useful for displaying an
+        account balance trend over a selected period.
+      tags: [Transactions]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: period
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [24hours, 7days, 30days, 12months]
+        - name: accountIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+          description: "Limit chart to specific account IDs"
+      responses:
+        '200':
+          description: Balance chart data points
+
+  # ─────────────────────────────────────────────
+  # Account Statements
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/account/statements:
+    get:
+      operationId: boListAccountStatements
+      summary: List account statements
+      description: >
+        Returns the available monthly statement files for the Business Owner's
+        accounts. Each file can be downloaded via the file endpoint.
+      tags: [Account Statements]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Available statements
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        fileUid:
+                          type: string
+                        accountId:
+                          type: string
+                        monthYear:
+                          type: string
+                          example: "2024-01"
+                        createdAt:
+                          type: string
+                          format: date-time
+
+  /accounts/private/v1/account/statements/{fileUid}/file:
+    get:
+      operationId: boDownloadAccountStatement
+      summary: Download account statement
+      description: >
+        Downloads the PDF statement file for the given `fileUid`. Retrieve
+        valid file UIDs from `GET /accounts/private/v1/account/statements`.
+      tags: [Account Statements]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: fileUid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Statement PDF file
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  # ─────────────────────────────────────────────
+  # Account Closure
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/delete-profile-otp:
+    post:
+      operationId: boRequestAccountClosureOTP
+      summary: Step 1 — Request account closure OTP
+      description: >
+        Initiates the account closure process by sending an OTP to the Business
+        Owner's verified phone number. The OTP is required to confirm the
+        deletion in step 2.
+
+
+        **Prerequisites before closing:**
+
+        - All accounts must have a zero balance
+
+        - No pending transactions
+
+        - Closure fee (if any) must be satisfiable
+
+
+        Returns `422` if any blocker prevents closure — check the `code` field
+        in the errors array.
+      tags: [Account Closure]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: OTP sent to registered phone number
+        '409':
+          description: Pending transactions block closure
+        '422':
+          description: >
+            Account closure blocked — check `code` in errors array. Possible
+            codes: `PENDING_TRANSACTIONS`, `NON_ZERO_BALANCE`,
+            `INSUFFICIENT_FUNDS`
+
+  /branches/private/v1/delete-profile:
+    delete:
+      operationId: boConfirmAccountClosure
+      summary: Step 2 — Confirm and close account
+      description: >
+        Permanently closes the Business Owner's account. Requires the OTP from
+        step 1. **This action is irreversible.**
+      tags: [Account Closure]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [otp]
+              properties:
+                otp:
+                  type: string
+                  description: "OTP received in step 1"
+      responses:
+        '200':
+          description: Account permanently closed
+        '400':
+          description: Incorrect OTP
+        '422':
+          description: Closure blockers still present
+
+  # ─────────────────────────────────────────────
+  # Notifications
+  # ─────────────────────────────────────────────
+
+  /notifications/private/v1/notifications:
+    get:
+      operationId: boListNotifications
+      summary: List notifications
+      description: >
+        Returns a paginated list of the Business Owner's notifications, ordered
+        newest first.
+      tags: [Notifications]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: Notification list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        body:
+                          type: string
+                        isRead:
+                          type: boolean
+                        createdAt:
+                          type: string
+                          format: date-time
+
+  /notifications/private/v1/notifications/unread-count:
+    get:
+      operationId: boGetUnreadNotificationCount
+      summary: Get unread notification count
+      description: >
+        Returns the count of unread notifications — use for badge display in
+        the notification bell.
+      tags: [Notifications]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Unread count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+
+  /notifications/private/v1/notifications/mark-all-read:
+    post:
+      operationId: boMarkAllNotificationsRead
+      summary: Mark all notifications as read
+      description: >
+        Marks all unread notifications as read and resets the unread count to
+        zero.
+      tags: [Notifications]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: All notifications marked as read

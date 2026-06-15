@@ -1,0 +1,1856 @@
+openapi: 3.0.0
+info:
+  title: TappCash Administration API
+  version: 1.0.0
+  description: >
+    The **Administration API** covers everything an admin user (Root Advisor,
+    Head Branch Manager, Branch Manager, or Advisor) needs to set up and manage
+    the organization's branch network and client portfolios.
+
+
+    It spans three microservices:
+
+
+    | Service | Prefix | Responsibility |
+
+    |---------|--------|----------------|
+
+    | `tapp-branches` | `/branches/` | Branches, admin hierarchy, client
+    invitations, client profiles |
+
+    | `tapp-users` | `/users/` | Authentication, tokens, admin profiles |
+
+    | `tapp-accounts` | `/accounts/` | Account viewing, balance export,
+    statistics |
+
+
+    ---
+
+
+    ## Authentication
+
+
+    All admin users authenticate with the same endpoint, passing their role in
+    the request body.
+
+
+    | Token | Lifetime | Purpose |
+
+    |-------|----------|---------|
+
+    | Access token | 30 minutes | All `/private/` endpoints |
+
+    | Refresh token | 30 days | Renew via `POST /users/public/v1/auth/refresh` |
+
+
+    Include the access token in every private request:
+
+    ```
+
+    Authorization: Bearer <accessToken>
+
+    V-Client-Device-Id: <device-uuid>
+
+    ```
+
+
+    ---
+
+
+    ## Role Access Summary
+
+
+    | Role | Internal name | What they manage |
+
+    |------|--------------|-----------------|
+
+    | Root Advisor | `root` | Entire organization — branches, all admin tiers,
+    all clients |
+
+    | Head Branch Manager | `superadvisor` | Multiple branches, advisors across
+    branches |
+
+    | Branch Manager | `branchmanager` | Single branch — approval settings,
+    transfer reviews |
+
+    | Advisor | `advisor` | Own client portfolio — invite and manage Individual
+    and Business Owner clients |
+
+
+    ---
+
+
+    ## Error Format
+
+
+    ```json
+
+    {
+      "errors": [
+        {
+          "code": "ERROR_CODE",
+          "title": "Human-readable title",
+          "details": "Additional context",
+          "target": "common | field",
+          "source": "fieldName"
+        }
+      ]
+    }
+
+    ```
+
+servers:
+  - url: https://api.tappcash.com
+    description: Production
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Address:
+      type: object
+      required: [address, city, state, zipCode, country]
+      properties:
+        address:
+          type: string
+          example: "123 Main St"
+        city:
+          type: string
+          example: "Austin"
+        state:
+          type: string
+          example: "TX"
+        zipCode:
+          type: string
+          example: "78701"
+        country:
+          type: string
+          example: "US"
+          default: "US"
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 120
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+
+    AdminSignInRequest:
+      type: object
+      required: [email, password, roles]
+      properties:
+        email:
+          type: string
+          format: email
+          example: "advisor@example.com"
+        password:
+          type: string
+          format: password
+        roles:
+          type: array
+          items:
+            type: string
+            enum: [root, superadvisor, branchmanager, advisor]
+          example: ["advisor"]
+
+    SignInResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: JWT valid for 30 minutes
+            refreshToken:
+              type: string
+              description: JWT valid for 30 days
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                email:
+                  type: string
+                roleName:
+                  type: string
+
+    RefreshRequest:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    RefreshResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+
+    AdminProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        roleName:
+          type: string
+        branch:
+          $ref: '#/components/schemas/BranchSummary'
+
+    BranchSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        branchName:
+          type: string
+
+    Branch:
+      type: object
+      properties:
+        id:
+          type: string
+        branchName:
+          type: string
+        description:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        activeSuperAdvisor:
+          $ref: '#/components/schemas/AdminProfileSummary'
+        activeBranchManager:
+          $ref: '#/components/schemas/AdminProfileSummary'
+        createdAt:
+          type: string
+          format: date-time
+
+    AdminProfileSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+
+    CreateBranchRequest:
+      type: object
+      required: [branchName, address]
+      properties:
+        branchName:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Downtown Branch"
+        description:
+          type: string
+          maxLength: 255
+          example: "Serves the downtown metro area"
+        address:
+          $ref: '#/components/schemas/Address'
+
+    UpdateBranchRequest:
+      type: object
+      properties:
+        branchName:
+          type: string
+          minLength: 2
+          maxLength: 50
+        description:
+          type: string
+          maxLength: 255
+        address:
+          $ref: '#/components/schemas/Address'
+
+    CreateHeadBranchManagerRequest:
+      type: object
+      required: [firstName, lastName, dateOfBirth, email, phoneNumber, SSN, address]
+      properties:
+        firstName:
+          type: string
+          example: "Alice"
+        lastName:
+          type: string
+          example: "Smith"
+        dateOfBirth:
+          type: string
+          example: "01/15/1985"
+          description: "MM/DD/YYYY"
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+          example: "+12025550101"
+        SSN:
+          type: string
+          description: "Social Security Number"
+        address:
+          $ref: '#/components/schemas/Address'
+
+    CreateAdvisorRequest:
+      type: object
+      required: [firstName, lastName, dateOfBirth, email, phoneNumber, SSN, address]
+      properties:
+        firstName:
+          type: string
+          example: "Bob"
+        lastName:
+          type: string
+          example: "Jones"
+        dateOfBirth:
+          type: string
+          example: "03/22/1990"
+          description: "MM/DD/YYYY"
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+          example: "+12025550102"
+        SSN:
+          type: string
+        license:
+          type: string
+          description: "Professional license number, if applicable"
+        address:
+          $ref: '#/components/schemas/Address'
+
+    IndividualClient:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        status:
+          type: string
+          enum: [invited, onboarding, pending, active, dormant, closed, rejected]
+        advisor:
+          $ref: '#/components/schemas/AdminProfileSummary'
+        branch:
+          $ref: '#/components/schemas/BranchSummary'
+        currentTier:
+          type: integer
+        kycErrors:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    InviteIndividualRequest:
+      type: object
+      required: [firstName, lastName, phoneNumber, email]
+      properties:
+        firstName:
+          type: string
+          example: "Jane"
+        lastName:
+          type: string
+          example: "Doe"
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+          example: "+12025550103"
+        email:
+          type: string
+          format: email
+          example: "jane.doe@example.com"
+
+    AssignClientRequest:
+      type: object
+      required: [advisorId]
+      properties:
+        advisorId:
+          type: string
+          description: "ID of the Advisor to reassign the client to"
+
+    BusinessOwnerClient:
+      type: object
+      properties:
+        id:
+          type: string
+        business:
+          type: object
+          properties:
+            name:
+              type: string
+              description: "Legal business name"
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        status:
+          type: string
+          enum: [invited, onboarding, pending, active, dormant, closed, rejected]
+        advisor:
+          $ref: '#/components/schemas/AdminProfileSummary'
+        branch:
+          $ref: '#/components/schemas/BranchSummary'
+        currentTier:
+          type: integer
+        kycErrors:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    InviteBusinessOwnerRequest:
+      type: object
+      required: [businessName, firstName, lastName, phoneNumber, email]
+      properties:
+        businessName:
+          type: string
+          example: "Acme Corp"
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Smith"
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+          example: "+12025550104"
+        email:
+          type: string
+          format: email
+          example: "john.smith@acmecorp.com"
+        advisorID:
+          type: string
+          description: "Advisor to assign this client to (Root Advisor / HBM only)"
+
+    AdminOperator:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        status:
+          type: string
+          enum: [invited, onboarding, pending, active, dormant, closed, rejected]
+        businessOwner:
+          type: object
+          properties:
+            id:
+              type: string
+            business:
+              type: object
+              properties:
+                name:
+                  type: string
+        permissions:
+          $ref: '#/components/schemas/OperatorPermissions'
+
+    OperatorPermissions:
+      type: object
+      properties:
+        transferFunds:
+          type: boolean
+        transferACH:
+          type: boolean
+        autoPay:
+          type: boolean
+
+    InviteOperatorRequest:
+      type: object
+      required: [firstName, lastName, dateOfBirth, phoneNumber, email, address]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          example: "05/10/1992"
+          description: "MM/DD/YYYY"
+        phoneNumber:
+          type: string
+          pattern: "^\\+1\\d{10}$"
+        email:
+          type: string
+          format: email
+        address:
+          $ref: '#/components/schemas/Address'
+        permissions:
+          $ref: '#/components/schemas/OperatorPermissions'
+
+    ApprovalSettings:
+      type: object
+      properties:
+        branchId:
+          type: string
+        isBmApprovalRequired:
+          type: boolean
+          description: "When true, transfer requests require Branch Manager approval before executing"
+
+    UpdateApprovalSettingsRequest:
+      type: object
+      required: [is_bm_approval_required]
+      properties:
+        is_bm_approval_required:
+          type: boolean
+          example: true
+
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        typeId:
+          type: integer
+        description:
+          type: string
+        balance:
+          type: string
+          format: decimal
+        availableBalance:
+          type: string
+          format: decimal
+        isActive:
+          type: boolean
+        allowWithdrawals:
+          type: boolean
+        allowDeposits:
+          type: boolean
+        userId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    AccountBankDetails:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+        routingNumber:
+          type: string
+        iban:
+          type: string
+        swiftCode:
+          type: string
+        bankName:
+          type: string
+
+    ExternalAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        accountNumber:
+          type: string
+        routingNumber:
+          type: string
+        accountOwnerName:
+          type: string
+        bankName:
+          type: string
+        bankCountry:
+          type: string
+        isActive:
+          type: boolean
+
+    Advisor:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        status:
+          type: string
+        branch:
+          $ref: '#/components/schemas/BranchSummary'
+        createdAt:
+          type: string
+          format: date-time
+
+  parameters:
+    DeviceId:
+      name: V-Client-Device-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: "Unique device identifier — generate once per device and reuse"
+
+    PageNumber:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+        default: 1
+
+    PageSize:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        example: "-createdAt"
+      description: "Field to sort by. Prefix with `-` for descending."
+
+paths:
+
+  # ─────────────────────────────────────────────
+  # Authentication
+  # ─────────────────────────────────────────────
+
+  /users/public/v1/auth/signin:
+    post:
+      operationId: adminSignIn
+      summary: Sign in as an admin user
+      description: >
+        Authenticates a Root Advisor, Head Branch Manager, Branch Manager, or
+        Advisor. Pass the user's role in the `roles` array.
+
+        Returns a 30-minute `accessToken` and a 30-day `refreshToken`.
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSignInRequest'
+            example:
+              email: "advisor@example.com"
+              password: "SecurePass123!"
+              roles: ["advisor"]
+      responses:
+        '200':
+          description: Successful sign-in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+        '400':
+          description: Invalid credentials or missing fields
+        '403':
+          description: Role not permitted for this account
+
+  /users/public/v1/auth/refresh:
+    post:
+      operationId: adminRefreshToken
+      summary: Refresh access token
+      description: >
+        Exchange a valid `refreshToken` for a new `accessToken` without
+        re-authenticating. Refresh tokens are valid for 30 days.
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: New access token issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Refresh token expired or invalid — user must sign in again
+
+  /users/private/v1/auth/me:
+    get:
+      operationId: adminGetProfile
+      summary: Get current admin profile
+      description: Returns the full profile for the authenticated admin user.
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Admin profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AdminProfile'
+
+  /users/private/v1/auth/change_password:
+    post:
+      operationId: adminChangePassword
+      summary: Change admin password
+      description: >
+        Updates the authenticated admin user's password. Requires the current
+        password for verification.
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password updated
+        '400':
+          description: Validation error — current password incorrect
+
+  # ─────────────────────────────────────────────
+  # Branches
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/branch:
+    get:
+      operationId: listBranches
+      summary: List branches
+      description: >
+        Returns a paginated list of all branches in the organization. Each
+        branch entry includes the active Head Branch Manager's contact
+        information.
+
+
+        **Access:** Root Advisor only.
+      tags: [Branches]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortParam'
+        - name: filter[name]
+          in: query
+          schema:
+            type: string
+          description: "Filter by branch name (partial match)"
+      responses:
+        '200':
+          description: Paginated list of branches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Branch'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+    post:
+      operationId: createBranch
+      summary: Create a branch
+      description: >
+        Creates a new branch. After creating a branch, assign admin roles to it
+        using the branch hierarchy endpoints.
+
+
+        **Access:** Root Advisor only.
+      tags: [Branches]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+            example:
+              branchName: "Downtown Branch"
+              description: "Serves the downtown metro area"
+              address:
+                address: "123 Main St"
+                city: "Austin"
+                state: "TX"
+                zipCode: "78701"
+                country: "US"
+      responses:
+        '201':
+          description: Branch created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Branch'
+        '400':
+          description: Validation error
+
+  /branches/private/v1/branch/all:
+    get:
+      operationId: listAllBranches
+      summary: List all branches (unpaginated)
+      description: >
+        Returns all branches without pagination — useful for populating
+        dropdowns and filters.
+
+
+        **Access:** Root Advisor only.
+      tags: [Branches]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Full list of branches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Branch'
+
+  /branches/private/v1/branch/my:
+    get:
+      operationId: getMyBranch
+      summary: Get my branch
+      description: >
+        Returns the branch the calling user is assigned to. Available to Branch
+        Managers, Advisors, and Head Branch Managers.
+      tags: [Branches]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Caller's branch details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Branch'
+
+  /branches/private/v1/branch/{branchId}:
+    get:
+      operationId: getBranch
+      summary: Get a branch by ID
+      description: >
+        Returns full details for a specific branch including assigned admin
+        roles.
+
+
+        **Access:** Root Advisor only.
+      tags: [Branches]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Branch details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Branch'
+        '404':
+          description: Branch not found
+    put:
+      operationId: updateBranch
+      summary: Update a branch
+      description: >
+        Updates branch details. Send only the fields you want to change.
+
+
+        **Access:** Root Advisor only.
+      tags: [Branches]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBranchRequest'
+      responses:
+        '200':
+          description: Branch updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Branch'
+        '404':
+          description: Branch not found
+
+  # ─────────────────────────────────────────────
+  # Admin Hierarchy — Create per Branch
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/branch/{branchId}/superadvisor:
+    post:
+      operationId: createHeadBranchManager
+      summary: Create Head Branch Manager for a branch
+      description: >
+        Creates and assigns a Head Branch Manager (Super Advisor) to the
+        specified branch. The created user receives a welcome email with login
+        credentials.
+
+
+        **Access:** Root Advisor only.
+      tags: [Admin Hierarchy]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHeadBranchManagerRequest'
+      responses:
+        '201':
+          description: Head Branch Manager created
+        '400':
+          description: Validation error
+
+  /branches/private/v1/branch/{branchId}/branchmanager:
+    post:
+      operationId: createBranchManager
+      summary: Create Branch Manager for a branch
+      description: >
+        Creates and assigns a Branch Manager to the specified branch.
+
+
+        **Access:** Root Advisor only.
+      tags: [Admin Hierarchy]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateHeadBranchManagerRequest'
+      responses:
+        '201':
+          description: Branch Manager created
+        '400':
+          description: Validation error
+
+  /branches/private/v1/branch/{branchId}/advisor:
+    post:
+      operationId: createAdvisor
+      summary: Create Advisor for a branch
+      description: >
+        Creates and assigns an Advisor to the specified branch. Advisors are
+        the front-line admin role that invites and manages client portfolios.
+
+
+        **Access:** Root Advisor only.
+      tags: [Admin Hierarchy]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: branchId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdvisorRequest'
+      responses:
+        '201':
+          description: Advisor created
+        '400':
+          description: Validation error
+
+  # ─────────────────────────────────────────────
+  # Admin Role Lists
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/advisor:
+    get:
+      operationId: listAdvisors
+      summary: List Advisors
+      description: >
+        Returns a paginated list of Advisors. Scope depends on the calling
+        user's role: Root Advisor sees all; Head Branch Manager sees Advisors
+        in their managed branches; Branch Manager sees Advisors in their
+        branch.
+      tags: [Admin Hierarchy]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortParam'
+        - name: filter[branchId]
+          in: query
+          schema:
+            type: string
+          description: "Filter by branch ID"
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+            enum: [active, pending, deleted]
+      responses:
+        '200':
+          description: Paginated list of Advisors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Advisor'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /branches/private/v1/superadvisor:
+    get:
+      operationId: listHeadBranchManagers
+      summary: List Head Branch Managers
+      description: >
+        Returns a paginated list of all Head Branch Managers (Super Advisors)
+        in the organization.
+
+
+        **Access:** Root Advisor only.
+      tags: [Admin Hierarchy]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Paginated list of Head Branch Managers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Advisor'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /branches/private/v1/branchmanager:
+    get:
+      operationId: listBranchManagers
+      summary: List Branch Managers
+      description: >
+        Returns a paginated list of all Branch Managers.
+
+
+        **Access:** Root Advisor and Head Branch Manager.
+      tags: [Admin Hierarchy]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortParam'
+        - name: filter[branchId]
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated list of Branch Managers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Advisor'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  # ─────────────────────────────────────────────
+  # Individual Client Management
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/individual:
+    get:
+      operationId: listIndividualClients
+      summary: List Individual clients
+      description: >
+        Returns a paginated list of Individual clients in the calling user's
+        scope. Advisors see only their portfolio; Root Advisors see all clients
+        across all branches.
+      tags: [Individual Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortParam'
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+            enum: [invited, onboarding, pending, active, dormant, closed, rejected]
+        - name: filter[branchId]
+          in: query
+          schema:
+            type: string
+          description: "Root Advisor / HBM only — filter by branch"
+        - name: filter[advisorId]
+          in: query
+          schema:
+            type: string
+          description: "Filter by Advisor ID"
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: "Search by name, email, or phone"
+      responses:
+        '200':
+          description: Paginated list of Individual clients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/IndividualClient'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+    post:
+      operationId: inviteIndividual
+      summary: Invite an Individual client
+      description: >
+        Sends an invitation email to the specified email address. The invited
+        user follows the onboarding flow to complete KYC and activate their
+        account.
+
+
+        **Access:** Advisor only.
+      tags: [Individual Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteIndividualRequest'
+            example:
+              firstName: "Jane"
+              lastName: "Doe"
+              phoneNumber: "+12025550103"
+              email: "jane.doe@example.com"
+      responses:
+        '201':
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IndividualClient'
+        '400':
+          description: Validation error or duplicate email
+
+  /branches/private/v1/individual/{individualId}:
+    get:
+      operationId: getIndividualClient
+      summary: Get Individual client details
+      description: >
+        Returns the full profile for a specific Individual client including KYC
+        status, verification tier, and any rejection errors.
+      tags: [Individual Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: individualId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Individual client profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/IndividualClient'
+        '404':
+          description: Client not found
+
+  /branches/private/v1/individual/assign:
+    patch:
+      operationId: assignIndividualClient
+      summary: Assign Individual client to a different Advisor
+      description: >
+        Reassigns an Individual client from their current Advisor to a new
+        Advisor. The new Advisor must belong to the same branch.
+
+
+        **Access:** Head Branch Manager and Root Advisor.
+      tags: [Individual Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [individualId, advisorId]
+              properties:
+                individualId:
+                  type: string
+                advisorId:
+                  type: string
+      responses:
+        '200':
+          description: Client reassigned
+        '400':
+          description: Advisor not in same branch
+
+  # ─────────────────────────────────────────────
+  # Business Owner Client Management
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/businessowner:
+    get:
+      operationId: listBusinessOwnerClients
+      summary: List Business Owner clients
+      description: >
+        Returns a paginated list of Business Owner clients in the calling
+        user's scope. Scope is determined by role — Advisors see their own
+        portfolio; Root Advisors see all clients.
+      tags: [Business Owner Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/SortParam'
+        - name: filter[status]
+          in: query
+          schema:
+            type: string
+            enum: [invited, onboarding, pending, active, dormant, closed, rejected]
+        - name: filter[branchId]
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: "Search by business name, email, or phone"
+      responses:
+        '200':
+          description: Paginated list of Business Owner clients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessOwnerClient'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+    post:
+      operationId: inviteBusinessOwner
+      summary: Invite a Business Owner client
+      description: >
+        Sends an invitation email to the Business Owner. They complete KYB
+        verification during onboarding before their accounts are activated.
+
+
+        **Access:** Advisor only.
+      tags: [Business Owner Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteBusinessOwnerRequest'
+            example:
+              businessName: "Acme Corp"
+              firstName: "John"
+              lastName: "Smith"
+              phoneNumber: "+12025550104"
+              email: "john.smith@acmecorp.com"
+      responses:
+        '201':
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BusinessOwnerClient'
+        '400':
+          description: Validation error
+
+  /branches/private/v1/businessowner/{businessOwnerId}:
+    get:
+      operationId: getBusinessOwnerClient
+      summary: Get Business Owner client details
+      description: >
+        Returns the full business profile including business entity details
+        (legal name, EIN, registration date, legal structure, state of
+        incorporation, industry code), the Business Owner's personal
+        information, and KYB verification status.
+      tags: [Business Owner Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: businessOwnerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Business Owner client profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/BusinessOwnerClient'
+        '404':
+          description: Client not found
+
+  /branches/private/v1/businessowner/assign:
+    patch:
+      operationId: assignBusinessOwnerClient
+      summary: Assign Business Owner client to a different Advisor
+      description: >
+        Reassigns a Business Owner client to a new Advisor within the same
+        branch.
+
+
+        **Access:** Head Branch Manager and Root Advisor.
+      tags: [Business Owner Clients]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [businessOwnerId, advisorId]
+              properties:
+                businessOwnerId:
+                  type: string
+                advisorId:
+                  type: string
+      responses:
+        '200':
+          description: Client reassigned
+        '400':
+          description: Advisor not in same branch
+
+  # ─────────────────────────────────────────────
+  # Operator Management (Admin)
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/operator:
+    post:
+      operationId: createOperatorAdmin
+      summary: Invite an Operator
+      description: >
+        Invites a new Operator for a Business Owner's account. The Operator
+        receives an email with onboarding instructions.
+
+
+        **Access:** Advisor only.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteOperatorRequest'
+      responses:
+        '201':
+          description: Operator invitation sent
+        '400':
+          description: Validation error
+
+  /branches/private/v1/operator/{operatorId}:
+    get:
+      operationId: getOperatorAdmin
+      summary: Get Operator details
+      description: >
+        Returns the Operator's profile including their current permissions
+        and onboarding status.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: operatorId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operator profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AdminOperator'
+        '404':
+          description: Operator not found
+    put:
+      operationId: updateOperatorAdmin
+      summary: Update Operator permissions
+      description: >
+        Updates the permissions granted to an Operator. Send the full
+        permissions object — any permission not included is set to `false`.
+      tags: [Operators]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: operatorId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permissions:
+                  $ref: '#/components/schemas/OperatorPermissions'
+      responses:
+        '200':
+          description: Operator updated
+        '404':
+          description: Operator not found
+
+  # ─────────────────────────────────────────────
+  # Approval Settings
+  # ─────────────────────────────────────────────
+
+  /branches/private/v1/approval-settings:
+    get:
+      operationId: getApprovalSettings
+      summary: Get branch approval settings
+      description: >
+        Returns the current transfer approval settings for the Branch Manager's
+        branch.
+
+
+        **Access:** Branch Manager (or higher).
+      tags: [Approval Settings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Approval settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ApprovalSettings'
+    put:
+      operationId: updateApprovalSettings
+      summary: Update branch approval settings
+      description: >
+        Enables or disables Branch Manager approval for transfer requests within
+        the branch. When enabled, client transfer requests move to
+        `pending_approval` before executing.
+
+
+        **Access:** Branch Manager only.
+      tags: [Approval Settings]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApprovalSettingsRequest'
+            example:
+              is_bm_approval_required: true
+      responses:
+        '200':
+          description: Approval settings updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ApprovalSettings'
+        '403':
+          description: Only Branch Managers can update approval settings
+
+  # ─────────────────────────────────────────────
+  # Account Viewing (Admin scope)
+  # ─────────────────────────────────────────────
+
+  /accounts/private/v1/account:
+    get:
+      operationId: adminListAccounts
+      summary: List client accounts
+      description: >
+        Returns a paginated list of accounts in the calling admin's scope.
+        Filter by `userId` to view accounts for a specific client.
+
+
+        Scope: Advisors see accounts for clients in their portfolio; Root
+        Advisors see all accounts organization-wide.
+      tags: [Account Management]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - name: filter[userId]
+          in: query
+          schema:
+            type: string
+          description: "Filter accounts by client user ID"
+        - name: filter[typeId]
+          in: query
+          schema:
+            type: integer
+          description: "Filter by account type"
+      responses:
+        '200':
+          description: Paginated list of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /accounts/private/v1/account/{accountId}:
+    get:
+      operationId: adminGetAccount
+      summary: Get account details
+      description: >
+        Returns full details for a specific account including balance,
+        available balance, and account settings.
+      tags: [Account Management]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Account details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found or not in scope
+
+  /accounts/private/v1/account/{accountId}/bank-details:
+    get:
+      operationId: adminGetAccountBankDetails
+      summary: Get account bank details
+      description: >
+        Returns the routing number, account number, IBAN, and SWIFT code for
+        the specified account.
+      tags: [Account Management]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Bank details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AccountBankDetails'
+
+  /accounts/private/v1/account/export/individual-balances:
+    get:
+      operationId: exportIndividualBalances
+      summary: Export individual account balances
+      description: >
+        Downloads an Excel (XLSX) spreadsheet of all Individual clients in the
+        calling admin's scope with their current account balances. Scope is
+        determined by role.
+
+
+        | Role | Export scope |
+
+        |------|-------------|
+
+        | Root Advisor | All clients, all branches |
+
+        | Head Branch Manager | All clients in managed branches |
+
+        | Branch Manager | All clients in their branch |
+
+        | Advisor | Clients in their portfolio |
+      tags: [Account Management]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Excel file download
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+
+  /external-accounts/private/v1/account:
+    get:
+      operationId: adminListExternalAccounts
+      summary: List client external accounts
+      description: >
+        Returns a paginated list of external bank accounts linked by clients
+        via Plaid. Filter by `userId` to view linked accounts for a specific
+        client.
+      tags: [Account Management]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+        - name: filter[userId]
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated list of external accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExternalAccount'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /external-accounts/private/v1/account/{accountId}:
+    get:
+      operationId: adminGetExternalAccount
+      summary: Get external account details
+      description: >
+        Returns details for a specific external bank account linked by a
+        client.
+      tags: [Account Management]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: External account details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ExternalAccount'
+        '404':
+          description: Account not found
