@@ -1,8 +1,9 @@
 ---
 title: Error Handling
-excerpt: HTTP status codes, common error scenarios, and best practices for handling errors in your TAPP Cash integration.
 hidden: false
 ---
+
+HTTP status codes, common error scenarios, and best practices for handling errors in your TAPP Cash integration.
 
 Every TAPP Cash error response uses a consistent envelope. Parse the `errors` array to get actionable details.
 

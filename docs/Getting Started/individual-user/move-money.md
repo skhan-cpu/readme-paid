@@ -1,8 +1,9 @@
 ---
 title: Move Money
-excerpt: Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.
 hidden: false
 ---
+
+Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.
 
 TAPP Cash supports two transfer types for individual users: **TBA** (internal, between the user's own accounts) and **ACH** (external, to/from linked bank accounts).
 

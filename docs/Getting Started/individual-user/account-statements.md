@@ -1,8 +1,9 @@
 ---
 title: Account Statements
-excerpt: Download monthly PDF statements for any account.
 hidden: false
 ---
+
+Download monthly PDF statements for any account.
 
 ## Monthly Statement
 

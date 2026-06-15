@@ -1,8 +1,9 @@
 ---
 title: FAQ
-excerpt: Frequently asked questions about integrating with the TAPP Cash API.
 hidden: false
 ---
+
+Frequently asked questions about integrating with the TAPP Cash API.
 
 ## Authentication
 

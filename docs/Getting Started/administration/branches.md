@@ -1,8 +1,9 @@
 ---
 title: Branches
-excerpt: Create and manage branches — the organizational units that group Advisors with their client portfolios.
 hidden: false
 ---
+
+Create and manage branches — the organizational units that group Advisors with their client portfolios.
 
 Branches are the organizational unit that groups Advisors and their client portfolios together. Every Advisor belongs to a branch, and every client belongs to an Advisor's branch. The Root Advisor manages all branches; Head Branch Managers and Branch Managers operate within their assigned branches.
 

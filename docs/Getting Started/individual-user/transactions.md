@@ -1,8 +1,9 @@
 ---
 title: Transactions
-excerpt: Paginated transaction history with status filtering and individual transaction details.
 hidden: false
 ---
+
+Paginated transaction history with status filtering and individual transaction details.
 
 ## Transaction History
 

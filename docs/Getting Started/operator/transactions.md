@@ -1,8 +1,9 @@
 ---
 title: Transactions
-excerpt: View transaction history and balance charts for the Business Owner's accounts as an Operator.
 hidden: false
 ---
+
+View transaction history and balance charts for the Business Owner's accounts as an Operator.
 
 Operators can view the full transaction history for all of the Business Owner's accounts. Transaction access is available to all active Operators regardless of their transfer permissions.
 

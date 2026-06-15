@@ -1,8 +1,9 @@
 ---
 title: Individual
-excerpt: Complete guide for individual users — onboarding, accounts, balances, transfers, notifications, KYC, and account closure.
 hidden: false
 ---
+
+Complete guide for individual users — onboarding, accounts, balances, transfers, notifications, KYC, and account closure.
 
 This section covers everything an Individual user can do after receiving an Advisor's invitation — from completing onboarding through daily banking operations.
 

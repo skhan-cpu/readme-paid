@@ -1,8 +1,9 @@
 ---
 title: Business Owner
-excerpt: Complete guide for Business Owner users — KYB onboarding, business accounts, money movement, and Operator management.
 hidden: false
 ---
+
+Complete guide for Business Owner users — KYB onboarding, business accounts, money movement, and Operator management.
 
 This section covers everything a Business Owner can do after receiving an Advisor's invitation — from completing KYB verification through daily business banking operations and managing Operators.
 

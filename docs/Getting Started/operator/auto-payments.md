@@ -1,8 +1,9 @@
 ---
 title: Auto-Payments
-excerpt: Create and manage recurring scheduled payments as an Operator — requires the autoPay permission.
 hidden: false
 ---
+
+Create and manage recurring scheduled payments as an Operator — requires the autoPay permission.
 
 Auto-payments allow Operators to schedule recurring payments on behalf of the Business Owner. All auto-payment operations require the `autoPay` permission. Attempting any auto-payment action without this permission returns `403 Forbidden`.
 

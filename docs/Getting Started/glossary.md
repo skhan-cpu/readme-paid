@@ -1,8 +1,9 @@
 ---
 title: Glossary
-excerpt: Definitions for key terms used throughout the TappCash API documentation.
 hidden: false
 ---
+
+Definitions for key terms used throughout the TappCash API documentation.
 
 ## A
 

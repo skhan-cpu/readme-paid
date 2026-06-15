@@ -1,8 +1,9 @@
 ---
 title: Notifications
-excerpt: Retrieve unread counts, list notifications, and mark them as read for individual users.
 hidden: false
 ---
+
+Retrieve unread counts, list notifications, and mark them as read for individual users.
 
 The notifications system lets you surface real-time activity alerts to individual users — transaction confirmations, KYC status changes, and platform messages.
 

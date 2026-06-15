@@ -1,8 +1,9 @@
 ---
 title: Registration & KYB
-excerpt: How a Business Owner accepts an invitation, completes KYB verification, and activates their business accounts.
 hidden: false
 ---
+
+How a Business Owner accepts an invitation, completes KYB verification, and activates their business accounts.
 
 Business Owner onboarding begins with an Advisor invitation and ends with KYB approval. Unlike Individual users who complete personal KYC, Business Owners submit Know Your Business (KYB) documentation that verifies the business entity and its beneficial owners.
 

@@ -1,8 +1,9 @@
 ---
 title: Client Portfolios
-excerpt: View and manage Individual and Business Owner clients — list, filter, assign, view accounts, and export balances.
 hidden: false
 ---
+
+View and manage Individual and Business Owner clients — list, filter, assign, view accounts, and export balances.
 
 Advisors and admin roles above them manage their client portfolios — Individual and Business Owner users they have invited and who have completed (or are working through) onboarding. Both client types support full listing, detail view, account inspection, and balance export.
 

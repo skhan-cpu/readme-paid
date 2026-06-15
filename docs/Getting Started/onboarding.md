@@ -1,8 +1,9 @@
 ---
 title: Onboarding
-excerpt: How to request API access, set up your organization, and begin inviting clients.
 hidden: false
 ---
+
+How to request API access, set up your organization, and begin inviting clients.
 
 Getting started with TappCash involves three phases: requesting credentials for your organization, signing in and configuring your environment, and then setting up your admin hierarchy to begin inviting clients.
 

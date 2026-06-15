@@ -1,8 +1,9 @@
 ---
 title: Managing Operators
-excerpt: Invite team members as Operators and configure their permissions to manage your business accounts on your behalf.
 hidden: false
 ---
+
+Invite team members as Operators and configure their permissions to manage your business accounts on your behalf.
 
 Business Owners can invite Operators — team members who manage the business's accounts and initiate transactions on the owner's behalf. Each Operator is granted specific permissions that define what they can do.
 

@@ -1,8 +1,9 @@
 ---
 title: Operator
-excerpt: Complete guide for Operators — onboarding, permissions, accounts, transfers, auto-payments, and transactions.
 hidden: false
 ---
+
+Complete guide for Operators — onboarding, permissions, accounts, transfers, auto-payments, and transactions.
 
 Operators are team members invited by a Business Owner to manage business accounts on their behalf. Each Operator acts within the boundaries of the permissions granted to them. Operators complete KYC verification before gaining access.
 
