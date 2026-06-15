@@ -12,11 +12,12 @@ These docs are for engineering teams integrating the TappCash API on behalf of y
 ## What can you build?
 
 <Cards>
-  <Card title="Admin Operations" href="./platform-overview" icon="fa-duotone fa-sitemap">Manage your organization's admin hierarchy — branches, Head Branch Managers, Branch Managers, and Advisors — and oversee all client portfolios, transfers, and reports from a single API.</Card>
-  <Card title="Individual Client Onboarding" href="./individual-user" icon="fa-duotone fa-user-check">Guide individual users through invitation acceptance, KYC verification, account setup, and full banking access.</Card>
-  <Card title="Business Client Onboarding" href="./onboarding" icon="fa-duotone fa-building">Onboard Business Owner clients through KYB verification, manage their accounts, and enable Operator access for their team.</Card>
-  <Card title="Money Movement" href="./individual-user/move-money" icon="fa-duotone fa-arrow-right-arrow-left">Internal transfers between accounts (TBA), ACH pulls and pushes to external bank accounts, and automated recurring payments.</Card>
-  <Card title="Account Activity" href="./individual-user/accounts" icon="fa-duotone fa-chart-line">Real-time balances, full transaction history with filtering, account statements, and notifications with unread-count badges.</Card>
+  <Card title="KYC & KYB Onboarding" href="./individual-user/registration" icon="fa-duotone fa-id-card">Compliance-grade identity verification for individuals and businesses. Guided 10-step flows — phone OTP, security questions, W9 certification, identity documents — gate account access until fully verified.</Card>
+  <Card title="Business Accounts & Operator Delegation" href="./business-owner" icon="fa-duotone fa-users-gear">Business Owner accounts with granular Operator access. Invite team members as Operators and control exactly what they can do — move funds internally, initiate ACH transfers, or schedule recurring payments.</Card>
+  <Card title="Internal & ACH Transfers" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Move funds between TappCash accounts (TBA) or connect external bank accounts via Plaid for ACH pulls and pushes. Preview fees before execution and track status through to final settlement.</Card>
+  <Card title="Recurring Payment Automation" href="./operator/auto-payments" icon="fa-duotone fa-calendar-check">Schedule weekly, biweekly, or monthly recurring payments with flexible stop conditions — a fixed end date, a cumulative spend limit, or run indefinitely until cancelled.</Card>
+  <Card title="Branch & Admin Hierarchy" href="./administration/branches" icon="fa-duotone fa-sitemap">Deploy a full admin structure across branches — Root Advisor, Head Branch Managers, Branch Managers, and Advisors — each scoped to their portfolio. Configure transfer approval thresholds per branch.</Card>
+  <Card title="Portfolio Reporting & Balance Export" href="./administration/clients" icon="fa-duotone fa-chart-mixed">Transaction history with filtering, balance trend charts, downloadable PDF account statements, and XLSX balance exports across your entire client portfolio — all scoped by admin role.</Card>
 </Cards>
 
 ---
