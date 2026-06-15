@@ -1,4 +1,5 @@
 ---
+title: List auto-payments
 api:
   file: openapi-operator-v1.yaml
   operationId: opListAutoPayments

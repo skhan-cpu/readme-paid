@@ -38,12 +38,12 @@ These docs are for engineering teams integrating the TappCash API on behalf of y
 End-to-end integration patterns with every API call in sequence.
 
 <Cards>
-  <Card title="Onboard an Individual" href="./recipes/onboard-individual" icon="fa-duotone fa-id-card">Advisor invite → 10-step KYC (W9, security questions, phone OTP, identity) → full access token and live accounts.</Card>
-  <Card title="Business Onboarding" href="./recipes/onboard-business-owner" icon="fa-duotone fa-users-gear">5-step KYB → invite Operators with scoped permissions (`transferFunds`, `autoPay`) → Operator KYC.</Card>
-  <Card title="ACH Transfer" href="./recipes/ach-transfer" icon="fa-duotone fa-building-columns">BaaS token → Plaid Link → list external accounts → preview fees → execute pull or push.</Card>
-  <Card title="Auto-Payment" href="./recipes/auto-payment" icon="fa-duotone fa-calendar-check">Preview fee → create with stop condition (end date, spend cap, or until cancelled) → cancel when needed.</Card>
-  <Card title="Transfer Approval" href="./recipes/transfer-approval" icon="fa-duotone fa-shield-check">Enable branch approval → client submits → `pending_approval` → Branch Manager approves or rejects.</Card>
-  <Card title="Token Refresh" href="./recipes/token-refresh" icon="fa-duotone fa-rotate">Sign in → use access token → auto-refresh on 401 → re-auth when refresh token expires.</Card>
+  <Card title="Onboard an Individual" href="/recipes/onboard-individual" icon="fa-duotone fa-id-card">Advisor invite → 10-step KYC (W9, security questions, phone OTP, identity) → full access token and live accounts.</Card>
+  <Card title="Business Onboarding" href="/recipes/onboard-business-owner" icon="fa-duotone fa-users-gear">5-step KYB → invite Operators with scoped permissions (`transferFunds`, `autoPay`) → Operator KYC.</Card>
+  <Card title="ACH Transfer" href="/recipes/ach-transfer" icon="fa-duotone fa-building-columns">BaaS token → Plaid Link → list external accounts → preview fees → execute pull or push.</Card>
+  <Card title="Auto-Payment" href="/recipes/auto-payment" icon="fa-duotone fa-calendar-check">Preview fee → create with stop condition (end date, spend cap, or until cancelled) → cancel when needed.</Card>
+  <Card title="Transfer Approval" href="/recipes/transfer-approval" icon="fa-duotone fa-shield-check">Enable branch approval → client submits → `pending_approval` → Branch Manager approves or rejects.</Card>
+  <Card title="Token Refresh" href="/recipes/token-refresh" icon="fa-duotone fa-rotate">Sign in → use access token → auto-refresh on 401 → re-auth when refresh token expires.</Card>
 </Cards>
 
 ---

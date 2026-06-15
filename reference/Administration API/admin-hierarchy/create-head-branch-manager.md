@@ -1,4 +1,5 @@
 ---
+title: Create Head Branch Manager for a branch
 api:
   file: openapi-admin-v1.yaml
   operationId: createHeadBranchManager
