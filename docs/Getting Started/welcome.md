@@ -25,10 +25,10 @@ These docs are for engineering teams integrating the TappCash API on behalf of y
 ## Quickstart
 
 <Cards>
-  <Card title="Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Contact support@tappcash.com to request your organization's API credentials. Include your organization name, environment, and use case.</Card>
-  <Card title="Sign In & Configure" href="./onboarding" icon="fa-duotone fa-right-to-bracket">Authenticate as the Root Advisor, change your temporary password, and begin setting up your admin hierarchy.</Card>
-  <Card title="Invite Your First Client" href="./onboarding" icon="fa-duotone fa-envelope">Once an Advisor is set up, send your first client invitation — Individual or Business Owner — to kick off their onboarding flow.</Card>
-  <Card title="Move Money" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Transfer funds between a user's own internal accounts (TBA) or pull/push to linked external bank accounts via ACH.</Card>
+  <Card title="1. Request Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Email support@tappcash.com with your organization name and target environment. You'll receive Root Advisor credentials and your staging base URL.</Card>
+  <Card title="2. Sign In & Build Your Admin Hierarchy" href="./onboarding" icon="fa-duotone fa-sitemap">Authenticate as Root Advisor, exchange your temporary password, then create branches and assign Head Branch Managers, Branch Managers, and Advisors.</Card>
+  <Card title="3. Invite Your First Client" href="./individual-user/registration" icon="fa-duotone fa-paper-plane">With an Advisor in place, send your first invitation — Individual for KYC or Business Owner for KYB. The client receives an invitation link by email and begins their guided onboarding flow.</Card>
+  <Card title="4. Execute Your First Transfer" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Once a client completes onboarding, preview and execute a TBA transfer between their accounts — or link an external bank via Plaid and initiate an ACH pull or push.</Card>
 </Cards>
 
 ---
