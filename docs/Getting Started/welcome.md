@@ -12,12 +12,12 @@ These docs are for engineering teams integrating the TappCash API on behalf of y
 ## What can you build?
 
 <Cards>
-  <Card title="KYC & KYB Onboarding" href="./individual-user/registration" icon="fa-duotone fa-id-card">Compliance-grade identity verification for individuals and businesses. Guided 10-step flows — phone OTP, security questions, W9 certification, identity documents — gate account access until fully verified.</Card>
-  <Card title="Business Accounts & Operator Delegation" href="./business-owner" icon="fa-duotone fa-users-gear">Business Owner accounts with granular Operator access. Invite team members as Operators and control exactly what they can do — move funds internally, initiate ACH transfers, or schedule recurring payments.</Card>
-  <Card title="Internal & ACH Transfers" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Move funds between TappCash accounts (TBA) or connect external bank accounts via Plaid for ACH pulls and pushes. Preview fees before execution and track status through to final settlement.</Card>
-  <Card title="Recurring Payment Automation" href="./operator/auto-payments" icon="fa-duotone fa-calendar-check">Schedule weekly, biweekly, or monthly recurring payments with flexible stop conditions — a fixed end date, a cumulative spend limit, or run indefinitely until cancelled.</Card>
-  <Card title="Branch & Admin Hierarchy" href="./administration/branches" icon="fa-duotone fa-sitemap">Deploy a full admin structure across branches — Root Advisor, Head Branch Managers, Branch Managers, and Advisors — each scoped to their portfolio. Configure transfer approval thresholds per branch.</Card>
-  <Card title="Portfolio Reporting & Balance Export" href="./administration/clients" icon="fa-duotone fa-chart-mixed">Transaction history with filtering, balance trend charts, downloadable PDF account statements, and XLSX balance exports across your entire client portfolio — all scoped by admin role.</Card>
+  <Card title="Identity Verification" href="./individual-user/registration" icon="fa-duotone fa-id-card">Compliant KYC and KYB onboarding with phone OTP, security questions, W9 certification, and identity documents.</Card>
+  <Card title="Operator Delegation" href="./business-owner" icon="fa-duotone fa-users-gear">Business Owners invite team members as Operators with scoped permissions — transfer funds, run ACH, or schedule payments.</Card>
+  <Card title="Money Movement" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Internal transfers between accounts (TBA) and external ACH via Plaid — with fee preview before every execution.</Card>
+  <Card title="Auto-Payments" href="./operator/auto-payments" icon="fa-duotone fa-calendar-check">Recurring scheduled payments — weekly, biweekly, or monthly — with a fixed end date, spend cap, or until cancelled.</Card>
+  <Card title="Admin Hierarchy" href="./administration/branches" icon="fa-duotone fa-sitemap">Create branches, assign admin roles at every tier, and configure transfer approval rules per branch.</Card>
+  <Card title="Reporting & Exports" href="./administration/clients" icon="fa-duotone fa-chart-mixed">Balance charts, transaction history, PDF statements, and XLSX portfolio exports — all scoped by admin role.</Card>
 </Cards>
 
 ---
@@ -25,26 +25,25 @@ These docs are for engineering teams integrating the TappCash API on behalf of y
 ## Quickstart
 
 <Cards>
-  <Card title="1. Request Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Email support@tappcash.com with your organization name and target environment. You'll receive Root Advisor credentials and your staging base URL.</Card>
-  <Card title="2. Sign In & Build Your Admin Hierarchy" href="./onboarding" icon="fa-duotone fa-sitemap">Authenticate as Root Advisor, exchange your temporary password, then create branches and assign Head Branch Managers, Branch Managers, and Advisors.</Card>
-  <Card title="3. Invite Your First Client" href="./individual-user/registration" icon="fa-duotone fa-paper-plane">With an Advisor in place, send your first invitation — Individual for KYC or Business Owner for KYB. The client receives an invitation link by email and begins their guided onboarding flow.</Card>
-  <Card title="4. Execute Your First Transfer" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Once a client completes onboarding, preview and execute a TBA transfer between their accounts — or link an external bank via Plaid and initiate an ACH pull or push.</Card>
+  <Card title="1. Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Email support@tappcash.com with your org name and environment to receive Root Advisor credentials and your staging base URL.</Card>
+  <Card title="2. Set Up Admin Hierarchy" href="./onboarding" icon="fa-duotone fa-sitemap">Sign in as Root Advisor, change your temporary password, create branches, and assign admin roles.</Card>
+  <Card title="3. Invite a Client" href="./individual-user/registration" icon="fa-duotone fa-paper-plane">Send your first invitation — Individual for KYC or Business Owner for KYB — and the client begins onboarding.</Card>
+  <Card title="4. Move Money" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Preview and execute a TBA transfer between accounts, or link an external bank via Plaid for ACH.</Card>
 </Cards>
 
 ---
 
 ## Recipes
 
-Step-by-step guides for common integration patterns.
+End-to-end integration patterns with every API call in sequence.
 
 <Cards>
-  <Card title="Advisor: Sign In & Invite" href="./onboarding" icon="fa-duotone fa-user-tie">Authenticate as an Advisor and send your first invitation to an Individual or Business Owner client.</Card>
-  <Card title="Individual Registration" href="./individual-user/registration" icon="fa-duotone fa-id-card">Steps 1–10: validate token → accept invite → KYC → token exchange.</Card>
-  <Card title="Sign In as Returning User" href="./authentication" icon="fa-duotone fa-arrow-right-to-bracket">Standard login flow and token refresh for client users.</Card>
-  <Card title="Internal Transfer (TBA)" href="./individual-user/move-money" icon="fa-duotone fa-shuffle">Preview fees and move funds between a user's own accounts.</Card>
-  <Card title="External Account Linking (ACH)" href="./individual-user/move-money" icon="fa-duotone fa-building-columns">BaaS token → Plaid link → pull or push funds to external bank accounts.</Card>
-  <Card title="Notifications" href="./individual-user/notifications" icon="fa-duotone fa-bell">Unread count, list notifications, mark as read.</Card>
-  <Card title="Account Closure" href="./individual-user/account-closure" icon="fa-duotone fa-circle-xmark">Two-step OTP-confirmed deletion flow.</Card>
+  <Card title="Onboard an Individual" href="./recipes/onboard-individual" icon="fa-duotone fa-id-card">Advisor invite → 10-step KYC (W9, security questions, phone OTP, identity) → full access token and live accounts.</Card>
+  <Card title="Onboard a Business Owner" href="./recipes/onboard-business-owner" icon="fa-duotone fa-users-gear">5-step KYB → invite Operators with scoped permissions (`transferFunds`, `autoPay`) → Operator KYC.</Card>
+  <Card title="ACH Transfer" href="./recipes/ach-transfer" icon="fa-duotone fa-building-columns">BaaS token → Plaid Link → list external accounts → preview fees → execute pull or push.</Card>
+  <Card title="Recurring Auto-Payment" href="./recipes/auto-payment" icon="fa-duotone fa-calendar-check">Preview fee → create with stop condition (end date, spend cap, or until cancelled) → cancel when needed.</Card>
+  <Card title="Branch Transfer Approval" href="./recipes/transfer-approval" icon="fa-duotone fa-shield-check">Enable branch approval → client submits → `pending_approval` → Branch Manager approves or rejects.</Card>
+  <Card title="Token Refresh" href="./recipes/token-refresh" icon="fa-duotone fa-rotate">Sign in → use access token → auto-refresh on 401 → re-auth when refresh token expires.</Card>
 </Cards>
 
 ---
