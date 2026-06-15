@@ -3,9 +3,7 @@ title: Account Closure
 hidden: false
 ---
 
-Two-step OTP-confirmed process for permanently closing an individual user's account.
-
-Account closure is a two-step process to prevent accidental deletion. The user must request an OTP and then confirm with it. Accounts with blockers (positive balance, pending transactions, or insufficient funds for the closure fee) cannot be closed until those blockers are resolved.
+Account closure is a two-step OTP-confirmed process: request an OTP then confirm with it. Accounts with blockers — positive balance, pending transactions, or insufficient funds for the closure fee — cannot be closed until those blockers are resolved.
 
 ---
 

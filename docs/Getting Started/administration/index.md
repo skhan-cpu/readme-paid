@@ -3,9 +3,7 @@ title: Admin Management
 hidden: false
 ---
 
-Build and manage your organization's admin hierarchy — branches, admin tiers, client portfolios, transfers, and reports.
-
-The admin layer of TappCash gives your organization full programmatic control over its internal structure and client operations. From the Root Advisor at the top of the hierarchy down to the front-line Advisor, each role has a defined scope of access and responsibility.
+The admin layer of TappCash gives your organization full programmatic control over its internal structure and client operations — from the Root Advisor at the top down to the front-line Advisor, each role has a defined scope covering branches, portfolios, transfers, and reports.
 
 ---
 

@@ -3,9 +3,7 @@ title: Accounts & Balances
 hidden: false
 ---
 
-View business accounts, check balances, and access account details after KYB approval.
-
-Once KYB is approved, the Business Owner's business accounts become fully active. Both the Business Owner and any Operators they invite can view account information and balances.
+Once KYB is approved, business accounts become fully active and both the Business Owner and their Operators can view account information, balances, and account details.
 
 ---
 

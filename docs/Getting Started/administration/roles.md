@@ -3,9 +3,7 @@ title: Roles & Permissions
 hidden: false
 ---
 
-A detailed breakdown of each admin role — what they can access, create, and manage within your organization.
-
-TappCash uses a four-tier admin hierarchy. Each role is scoped to a specific level of access. Tokens are role-bound — calling an endpoint outside your role returns `403 Forbidden`.
+TappCash uses a four-tier admin hierarchy where each role is scoped to a specific level of access — tokens are role-bound, and calling an endpoint outside your role returns `403 Forbidden`.
 
 ---
 

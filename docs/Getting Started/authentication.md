@@ -3,9 +3,7 @@ title: Authentication
 hidden: false
 ---
 
-How Bearer tokens work in TAPP Cash — issuing, using, refreshing, and the full token lifecycle.
-
-Every request to a private endpoint requires a valid Bearer token in the `Authorization` header.
+Every request to a private endpoint requires a valid Bearer token in the `Authorization` header — covering token types, issuance, refresh, and the full token lifecycle.
 
 ```
 Authorization: Bearer <your_token>

@@ -3,9 +3,7 @@ title: KYC
 hidden: false
 ---
 
-Check an individual user's KYC verification status and handle document verification prompts.
-
-KYC (Know Your Customer) verification is submitted during onboarding (Step 9) and processed asynchronously. Use this endpoint to check the current status and determine whether additional action is needed.
+KYC verification is submitted during onboarding (Step 9) and processed asynchronously — use these endpoints to check the current status and respond to any document verification prompts.
 
 ---
 

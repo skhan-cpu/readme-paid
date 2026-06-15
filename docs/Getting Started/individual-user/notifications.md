@@ -3,9 +3,7 @@ title: Notifications
 hidden: false
 ---
 
-Retrieve unread counts, list notifications, and mark them as read for individual users.
-
-The notifications system lets you surface real-time activity alerts to individual users — transaction confirmations, KYC status changes, and platform messages.
+The notifications API lets you surface real-time activity alerts to individual users — retrieve unread counts, list notifications (transaction confirmations, KYC updates, platform messages), and mark them as read.
 
 ---
 

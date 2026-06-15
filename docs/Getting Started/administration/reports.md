@@ -3,9 +3,7 @@ title: Reports
 hidden: false
 ---
 
-Access client-level and system-level reports for Individual and Business Owner portfolios.
-
-TappCash provides two categories of reports accessible to admin roles: **client reports** scoped to individual client activity, and **general system reports** that aggregate activity across the branch or organization.
+TappCash provides two categories of reports for admin roles: **client reports** scoped to individual client activity, and **general system reports** that aggregate activity across the branch or organization.
 
 ---
 

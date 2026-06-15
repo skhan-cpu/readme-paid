@@ -3,9 +3,7 @@ title: Platform Overview
 hidden: false
 ---
 
-The TappCash role hierarchy, user types, environments, and key concepts — everything you need to understand before you start integrating.
-
-TappCash is a financial platform API that gives organizations programmatic control over the full banking lifecycle — from building out an admin hierarchy and onboarding clients through daily operations including transfers, account management, and reporting.
+TappCash is a financial platform API that gives organizations programmatic control over the full banking lifecycle — covering role hierarchy, user types, environments, and key concepts from admin setup through client operations.
 
 ---
 

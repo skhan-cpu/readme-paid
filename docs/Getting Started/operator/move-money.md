@@ -3,9 +3,7 @@ title: Move Money
 hidden: false
 ---
 
-Initiate TBA internal transfers and ACH external transfers as an Operator — subject to assigned permissions.
-
-Operators can initiate transfers on behalf of the Business Owner if they have been granted the relevant permissions. All transfer operations check permissions before executing and return `403 Forbidden` if the permission is missing.
+Operators can initiate TBA internal transfers and ACH external transfers on behalf of the Business Owner — all transfer operations check permissions before executing and return `403 Forbidden` if the required permission is missing.
 
 ---
 

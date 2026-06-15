@@ -3,9 +3,7 @@ title: Accounts
 hidden: false
 ---
 
-View total balance, list all accounts, and get per-account details.
-
-All accounts are created automatically when onboarding completes and are immediately available after token exchange.
+All accounts are created automatically when onboarding completes and are immediately available after token exchange — view total balance, list all accounts, and get per-account details.
 
 ---
 

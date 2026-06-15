@@ -3,9 +3,7 @@ title: Head Branch Manager
 hidden: false
 ---
 
-Head Branch Managers oversee Advisors and have full visibility across all client portfolios, transfers, and reports within their managed branches.
-
-The Head Branch Manager sits between the Root Advisor and Branch Managers/Advisors in the admin hierarchy. They manage Advisors directly and have broad read access across all client activity — portfolios, accounts, transfers, auto-payments, and reports. They also have access to the chat module.
+The Head Branch Manager sits between the Root Advisor and Branch Managers/Advisors, managing Advisors directly with broad read access across all client activity — portfolios, accounts, transfers, auto-payments, reports, and the chat module.
 
 ---
 

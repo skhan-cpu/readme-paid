@@ -3,9 +3,7 @@ title: Move Money
 hidden: false
 ---
 
-Internal transfers between business accounts (TBA), ACH transfers to external bank accounts, and automated recurring payments.
-
-Business Owners and their Operators can initiate three types of money movement: internal transfers between business accounts, ACH transfers to and from linked external bank accounts, and scheduled auto-payments. Transfer capability requires KYB approval.
+Business Owners and their Operators can initiate three types of money movement — internal TBA transfers, ACH transfers to/from linked external bank accounts, and scheduled auto-payments — all of which require KYB approval.
 
 ---
 

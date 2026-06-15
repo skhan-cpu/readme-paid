@@ -3,9 +3,7 @@ title: Advisor
 hidden: false
 ---
 
-Advisors are the front-line admin role. They invite Individual and Business Owner clients, manage their portfolios, and monitor all client account activity within their branch.
-
-The Advisor is the role your integration will use most frequently for client-facing operations. Advisors invite clients (Individual or Business Owner), track their onboarding progress, and monitor their accounts, transfers, and reports. They also have access to the chat module.
+The Advisor is the front-line admin role your integration will use most frequently — inviting Individual and Business Owner clients, tracking onboarding progress, and monitoring accounts, transfers, reports, and the chat module.
 
 ---
 

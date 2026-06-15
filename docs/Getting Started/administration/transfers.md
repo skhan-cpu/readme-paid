@@ -3,9 +3,7 @@ title: Transfers & Auto-Payments
 hidden: false
 ---
 
-Monitor transfer requests, transfers, and auto-payment schedules across your client portfolios.
-
-Admin roles have visibility into their clients' money movement activity. Depending on your role, you can view transfer requests, completed transfers, and auto-payment schedules for both Individual and Business Owner portfolios.
+Admin roles have visibility into client money movement — depending on your role, you can view transfer requests, completed transfers, and auto-payment schedules for both Individual and Business Owner portfolios.
 
 ---
 

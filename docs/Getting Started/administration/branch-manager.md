@@ -3,9 +3,7 @@ title: Branch Manager
 hidden: false
 ---
 
-Branch Managers manage Advisors within a branch, review client transfer requests, and configure approval settings that control whether transfers require sign-off before executing.
-
-The Branch Manager's primary responsibility is managing Advisors within their branch and controlling the transfer approval workflow. They can require that client transfer requests pass through their approval before executing — a key compliance and oversight control.
+Branch Managers manage Advisors within their branch and control the transfer approval workflow — they can require client transfer requests to pass through their sign-off before executing, a key compliance and oversight control.
 
 ---
 

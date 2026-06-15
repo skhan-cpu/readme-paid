@@ -3,9 +3,7 @@ title: Registration
 hidden: false
 ---
 
-Step-by-step KYC onboarding flow for Operators — from invitation email through full account activation.
-
-Operators are invited by a Business Owner and must complete a 10-step KYC onboarding flow before gaining access to business accounts. The steps are identical to Individual onboarding, with the only differences being the invite acceptance endpoint and the KYC signup endpoint.
+Operators are invited by a Business Owner and complete a 10-step KYC onboarding flow — identical to Individual onboarding except for the invite acceptance and KYC signup endpoints — before gaining access to business accounts.
 
 ---
 

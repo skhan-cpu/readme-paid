@@ -3,9 +3,7 @@ title: Root Advisor
 hidden: false
 ---
 
-The Root Advisor is the top-level admin created during organization onboarding. This page covers first-time setup, ongoing responsibilities, and the full scope of access.
-
-The Root Advisor is the highest admin role in TappCash. There is one Root Advisor per organization, created by the TappCash team when your organization is onboarded. All other admin users — Head Branch Managers, Branch Managers, and Advisors — are created by or under the Root Advisor.
+The Root Advisor is the highest admin role in TappCash — one per organization, created by the TappCash team at onboarding — with full access to create and manage all other admin users, branches, client portfolios, and reports.
 
 ---
 

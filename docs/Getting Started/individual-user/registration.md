@@ -3,9 +3,7 @@ title: Registration
 hidden: false
 ---
 
-The 10-step registration flow for individual users — from invitation acceptance through KYC submission and full token exchange.
-
-After an Advisor sends an invitation, the individual user completes a guided 10-step flow to activate their accounts.
+After an Advisor sends an invitation, the individual user completes a guided 10-step flow — covering invitation acceptance, agreements, password setup, W9, security questions, phone OTP, KYC submission, and token exchange — to activate their accounts.
 
 ---
 

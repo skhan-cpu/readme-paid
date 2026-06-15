@@ -3,9 +3,7 @@ title: Accounts & Balances
 hidden: false
 ---
 
-View the Business Owner's accounts, balances, and bank details as an Operator.
-
-Operators can view all accounts belonging to the Business Owner who invited them. Account viewing is available to all active Operators regardless of their transfer permissions.
+Operators can view all accounts, balances, and bank details belonging to the Business Owner who invited them — account viewing is available to all active Operators regardless of their transfer permissions.
 
 ---
 
