@@ -1,6 +1,5 @@
 ---
 title: Welcome to TAPP Cash
-excerpt: TAPP Cash is a white-label financial platform for embedding accounts, transfers, and KYC into your product.
 hidden: false
 ---
 
