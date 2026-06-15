@@ -78,7 +78,7 @@ The `accessToken` expires after **30 minutes**. Refresh it with `POST /users/pub
 }
 ```
 
-On success, an invitation email is sent and the client record is created with `status: "invited"`. The client then follows the [Individual Account](../individual-account) onboarding steps.
+On success, an invitation email is sent and the client record is created with `status: "invited"`. The client then follows the [Individual Account](../individual-user) onboarding steps.
 
 ---
 

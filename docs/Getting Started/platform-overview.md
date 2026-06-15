@@ -47,7 +47,7 @@ flowchart TD
 ## Client-Facing Roles
 
 <Cards>
-  <Card title="Individual" href="./individual-account" icon="fa-duotone fa-user">Holds personal financial accounts (checking and savings). Completes KYC verification, initiates internal transfers and ACH transactions, and views account activity and statements.</Card>
+  <Card title="Individual" href="./individual-user" icon="fa-duotone fa-user">Holds personal financial accounts (checking and savings). Completes KYC verification, initiates internal transfers and ACH transactions, and views account activity and statements.</Card>
   <Card title="Business Owner" href="./onboarding" icon="fa-duotone fa-building">Holds business financial accounts. Completes KYB verification. Invites and manages Operators to act on their behalf.</Card>
   <Card title="Operator" href="./onboarding" icon="fa-duotone fa-user-lock">Manages a Business Owner's accounts with granted permissions. Can initiate transfers and set up auto-payments based on the access the Business Owner assigns.</Card>
 </Cards>

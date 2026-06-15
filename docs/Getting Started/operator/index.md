@@ -1,93 +1,107 @@
 ---
 title: Operator
-excerpt: How Operators are invited, what they can access, and how they manage a Business Owner's accounts.
+excerpt: Complete guide for Operators — onboarding, permissions, accounts, transfers, auto-payments, and transactions.
 hidden: false
 ---
 
-Operators are team members invited by a Business Owner to manage their business accounts. Each Operator acts on behalf of the Business Owner within the boundaries of the permissions they have been granted. Operators complete KYC verification before gaining access.
+Operators are team members invited by a Business Owner to manage business accounts on their behalf. Each Operator acts within the boundaries of the permissions granted to them. Operators complete KYC verification before gaining access.
 
 ---
 
 ## What Operators can do
 
-An Operator's capabilities depend entirely on the permissions assigned by the Business Owner.
-
 <Cards>
-  <Card title="View Accounts & Balances" href="../business-owner/accounts" icon="fa-duotone fa-wallet">View the business's accounts and balances. Account viewing is available to all active Operators regardless of permissions.</Card>
-  <Card title="Transfer Funds" href="../business-owner/move-money" icon="fa-duotone fa-arrow-right-arrow-left">Initiate TBA internal transfers and ACH external transfers — requires the `transferFunds` permission.</Card>
-  <Card title="Auto-Payments" href="../business-owner/move-money" icon="fa-duotone fa-clock-rotate-left">Create and manage recurring scheduled payments — requires the `autoPay` permission.</Card>
+  <Card title="Registration" href="./registration" icon="fa-duotone fa-list-check">Complete the KYC onboarding flow — validate invite token, set password, verify phone, submit identity, and exchange for a full access token.</Card>
+  <Card title="Accounts & Balances" href="./accounts" icon="fa-duotone fa-wallet">View the Business Owner's accounts, account details, bank details, and total balance across all accounts.</Card>
+  <Card title="Move Money" href="./move-money" icon="fa-duotone fa-money-bill-transfer">Initiate internal TBA transfers and ACH external transfers — requires `transferFunds` or `transferACH` permission.</Card>
+  <Card title="Auto-Payments" href="./auto-payments" icon="fa-duotone fa-clock-rotate-left">Set up and manage recurring scheduled payments — requires the `autoPay` permission.</Card>
+  <Card title="Transactions" href="./transactions" icon="fa-duotone fa-receipt">View the full transaction history for the Business Owner's accounts.</Card>
 </Cards>
 
 ---
 
-## Operator Onboarding
+## Onboarding Journey
 
-Operators are invited by a Business Owner and follow an invitation-based onboarding flow. The flow is similar to Individual onboarding, but the Operator completes **KYC** (personal identity verification) rather than KYB.
+Operators follow an invitation-based onboarding flow identical to Individual users — with KYC (personal identity verification) instead of KYB.
 
 ```mermaid
 flowchart TD
     A(["Business Owner sends invitation"])
     A --> B["Operator receives invitation email"]
-    B --> C["Step 1 — Validate invitation token"]
+    B --> C["Step 1 — Validate invitation token\nGET /branches/public/v1/common/invites/check"]
     C -->|invalid / expired| ERR(["Contact Business Owner to resend"])
-    C -->|valid| D["Step 2 — Accept platform agreements"]
-    D --> E["Step 3 — Accept invite and set password"]
-    E -->|Returns temporaryAccessToken| F{{"Store temporaryAccessToken"}}
-    F --> G["Step 4 — Complete KYC\n(personal identity + phone OTP)"]
-    G --> H["KYC submitted — pending review"]
-    H --> I["Step 5 — Exchange for full access token"]
+    C -->|valid| D["Step 2 — Fetch platform agreements\nGET /branches/public/v1/common/agreements?type=Person"]
+    D --> E["Step 3 — Accept invite and set password\nPOST /branches/public/v1/operator/invites/accept"]
+    E -->|HTTP 403 + temporaryAccessToken| F{{"Store temporaryAccessToken"}}
+    F --> G["Steps 4–8 — W9, security questions, phone OTP"]
+    G --> H["Step 9 — Submit KYC\nPOST /branches/private/v1/limited/operator/signup"]
+    H --> I["Step 10 — Exchange for full access token\nPUT /users/private/v1/limited/token-exchange"]
     I --> J{{"Store accessToken + refreshToken"}}
     J --> K(["Operator active — business accounts accessible"])
 ```
 
-The onboarding steps (validate token → accept agreements → set password → KYC → token exchange) follow the same API calls as Individual registration. See [Individual Registration](../individual-account/registration) for the full step-by-step API reference.
+See [Registration](./registration) for the full step-by-step guide.
 
 ---
 
 ## Permissions
 
-The Business Owner assigns permissions when creating the Operator invitation. These can be updated at any time.
+The Business Owner assigns permissions when creating the Operator invitation and can update them at any time.
 
-| Permission      | What it allows                                               |
-|-----------------|--------------------------------------------------------------|
-| `transferFunds` | Initiate TBA internal transfers and ACH external transfers   |
-| `autoPay`       | Create, update, and delete auto-payment schedules            |
+| Permission | What it enables |
+|------------|-----------------|
+| `transferFunds` | Initiate TBA (internal) and TBU (user-to-user) transfers |
+| `transferACH` | Initiate ACH external transfers via linked bank accounts |
+| `autoPay` | Create, view, and cancel recurring auto-payments |
 
-When an Operator attempts an action they are not permitted for, the API returns `403 Forbidden`.
+Attempting an action without the required permission returns `403 Forbidden`. Always check the Operator's current permissions before rendering transfer UI.
+
+**Get current permissions:**
+
+`GET /branches/private/v1/limited/operator/details`
+
+- **Auth**: Operator access token
+
+Returns the Operator profile including the current `permissions` object. Call this on sign-in to determine which features to show in your UI.
 
 ---
 
 ## Authentication
 
-Operators authenticate using the same sign-in endpoint as all other users:
+**Sign in:**
 
 `POST /users/public/v1/auth/signin`
 
 ```json
 {
-  "login": "operator@business.com",
-  "password": "Password123!"
+  "email": "operator@business.com",
+  "password": "Password123!",
+  "roles": ["businessoperator"]
 }
 ```
 
-The returned `accessToken` is scoped to the Operator role. All requests using this token are automatically limited to the Business Owner's accounts and the Operator's assigned permissions.
+**Refresh token:**
+
+`POST /users/public/v1/auth/refresh`
+
+```json
+{
+  "refreshToken": "<refresh_token>"
+}
+```
+
+| Token | Lifetime | Renewal |
+|-------|----------|---------|
+| `accessToken` | 30 minutes | Call `POST /users/public/v1/auth/refresh` |
+| `refreshToken` | 30 days | Sign in again after expiry |
 
 ---
 
 ## Scope of Access
 
-Operators can only access the business accounts of the Business Owner who invited them. An Operator token cannot access:
+Operators can only access the accounts of the Business Owner who invited them. An Operator token cannot access:
 
-- Any accounts belonging to other Business Owners
-- Admin endpoints (advisor, branch, or platform management)
+- Accounts belonging to any other Business Owner
+- Admin endpoints (branch, advisor, or platform management)
 - Individual user accounts
-- Business Owner management features (inviting other Operators)
-
----
-
-## Token Expiry
-
-| Token          | Lifetime   | Renewal                                                        |
-|----------------|------------|----------------------------------------------------------------|
-| `accessToken`  | 30 minutes | Call `POST /users/public/v1/auth/refresh` with `refreshToken`  |
-| `refreshToken` | 30 days    | Sign in again after expiry                                     |
+- Business Owner management features (inviting or managing other Operators)

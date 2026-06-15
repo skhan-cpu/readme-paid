@@ -59,4 +59,4 @@ These are the transfer types your clients can initiate. Admin roles view these a
 | **ACH**           | External bank ↔ Checking/Savings | Individual, Business Owner, Operator |
 | **Auto-Payment**  | Scheduled recurring ACH or TBA   | Individual, Business Owner, Operator |
 
-> See [Move Money](../individual-account/move-money) for the client-side transfer API calls.
+> See [Move Money](../individual-user/move-money) for the client-side transfer API calls.

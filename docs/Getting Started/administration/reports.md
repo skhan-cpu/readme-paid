@@ -37,4 +37,4 @@ Reports are available for both client types:
 - **Individual clients** — transaction history, transfer history, account statements, balance trends
 - **Business Owner clients** — business account activity, operator transaction history, transfer reports
 
-> Account statements (monthly PDF download per account) are also accessible to clients directly. See [Account Statements](../individual-account/account-statements) for the client-facing endpoint.
+> Account statements (monthly PDF download per account) are also accessible to clients directly. See [Account Statements](../individual-user/account-statements) for the client-facing endpoint.

@@ -11,7 +11,7 @@ Advisors and admin roles above them manage their client portfolios — Individua
 ## Client Types
 
 <Cards>
-  <Card title="Individual Clients" href="../individual-account" icon="fa-duotone fa-user">Personal account holders who complete KYC verification. Manage their profiles, view accounts, transactions, transfers, and export balances.</Card>
+  <Card title="Individual Clients" href="../individual-user" icon="fa-duotone fa-user">Personal account holders who complete KYC verification. Manage their profiles, view accounts, transactions, transfers, and export balances.</Card>
   <Card title="Business Owner Clients" href="../business-owner" icon="fa-duotone fa-building">Business account holders who complete KYB verification. Manage their business profiles, view business accounts, and oversee Operator access.</Card>
 </Cards>
 

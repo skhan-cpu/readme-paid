@@ -1,5 +1,5 @@
 ---
-title: Individual Account
+title: Individual
 excerpt: Complete guide for individual users — onboarding, accounts, balances, transfers, notifications, KYC, and account closure.
 hidden: false
 ---
