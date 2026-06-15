@@ -10,57 +10,23 @@ TAPP Cash is a modern banking platform that lets you embed financial accounts, t
 
 ## Quickstart
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Get Credentials</strong><br/><br/>
-Contact <a href="mailto:support@tappcash.com">support@tappcash.com</a> to request your account manager credentials. Include your name, organization, environment, and use case. All API requests require a Bearer token.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Sign In &amp; Invite</strong><br/><br/>
-Authenticate as an advisor and send your first invitation in two API calls — sign in to get your <code>accessToken</code>, then invite an individual by email. See <a href="./onboarding">Onboarding</a> for the full flow.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Complete Onboarding</strong><br/><br/>
-The invited user follows a guided 10-step flow — invite token, agreements, password, W9, security questions, phone OTP, KYC, and token exchange. See <a href="./individual-account">Individual Account</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Move Money</strong><br/><br/>
-Transfer funds between a user's own internal accounts (TBA) or pull/push to linked external bank accounts via ACH. See <a href="./individual-account/move-money">Move Money</a> for the full flow.
-</div>
-
-</div>
+<Cards>
+  <Card title="Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Contact support@tappcash.com to request your account manager credentials. Include your name, organization, environment, and use case.</Card>
+  <Card title="Sign In & Invite" href="./onboarding" icon="fa-duotone fa-right-to-bracket">Authenticate as an advisor and send your first invitation — sign in to get your `accessToken`, then invite an individual by email.</Card>
+  <Card title="Complete Onboarding" href="./individual-account" icon="fa-duotone fa-list-check">The invited user follows a guided 10-step flow — invite token, agreements, password, W9, security questions, phone OTP, KYC, and token exchange.</Card>
+  <Card title="Move Money" href="./individual-account/move-money" icon="fa-duotone fa-money-bill-transfer">Transfer funds between a user's own internal accounts (TBA) or pull/push to linked external bank accounts via ACH.</Card>
+</Cards>
 
 ---
 
 ## What can you build?
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Account Manager Workflows</strong><br/><br/>
-Sign in as an advisor, manage your portfolio of individuals, send invitations, and track onboarding status across your branch.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Individual Onboarding</strong><br/><br/>
-Guide users through invitation acceptance, W9 certification, security setup, phone verification, and KYC submission — all via API.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Money Movement</strong><br/><br/>
-Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Account Activity</strong><br/><br/>
-Real-time balances, full transaction history with status filtering, and a notification system with unread-count badges.
-</div>
-
-</div>
+<Cards>
+  <Card title="Account Manager Workflows" href="./onboarding" icon="fa-duotone fa-briefcase">Sign in as an advisor, manage your portfolio of individuals, send invitations, and track onboarding status across your branch.</Card>
+  <Card title="Individual Onboarding" href="./individual-account" icon="fa-duotone fa-user-check">Guide users through invitation acceptance, W9 certification, security setup, phone verification, and KYC submission — all via API.</Card>
+  <Card title="Money Movement" href="./individual-account/move-money" icon="fa-duotone fa-arrow-right-arrow-left">Internal transfers between a user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts.</Card>
+  <Card title="Account Activity" href="./individual-account/accounts" icon="fa-duotone fa-chart-line">Real-time balances, full transaction history with status filtering, and a notification system with unread-count badges.</Card>
+</Cards>
 
 ---
 
@@ -68,46 +34,15 @@ Real-time balances, full transaction history with status filtering, and a notifi
 
 Step-by-step guides for common integration patterns.
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Account Manager: Sign in &amp; Invite</strong><br/><br/>
-Authenticate as advisor, list managed individuals, and send an invitation.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Individual Onboarding</strong><br/><br/>
-Steps 1–10: validate token → accept invite → KYC → token exchange.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Sign in as Returning User</strong><br/><br/>
-Standard login flow and token refresh for individual users.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Internal Transfer (TBA)</strong><br/><br/>
-Preview fees and move funds between a user's own accounts.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>External Account Linking (ACH)</strong><br/><br/>
-BaaS token → Plaid link → pull or push funds.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Notifications</strong><br/><br/>
-Unread count, list notifications, mark as read.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Account Closure</strong><br/><br/>
-Two-step OTP-confirmed deletion flow.
-</div>
-
-</div>
-
-> **Available Soon** — detailed recipe pages with full curl examples and step-by-step walkthroughs are coming shortly.
+<Cards>
+  <Card title="Account Manager: Sign In & Invite" href="./onboarding" icon="fa-duotone fa-user-tie">Authenticate as advisor, list managed individuals, and send an invitation.</Card>
+  <Card title="Individual Registration" href="./individual-account/registration" icon="fa-duotone fa-id-card">Steps 1–10: validate token → accept invite → KYC → token exchange.</Card>
+  <Card title="Sign In as Returning User" href="./authentication" icon="fa-duotone fa-arrow-right-to-bracket">Standard login flow and token refresh for individual users.</Card>
+  <Card title="Internal Transfer (TBA)" href="./individual-account/move-money" icon="fa-duotone fa-shuffle">Preview fees and move funds between a user's own accounts.</Card>
+  <Card title="External Account Linking (ACH)" href="./individual-account/move-money" icon="fa-duotone fa-building-columns">BaaS token → Plaid link → pull or push funds.</Card>
+  <Card title="Notifications" href="./individual-account/notifications" icon="fa-duotone fa-bell">Unread count, list notifications, mark as read.</Card>
+  <Card title="Account Closure" href="./individual-account/account-closure" icon="fa-duotone fa-circle-xmark">Two-step OTP-confirmed deletion flow.</Card>
+</Cards>
 
 ---
 

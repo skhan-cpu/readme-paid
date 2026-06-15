@@ -10,49 +10,16 @@ This section covers everything an individual user can do after receiving an acco
 
 ## What can you do?
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0">
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Onboarding</strong><br/><br/>
-Complete the 10-step flow: validate invite token, accept agreements, set password, W9, security questions, phone OTP, KYC, and token exchange. See <a href="./registration">Registration</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Accounts &amp; Balances</strong><br/><br/>
-View total balance, list all accounts, and get per-account details including available and pending balances. See <a href="./accounts">Accounts</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Transactions</strong><br/><br/>
-Full paginated transaction history with status filtering. See <a href="./transactions">Transactions</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Account Statements</strong><br/><br/>
-Download monthly PDF statements for any account by year and month. See <a href="./account-statements">Account Statements</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Move Money</strong><br/><br/>
-Internal transfers between the user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts via Plaid. See <a href="./move-money">Move Money</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Notifications</strong><br/><br/>
-Unread count badge, full notification list, mark all as read, and mark individual notifications as read. See <a href="./notifications">Notifications</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>KYC</strong><br/><br/>
-Check KYC verification status and respond to document verification requests. See <a href="./kyc">KYC</a>.
-</div>
-
-<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px">
-<strong>Account Closure</strong><br/><br/>
-Handle the two-step OTP-confirmed account deletion flow. See <a href="./account-closure">Account Closure</a>.
-</div>
-
-</div>
+<Cards>
+  <Card title="Registration" href="./registration" icon="fa-duotone fa-list-check">Complete the 10-step flow: validate invite token, accept agreements, set password, W9, security questions, phone OTP, KYC, and token exchange.</Card>
+  <Card title="Accounts & Balances" href="./accounts" icon="fa-duotone fa-wallet">View total balance, list all accounts, and get per-account details including available and pending balances.</Card>
+  <Card title="Transactions" href="./transactions" icon="fa-duotone fa-receipt">Full paginated transaction history with status filtering and individual transaction details.</Card>
+  <Card title="Account Statements" href="./account-statements" icon="fa-duotone fa-file-invoice">Download monthly PDF statements for any account by year and month.</Card>
+  <Card title="Move Money" href="./move-money" icon="fa-duotone fa-money-bill-transfer">Internal transfers between the user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts via Plaid.</Card>
+  <Card title="Notifications" href="./notifications" icon="fa-duotone fa-bell">Unread count badge, full notification list, mark all as read, and mark individual notifications as read.</Card>
+  <Card title="KYC" href="./kyc" icon="fa-duotone fa-shield-check">Check KYC verification status and respond to document verification requests.</Card>
+  <Card title="Account Closure" href="./account-closure" icon="fa-duotone fa-circle-xmark">Handle the two-step OTP-confirmed account deletion flow.</Card>
+</Cards>
 
 ---
 
