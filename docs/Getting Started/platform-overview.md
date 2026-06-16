@@ -78,7 +78,7 @@ flowchart TD
 | Environment | Base URL                                                    |
 |-------------|-------------------------------------------------------------|
 | Staging     | `https://api-test.stage2.tappbank.com`                      |
-| Production  | Contact [support@tappcash.com](mailto:support@tappcash.com) |
+| Production  | Contact **support@tappcash.com** |
 
 All API paths are appended to the base URL. Example:
 
@@ -109,4 +109,4 @@ Endpoints follow a versioned path pattern:
 
 **Staging** is for development and testing. Use test credentials and dummy data — no real money moves. Staging credentials will not work against the production base URL.
 
-**Production** requires separate credentials issued by the TAPP Cash platform team. Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.
+**Production** requires separate credentials issued by the TAPP Cash platform team. Contact **support@tappcash.com** to request production access.

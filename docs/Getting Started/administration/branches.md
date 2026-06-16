@@ -104,7 +104,7 @@ Returns a paginated list of branches with their active Head Branch Manager's con
 
 `POST /branches/private/v1/branch/import`
 
-Upload a CSV file as `multipart/form-data`. Contact [support@tappcash.com](mailto:support@tappcash.com) for the CSV template.
+Upload a CSV file as `multipart/form-data`. Contact **support@tappcash.com** for the CSV template.
 
 ---
 

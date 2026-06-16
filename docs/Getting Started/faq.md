@@ -9,7 +9,7 @@ Frequently asked questions about integrating with the TAPP Cash API.
 
 **How do I get an API key?**
 
-Contact [support@tappcash.com](mailto:support@tappcash.com) with your name, organization, environment (staging or production), and a brief description of your use case. The team will provision your organization's credentials and reply with your login email and a temporary password.
+Contact **support@tappcash.com** with your name, organization, environment (staging or production), and a brief description of your use case. The team will provision your organization's credentials and reply with your login email and a temporary password.
 
 **My access token expired. What do I do?**
 
@@ -75,4 +75,4 @@ The account has blockers preventing closure: a positive balance, pending transac
 
 ## Support
 
-For issues not covered here, contact [support@tappcash.com](mailto:support@tappcash.com).
+For issues not covered here, contact **support@tappcash.com**.

@@ -11,7 +11,7 @@ Getting started with TAPP Cash involves three phases: requesting credentials, si
 
 Organization credentials are provisioned by the TAPP Cash team — they are not self-service.
 
-Email **[support@tappcash.com](mailto:support@tappcash.com)** with the following details:
+Email **support@tappcash.com** with the following details:
 
 | Field         | Description                                       |
 |---------------|---------------------------------------------------|

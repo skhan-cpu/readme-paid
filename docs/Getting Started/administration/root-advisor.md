@@ -21,7 +21,7 @@ The Root Advisor is the highest admin role in TAPP Cash — one per organization
 
 ## First-Time Setup Workflow
 
-After receiving credentials from [support@tappcash.com](mailto:support@tappcash.com), the Root Advisor sets up the organization's structure before any clients can be invited.
+After receiving credentials from **support@tappcash.com**, the Root Advisor sets up the organization's structure before any clients can be invited.
 
 ```mermaid
 flowchart TD
