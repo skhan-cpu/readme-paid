@@ -97,7 +97,7 @@ Returns the full client profile including KYC status, personal details, and assi
 - **Auth**: Root Advisor or Head Branch Manager access token
 - **Body**: `multipart/form-data` with a CSV file
 
-Contact **support@tappcash.com** for the CSV template format.
+Contact `support@tappcash.com` for the CSV template format.
 
 ---
 
