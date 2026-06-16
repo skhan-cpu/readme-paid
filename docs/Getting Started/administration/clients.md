@@ -10,8 +10,8 @@ Advisors and higher admin roles manage portfolios of Individual and Business Own
 ## Client Types
 
 <Cards>
-  <Card title="Individual Clients" href="../individual-user" icon="fa-duotone fa-user">Personal account holders who complete KYC verification. Manage their profiles, view accounts, transactions, transfers, and export balances.</Card>
-  <Card title="Business Owner Clients" href="../business-owner" icon="fa-duotone fa-building">Business account holders who complete KYB verification. Manage their business profiles, view business accounts, and oversee Operator access.</Card>
+  <Card title="Individual Clients" href="/docs/individual-user" icon="fa-duotone fa-user">Personal account holders who complete KYC verification. Manage their profiles, view accounts, transactions, transfers, and export balances.</Card>
+  <Card title="Business Owner Clients" href="/docs/business-owner" icon="fa-duotone fa-building">Business account holders who complete KYB verification. Manage their business profiles, view business accounts, and oversee Operator access.</Card>
 </Cards>
 
 ---

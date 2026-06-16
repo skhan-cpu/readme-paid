@@ -1,4 +1,5 @@
 ---
+slug: operator-registration
 title: Registration
 hidden: false
 ---

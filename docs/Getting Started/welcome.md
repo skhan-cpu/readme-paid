@@ -12,12 +12,12 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 ## What can you build?
 
 <Cards>
-  <Card title="Identity Verification" href="./individual-user/registration" icon="fa-duotone fa-id-card">Compliant KYC and KYB onboarding with phone OTP, security questions, W9 certification, and identity documents.</Card>
-  <Card title="Operator Delegation" href="./business-owner" icon="fa-duotone fa-users-gear">Business Owners invite team members as Operators with scoped permissions — transfer funds, run ACH, or schedule payments.</Card>
-  <Card title="Money Movement" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Internal transfers between accounts (TBA) and external ACH via Plaid — with fee preview before every execution.</Card>
-  <Card title="Auto-Payments" href="./operator/auto-payments" icon="fa-duotone fa-calendar-check">Recurring scheduled payments — weekly, biweekly, or monthly — with a fixed end date, spend cap, or until cancelled.</Card>
-  <Card title="Admin Hierarchy" href="./administration/branches" icon="fa-duotone fa-sitemap">Create branches, assign admin roles at every tier, and configure transfer approval rules per branch.</Card>
-  <Card title="Reporting & Exports" href="./administration/clients" icon="fa-duotone fa-chart-mixed">Balance charts, transaction history, PDF statements, and XLSX portfolio exports — all scoped by admin role.</Card>
+  <Card title="Identity Verification" href="/docs/individual-registration" icon="fa-duotone fa-id-card">Compliant KYC and KYB onboarding with phone OTP, security questions, W9 certification, and identity documents.</Card>
+  <Card title="Operator Delegation" href="/docs/business-owner" icon="fa-duotone fa-users-gear">Business Owners invite team members as Operators with scoped permissions — transfer funds, run ACH, or schedule payments.</Card>
+  <Card title="Money Movement" href="/docs/individual-move-money" icon="fa-duotone fa-money-bill-transfer">Internal transfers between accounts (TBA) and external ACH via Plaid — with fee preview before every execution.</Card>
+  <Card title="Auto-Payments" href="/docs/auto-payments" icon="fa-duotone fa-calendar-check">Recurring scheduled payments — weekly, biweekly, or monthly — with a fixed end date, spend cap, or until cancelled.</Card>
+  <Card title="Admin Hierarchy" href="/docs/branches" icon="fa-duotone fa-sitemap">Create branches, assign admin roles at every tier, and configure transfer approval rules per branch.</Card>
+  <Card title="Reporting & Exports" href="/docs/clients" icon="fa-duotone fa-chart-mixed">Balance charts, transaction history, PDF statements, and XLSX portfolio exports — all scoped by admin role.</Card>
 </Cards>
 
 ---
@@ -26,9 +26,9 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 
 <Cards>
   <Card title="1. Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Email support@tappcash.com with your org name and environment to receive Root Advisor credentials and your staging base URL.</Card>
-  <Card title="2. Admin Hierarchy" href="./onboarding" icon="fa-duotone fa-sitemap">Sign in as Root Advisor, change your temporary password, create branches, and assign admin roles.</Card>
-  <Card title="3. Invite a Client" href="./individual-user/registration" icon="fa-duotone fa-paper-plane">Send your first invitation — Individual for KYC or Business Owner for KYB — and the client begins onboarding.</Card>
-  <Card title="4. Move Money" href="./individual-user/move-money" icon="fa-duotone fa-money-bill-transfer">Preview and execute a TBA transfer between accounts, or link an external bank via Plaid for ACH.</Card>
+  <Card title="2. Admin Hierarchy" href="/docs/onboarding" icon="fa-duotone fa-sitemap">Sign in as Root Advisor, change your temporary password, create branches, and assign admin roles.</Card>
+  <Card title="3. Invite a Client" href="/docs/individual-registration" icon="fa-duotone fa-paper-plane">Send your first invitation — Individual for KYC or Business Owner for KYB — and the client begins onboarding.</Card>
+  <Card title="4. Move Money" href="/docs/individual-move-money" icon="fa-duotone fa-money-bill-transfer">Preview and execute a TBA transfer between accounts, or link an external bank via Plaid for ACH.</Card>
 </Cards>
 
 ---
@@ -84,7 +84,7 @@ so you can track your current usage.
 | `X-RateLimit-Reset`     | Unix timestamp when the window resets          |
 
 When the limit is exceeded the API returns `429 Too Many Requests`. Back off and retry after the time indicated by
-`X-RateLimit-Reset`. See [Error Handling](./error-handling) for the full retry strategy.
+`X-RateLimit-Reset`. See [Error Handling](/docs/error-handling) for the full retry strategy.
 
 ---
 

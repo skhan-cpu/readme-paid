@@ -1,4 +1,5 @@
 ---
+slug: business-move-money
 title: Move Money
 hidden: false
 ---

@@ -105,7 +105,7 @@ Advisors can invite two types of clients: **Individual** users and **Business Ow
 }
 ```
 
-On success, the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](./individual-user) onboarding steps.
+On success, the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](/docs/individual-user) onboarding steps.
 
 **Invite a Business Owner**
 

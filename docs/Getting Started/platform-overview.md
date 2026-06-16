@@ -35,10 +35,10 @@ flowchart TD
 ## Admin Roles
 
 <Cards>
-  <Card title="Root Advisor" href="./onboarding" icon="fa-duotone fa-crown">Top-level admin. Manages all branches and admin tiers with full visibility across every client portfolio and report.</Card>
-  <Card title="Head Branch Manager" href="./onboarding" icon="fa-duotone fa-user-shield">Manages Advisors across branches. Oversees all client transfers, auto-payments, and reports for managed branches.</Card>
-  <Card title="Branch Manager" href="./onboarding" icon="fa-duotone fa-user-gear">Manages Advisors within a branch, reviews client transfer requests and portfolios, and configures approval settings.</Card>
-  <Card title="Advisor" href="./onboarding" icon="fa-duotone fa-user-tie">Front-line role. Invites and manages Individual and Business Owner clients — transfers, auto-payments, and reports.</Card>
+  <Card title="Root Advisor" href="/docs/onboarding" icon="fa-duotone fa-crown">Top-level admin. Manages all branches and admin tiers with full visibility across every client portfolio and report.</Card>
+  <Card title="Head Branch Manager" href="/docs/onboarding" icon="fa-duotone fa-user-shield">Manages Advisors across branches. Oversees all client transfers, auto-payments, and reports for managed branches.</Card>
+  <Card title="Branch Manager" href="/docs/onboarding" icon="fa-duotone fa-user-gear">Manages Advisors within a branch, reviews client transfer requests and portfolios, and configures approval settings.</Card>
+  <Card title="Advisor" href="/docs/onboarding" icon="fa-duotone fa-user-tie">Front-line role. Invites and manages Individual and Business Owner clients — transfers, auto-payments, and reports.</Card>
 </Cards>
 
 ---
@@ -46,9 +46,9 @@ flowchart TD
 ## Client-Facing Roles
 
 <Cards>
-  <Card title="Individual" href="./individual-user" icon="fa-duotone fa-user">Holds personal checking and savings accounts. Completes KYC, initiates transfers and ACH, and views transaction history.</Card>
-  <Card title="Business Owner" href="./business-owner" icon="fa-duotone fa-building">Holds business accounts. Completes KYB verification and invites Operators to manage accounts on their behalf.</Card>
-  <Card title="Operator" href="./operator" icon="fa-duotone fa-user-lock">Acts on behalf of a Business Owner with assigned permissions — transfer funds, run ACH, or schedule auto-payments.</Card>
+  <Card title="Individual" href="/docs/individual-user" icon="fa-duotone fa-user">Holds personal checking and savings accounts. Completes KYC, initiates transfers and ACH, and views transaction history.</Card>
+  <Card title="Business Owner" href="/docs/business-owner" icon="fa-duotone fa-building">Holds business accounts. Completes KYB verification and invites Operators to manage accounts on their behalf.</Card>
+  <Card title="Operator" href="/docs/operator" icon="fa-duotone fa-user-lock">Acts on behalf of a Business Owner with assigned permissions — transfer funds, run ACH, or schedule auto-payments.</Card>
 </Cards>
 
 ---

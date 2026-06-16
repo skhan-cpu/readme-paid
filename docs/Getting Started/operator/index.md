@@ -1,4 +1,5 @@
 ---
+slug: operator
 title: Operator
 hidden: false
 ---
@@ -10,11 +11,11 @@ Operators are team members invited by a Business Owner to manage business accoun
 ## What Operators can do
 
 <Cards>
-  <Card title="Registration" href="./registration" icon="fa-duotone fa-list-check">Complete the KYC onboarding flow — validate invite token, set password, verify phone, submit identity, and exchange for a full access token.</Card>
-  <Card title="Accounts & Balances" href="./accounts" icon="fa-duotone fa-wallet">View the Business Owner's accounts, account details, bank details, and total balance across all accounts.</Card>
-  <Card title="Move Money" href="./move-money" icon="fa-duotone fa-money-bill-transfer">Initiate internal TBA transfers and ACH external transfers — requires `transferFunds` or `transferACH` permission.</Card>
-  <Card title="Auto-Payments" href="./auto-payments" icon="fa-duotone fa-clock-rotate-left">Set up and manage recurring scheduled payments — requires the `autoPay` permission.</Card>
-  <Card title="Transactions" href="./transactions" icon="fa-duotone fa-receipt">View the full transaction history for the Business Owner's accounts.</Card>
+  <Card title="Registration" href="/docs/operator-registration" icon="fa-duotone fa-list-check">Complete the KYC onboarding flow — validate invite token, set password, verify phone, submit identity, and exchange for a full access token.</Card>
+  <Card title="Accounts & Balances" href="/docs/operator-accounts" icon="fa-duotone fa-wallet">View the Business Owner's accounts, account details, bank details, and total balance across all accounts.</Card>
+  <Card title="Move Money" href="/docs/operator-move-money" icon="fa-duotone fa-money-bill-transfer">Initiate internal TBA transfers and ACH external transfers — requires `transferFunds` or `transferACH` permission.</Card>
+  <Card title="Auto-Payments" href="/docs/auto-payments" icon="fa-duotone fa-clock-rotate-left">Set up and manage recurring scheduled payments — requires the `autoPay` permission.</Card>
+  <Card title="Transactions" href="/docs/operator-transactions" icon="fa-duotone fa-receipt">View the full transaction history for the Business Owner's accounts.</Card>
 </Cards>
 
 ---
@@ -39,7 +40,7 @@ flowchart TD
     J --> K(["Operator active — business accounts accessible"])
 ```
 
-See [Registration](./registration) for the full step-by-step guide.
+See [Registration](/docs/operator-registration) for the full step-by-step guide.
 
 ---
 

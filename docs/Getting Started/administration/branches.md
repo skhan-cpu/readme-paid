@@ -72,7 +72,7 @@ flowchart TD
 | `address.zipCode` | string | ✓ | US ZIP code |
 | `address.country` | string | ✓ | `"US"` |
 
-> After creating a branch, assign a Head Branch Manager and Branch Manager to it — see [Root Advisor](./root-advisor) for those flows.
+> After creating a branch, assign a Head Branch Manager and Branch Manager to it — see [Root Advisor](/docs/root-advisor) for those flows.
 
 ---
 
@@ -166,7 +166,7 @@ After creating a branch, assign Head Branch Managers, Branch Managers, and Advis
 
 `POST /branches/private/v1/branch/:id/advisor`
 
-See the [Root Advisor](./root-advisor) and [Advisor](./advisor) pages for full request body schemas.
+See the [Root Advisor](/docs/root-advisor) and [Advisor](/docs/advisor) pages for full request body schemas.
 
 ---
 

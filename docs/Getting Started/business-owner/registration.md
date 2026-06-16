@@ -1,4 +1,5 @@
 ---
+slug: business-registration
 title: Registration & KYB
 hidden: false
 ---

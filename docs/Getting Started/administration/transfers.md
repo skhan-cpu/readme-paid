@@ -11,7 +11,7 @@ Admin roles have visibility into client money movement — depending on your rol
 
 | Concept             | Description                                                                                          |
 |---------------------|------------------------------------------------------------------------------------------------------|
-| **Transfer Request** | A pending money movement initiated by a client. May require Branch Manager approval before executing — depending on your branch's [approval settings](./branches). |
+| **Transfer Request** | A pending money movement initiated by a client. May require Branch Manager approval before executing — depending on your branch's [approval settings](/docs/branches). |
 | **Transfer**         | A completed or in-progress money movement. Includes both internal TBA transfers and ACH transactions. |
 | **Auto-Payment**     | A recurring scheduled transfer set up by a client or Operator. Runs automatically on the configured frequency. |
 

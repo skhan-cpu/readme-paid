@@ -1,4 +1,5 @@
 ---
+slug: operator-accounts
 title: Accounts & Balances
 hidden: false
 ---

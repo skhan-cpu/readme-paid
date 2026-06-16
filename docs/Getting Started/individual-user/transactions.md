@@ -1,4 +1,5 @@
 ---
+slug: individual-transactions
 title: Transactions
 hidden: false
 ---

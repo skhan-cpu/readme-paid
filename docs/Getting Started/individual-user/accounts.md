@@ -1,4 +1,5 @@
 ---
+slug: individual-accounts
 title: Accounts
 hidden: false
 ---

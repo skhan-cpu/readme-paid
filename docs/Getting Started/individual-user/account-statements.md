@@ -14,7 +14,7 @@ Download monthly PDF statements for any account.
 
 | Parameter | Description |
 |-----------|-------------|
-| `id` | Account ID from the [Accounts](./accounts) list |
+| `id` | Account ID from the [Accounts](/docs/individual-accounts) list |
 | `year` | Four-digit year, e.g. `2024` |
 | `month` | Two-digit month, e.g. `03` |
 
