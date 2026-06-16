@@ -25,7 +25,7 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 ## Quickstart
 
 <Cards>
-  <Card title="1. Get Credentials" href="mailto:support@tappcash.com" icon="fa-duotone fa-key">Email support@tappcash.com with your org name and environment to receive Root Advisor credentials and your staging base URL.</Card>
+  <Card title="1. Get Credentials" icon="fa-duotone fa-key">Email [support@tappcash.com](mailto:support@tappcash.com) with your org name and environment to receive Root Advisor credentials and your staging base URL.</Card>
   <Card title="2. Admin Hierarchy" href="/docs/onboarding" icon="fa-duotone fa-sitemap">Sign in as Root Advisor, change your temporary password, create branches, and assign admin roles.</Card>
   <Card title="3. Invite a Client" href="/docs/individual-registration" icon="fa-duotone fa-paper-plane">Send your first invitation — Individual for KYC or Business Owner for KYB — and the client begins onboarding.</Card>
   <Card title="4. Move Money" href="/docs/individual-move-money" icon="fa-duotone fa-money-bill-transfer">Preview and execute a TBA transfer between accounts, or link an external bank via Plaid for ACH.</Card>
