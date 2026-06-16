@@ -3,7 +3,7 @@ title: Reports
 hidden: false
 ---
 
-TappCash provides two categories of reports for admin roles: **client reports** scoped to individual client activity, and **general system reports** that aggregate activity across the branch or organization.
+TAPP Cash provides two categories of reports for admin roles: **client reports** scoped to individual client activity, and **general system reports** that aggregate activity across the branch or organization.
 
 ---
 

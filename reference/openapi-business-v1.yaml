@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: TappCash Business Owner API
+  title: TAPP Cash Business Owner API
   version: 1.0.0
   description: >
     The **Business Owner API** covers the complete lifecycle of a Business Owner
@@ -1393,7 +1393,7 @@ paths:
       operationId: boPreviewACHTransfer
       summary: Preview ACH transfer
       description: >
-        Calculates fees for an ACH transfer between a TappCash account and a
+        Calculates fees for an ACH transfer between a TAPP Cash account and a
         linked external bank account. Always preview before executing.
       tags: [Transfers]
       security:
@@ -1444,7 +1444,7 @@ paths:
       operationId: boCreateACHTransfer
       summary: Create ACH transfer
       description: >
-        Executes an ACH pull or push between a TappCash account and a linked
+        Executes an ACH pull or push between a TAPP Cash account and a linked
         external bank account. Confirm amounts from the preview before calling.
       tags: [Transfers]
       security:
@@ -1503,7 +1503,7 @@ paths:
                   type: string
                 accountIdTo:
                   type: string
-                  description: "TappCash account ID (use this or accountToACH, not both)"
+                  description: "TAPP Cash account ID (use this or accountToACH, not both)"
                 amount:
                   type: string
                   format: decimal

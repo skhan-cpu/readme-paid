@@ -3,13 +3,13 @@ title: Roles & Permissions
 hidden: false
 ---
 
-TappCash uses a four-tier admin hierarchy where each role is scoped to a specific level of access — tokens are role-bound, and calling an endpoint outside your role returns `403 Forbidden`.
+TAPP Cash uses a four-tier admin hierarchy where each role is scoped to a specific level of access — tokens are role-bound, and calling an endpoint outside your role returns `403 Forbidden`.
 
 ---
 
 ## Root Advisor
 
-The highest admin tier. Created during organization onboarding by the TappCash team.
+The highest admin tier. Created during organization onboarding by the TAPP Cash team.
 
 **Access:**
 - Full visibility across the entire organization

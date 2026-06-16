@@ -34,7 +34,7 @@ Check the Operator's current permissions before rendering transfer UI:
 
 ## Internal Transfer — TBA (Transfer Between Accounts)
 
-TBA moves funds between two of the Business Owner's accounts within TappCash. Always preview before executing — preview calculates the fee and confirms available balance.
+TBA moves funds between two of the Business Owner's accounts within TAPP Cash. Always preview before executing — preview calculates the fee and confirms available balance.
 
 ### Preview
 
@@ -96,7 +96,7 @@ Show the fee breakdown to the user before they confirm.
 
 ## ACH Transfer (External Bank Account)
 
-ACH moves funds between a TappCash account and an external bank account linked via Plaid.
+ACH moves funds between a TAPP Cash account and an external bank account linked via Plaid.
 
 ```mermaid
 flowchart LR

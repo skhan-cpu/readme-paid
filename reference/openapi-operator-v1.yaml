@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: TappCash Operator API
+  title: TAPP Cash Operator API
   version: 1.0.0
   description: >
     The **Operator API** covers the lifecycle of an Operator user — invited by

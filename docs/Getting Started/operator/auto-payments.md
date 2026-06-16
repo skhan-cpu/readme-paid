@@ -93,7 +93,7 @@ To send to an external bank account directly (without a linked Plaid account):
 | Field | Type | Required | Notes |
 |-------|------|:--------:|-------|
 | `accountIdFrom` | string | ✓ | Source account ID |
-| `accountIdTo` | string | | Destination TappCash account |
+| `accountIdTo` | string | | Destination TAPP Cash account |
 | `accountToACH` | object | | External bank account (instead of `accountIdTo`) |
 | `amount` | string (decimal) | ✓ | Per-period payment amount, must be > 0 |
 | `period` | string | ✓ | `weekly`, `biweekly`, `monthly`, or `one_time` |

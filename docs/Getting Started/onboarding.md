@@ -3,13 +3,13 @@ title: Onboarding
 hidden: false
 ---
 
-Getting started with TappCash involves three phases: requesting credentials, signing in and configuring your environment, and setting up your admin hierarchy to begin inviting clients.
+Getting started with TAPP Cash involves three phases: requesting credentials, signing in and configuring your environment, and setting up your admin hierarchy to begin inviting clients.
 
 ---
 
 ## Step 1 — Request Credentials
 
-Organization credentials are provisioned by the TappCash team — they are not self-service.
+Organization credentials are provisioned by the TAPP Cash team — they are not self-service.
 
 Email **[support@tappcash.com](mailto:support@tappcash.com)** with the following details:
 

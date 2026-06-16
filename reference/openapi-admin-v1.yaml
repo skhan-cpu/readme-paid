@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: TappCash Administration API
+  title: TAPP Cash Administration API
   version: 1.0.0
   description: >
     The **Administration API** covers everything an admin user (Root Advisor,

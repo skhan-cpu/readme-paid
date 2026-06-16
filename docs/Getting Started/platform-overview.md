@@ -3,13 +3,13 @@ title: Platform Overview
 hidden: false
 ---
 
-TappCash is a financial platform API that gives organizations programmatic control over the full banking lifecycle — covering role hierarchy, user types, environments, and key concepts from admin setup through client operations.
+TAPP Cash is a financial platform API that gives organizations programmatic control over the full banking lifecycle — covering role hierarchy, user types, environments, and key concepts from admin setup through client operations.
 
 ---
 
 ## Role Hierarchy
 
-TappCash organizes users into two groups: **admin roles** that manage the organization and its clients, and **client-facing roles** that hold and operate financial accounts.
+TAPP Cash organizes users into two groups: **admin roles** that manage the organization and its clients, and **client-facing roles** that hold and operate financial accounts.
 
 ```mermaid
 flowchart TD
@@ -109,4 +109,4 @@ Endpoints follow a versioned path pattern:
 
 **Staging** is for development and testing. Use test credentials and dummy data — no real money moves. Staging credentials will not work against the production base URL.
 
-**Production** requires separate credentials issued by the TappCash platform team. Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.
+**Production** requires separate credentials issued by the TAPP Cash platform team. Contact [support@tappcash.com](mailto:support@tappcash.com) to request production access.

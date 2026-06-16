@@ -3,7 +3,7 @@ title: Admin Management
 hidden: false
 ---
 
-The admin layer of TappCash gives your organization full programmatic control over its internal structure and client operations — from the Root Advisor at the top down to the front-line Advisor, each role has a defined scope covering branches, portfolios, transfers, and reports.
+The admin layer of TAPP Cash gives your organization full programmatic control over its internal structure and client operations — from the Root Advisor at the top down to the front-line Advisor, each role has a defined scope covering branches, portfolios, transfers, and reports.
 
 ---
 

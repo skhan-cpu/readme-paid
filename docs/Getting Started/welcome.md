@@ -3,9 +3,9 @@ title: Welcome to TAPP Cash
 hidden: false
 ---
 
-TappCash is a financial platform API that lets organizations embed banking capabilities into their products. With TappCash, you can build and manage the full client lifecycle — from inviting users and verifying their identity through daily banking operations including transfers, account management, and reporting.
+TAPP Cash is a financial platform API that lets organizations embed banking capabilities into their products. With TAPP Cash, you can build and manage the full client lifecycle — from inviting users and verifying their identity through daily banking operations including transfers, account management, and reporting.
 
-These docs are for engineering teams integrating the TappCash API on behalf of your organization.
+These docs are for engineering teams integrating the TAPP Cash API on behalf of your organization.
 
 ---
 
