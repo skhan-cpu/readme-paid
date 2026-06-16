@@ -1,5 +1,4 @@
 ---
-slug: business-accounts
 title: Accounts & Balances
 hidden: false
 ---

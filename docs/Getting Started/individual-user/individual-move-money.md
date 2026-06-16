@@ -1,5 +1,4 @@
 ---
-slug: individual-move-money
 title: Move Money
 hidden: false
 ---

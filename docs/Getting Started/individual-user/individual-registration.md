@@ -1,5 +1,4 @@
 ---
-slug: individual-registration
 title: Registration
 hidden: false
 ---

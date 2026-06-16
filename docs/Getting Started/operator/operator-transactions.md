@@ -1,5 +1,4 @@
 ---
-slug: operator-transactions
 title: Transactions
 hidden: false
 ---

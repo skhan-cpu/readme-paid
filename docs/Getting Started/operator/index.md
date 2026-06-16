@@ -1,5 +1,4 @@
 ---
-slug: operator
 title: Operator
 hidden: false
 ---

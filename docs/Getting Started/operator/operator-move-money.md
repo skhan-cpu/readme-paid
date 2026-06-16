@@ -1,5 +1,4 @@
 ---
-slug: operator-move-money
 title: Move Money
 hidden: false
 ---

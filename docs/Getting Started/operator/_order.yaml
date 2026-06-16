@@ -1,6 +1,6 @@
 - index
-- registration
-- accounts
-- move-money
+- operator-registration
+- operator-accounts
+- operator-move-money
 - auto-payments
-- transactions
+- operator-transactions

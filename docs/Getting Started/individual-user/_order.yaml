@@ -1,9 +1,9 @@
 - index
-- registration
-- accounts
-- transactions
+- individual-registration
+- individual-accounts
+- individual-transactions
 - account-statements
-- move-money
+- individual-move-money
 - notifications
 - kyc
 - account-closure

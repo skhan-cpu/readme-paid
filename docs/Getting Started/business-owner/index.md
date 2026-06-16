@@ -1,5 +1,4 @@
 ---
-slug: business-owner
 title: Business Owner
 hidden: false
 ---

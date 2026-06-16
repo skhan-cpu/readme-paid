@@ -1,5 +1,4 @@
 ---
-slug: administration
 title: Admin Management
 hidden: false
 ---

@@ -1,5 +1,4 @@
 ---
-slug: individual-user
 title: Individual
 hidden: false
 ---
