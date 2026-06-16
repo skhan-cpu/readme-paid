@@ -1,13 +1,13 @@
 - welcome
 - platform-overview
 - onboarding
-- auto-payments
-- authentication
 - administration
 - individual-user
 - business-owner
 - operator
+- auto-payments
+- authentication
+- api-response
+- error-handling
 - faq
 - glossary
-- error-handling
-- api-response
