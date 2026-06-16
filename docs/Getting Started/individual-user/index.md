@@ -17,6 +17,7 @@ Everything an Individual user can do after receiving an Advisor's invitation —
   <Card title="Move Money" href="/docs/individual-move-money" icon="fa-duotone fa-money-bill-transfer">Internal transfers between the user's own accounts (TBA) and ACH pulls/pushes to linked external bank accounts via Plaid.</Card>
   <Card title="Notifications" href="/docs/notifications" icon="fa-duotone fa-bell">Unread count badge, full notification list, mark all as read, and mark individual notifications as read.</Card>
   <Card title="KYC" href="/docs/kyc" icon="fa-duotone fa-shield-check">Check KYC verification status and respond to document verification requests.</Card>
+  <Card title="Auto-Payments" href="/docs/individual-auto-payments" icon="fa-duotone fa-calendar-check">Schedule recurring transfers — weekly, biweekly, or monthly — internal or to an external bank via ACH.</Card>
   <Card title="Account Closure" href="/docs/account-closure" icon="fa-duotone fa-circle-xmark">Handle the two-step OTP-confirmed account deletion flow.</Card>
 </Cards>
 

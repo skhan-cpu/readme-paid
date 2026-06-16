@@ -35,10 +35,10 @@ flowchart TD
 ## Admin Roles
 
 <Cards>
-  <Card title="Root Advisor" href="/docs/onboarding" icon="fa-duotone fa-crown">Top-level admin. Manages all branches and admin tiers with full visibility across every client portfolio and report.</Card>
-  <Card title="Head Branch Manager" href="/docs/onboarding" icon="fa-duotone fa-user-shield">Manages Advisors across branches. Oversees all client transfers, auto-payments, and reports for managed branches.</Card>
-  <Card title="Branch Manager" href="/docs/onboarding" icon="fa-duotone fa-user-gear">Manages Advisors within a branch, reviews client transfer requests and portfolios, and configures approval settings.</Card>
-  <Card title="Advisor" href="/docs/onboarding" icon="fa-duotone fa-user-tie">Front-line role. Invites and manages Individual and Business Owner clients — transfers, auto-payments, and reports.</Card>
+  <Card title="Root Advisor" href="/docs/root-advisor" icon="fa-duotone fa-crown">Top-level admin. Manages all branches and admin tiers with full visibility across every client portfolio and report.</Card>
+  <Card title="Head Branch Manager" href="/docs/head-branch-manager" icon="fa-duotone fa-user-shield">Manages Advisors across branches. Oversees all client transfers, auto-payments, and reports for managed branches.</Card>
+  <Card title="Branch Manager" href="/docs/branch-manager" icon="fa-duotone fa-user-gear">Manages Advisors within a branch, reviews client transfer requests and portfolios, and configures approval settings.</Card>
+  <Card title="Advisor" href="/docs/advisor" icon="fa-duotone fa-user-tie">Front-line role. Invites and manages Individual and Business Owner clients — transfers, auto-payments, and reports.</Card>
 </Cards>
 
 ---
