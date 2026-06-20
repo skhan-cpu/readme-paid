@@ -114,20 +114,14 @@ info:
     features:
 
 
+    > **Authentication endpoints** (sign in, refresh, profile, sign out, change
+    password) are documented in the **Authentication API** — they work identically
+    for all user types.
+
+
     | Feature | Method | Endpoint | Description |
 
     |---------|--------|----------|-------------|
-
-    | Sign in (returning) | `POST` | `/users/public/v1/auth/signin` |
-    Authenticate with email + password |
-
-    | Refresh token | `POST` | `/users/public/v1/auth/refresh` | Get new access
-    token using refresh token |
-
-    | Profile | `GET` | `/users/private/v1/auth/me` | Full user profile |
-
-    | Change password | `POST` | `/users/private/v1/auth/change_password` |
-    Update password |
 
     | List accounts | `GET` | `/accounts/private/v1/account` | All personal
     accounts |
@@ -217,8 +211,7 @@ info:
 
     | Full access token | ~10 minutes (default) | All authenticated endpoints |
 
-    | Refresh token | ~35 minutes (default) | Renew access token via
-    `/users/public/v1/auth/refresh` |
+    | Refresh token | ~35 minutes (default) | Renew via the Authentication API |
 
 
     > **Tip:** Decode any JWT at [jwt.io](https://jwt.io/) to read the `exp`,
@@ -348,118 +341,15 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: your-org
+        default: wire-network
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com
     description: Production
     variables:
       tenant:
-        default: your-org
+        default: wire-network
         description: Your organization's subdomain (e.g. wire-network)
 paths:
-  /users/private/v1/auth/me:
-    get:
-      tags:
-        - Auth
-      summary: Get current authenticated user
-      description: >
-        Returns the complete user profile for the authenticated user based on
-        the access token.
-
-        The response includes all user details, settings, addresses, and other
-        related information.
-      operationId: individualGetProfile
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Successfully retrieved user profile
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  data:
-                    $ref: '#/components/schemas/User'
-              examples:
-                buyerData:
-                  $ref: '#/components/examples/BuyerData'
-                adminData:
-                  $ref: '#/components/examples/AdminData'
-        '400':
-          description: Bad Request - Cannot find user by access token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                errors:
-                  - code: CANNOT_FIND_USER_BY_ACCESS_TOKEN
-                    title: Cannot find user by access token
-                    details: Can't find user.
-        '401':
-          description: Unauthorized - Invalid or missing access token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                accessTokenNotFound:
-                  $ref: '#/components/examples/AccessTokenNotFoundError'
-                accessTokenInvalid:
-                  $ref: '#/components/examples/AccessTokenIsInvalidError'
-        '403':
-          description: Forbidden - Access denied
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /users/private/v1/auth/logout:
-    delete:
-      tags:
-        - Auth
-      summary: Sign out user
-      description: >
-        Revokes the current access token, effectively signing out the user.
-
-        The access token is retrieved from the request context and invalidated.
-
-        After successful logout, the token can no longer be used for
-        authentication.
-      operationId: individualSignOut
-      security:
-        - bearerAuth: []
-      responses:
-        '204':
-          description: Successfully logged out - No content returned
-        '401':
-          description: Unauthorized - Access token not found or unable to sign out
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                tokenNotFound:
-                  value:
-                    errors:
-                      - code: UNAUTHORIZED
-                        title: Unauthorized
-                        details: Access token not found.
-                signOutFailed:
-                  value:
-                    errors:
-                      - code: UNAUTHORIZED
-                        title: Unauthorized
-                        details: Can't sign out.
   /users/private/v1/limited/token-exchange:
     put:
       security:
@@ -3245,96 +3135,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-  /users/private/v1/auth/change_password:
-    post:
-      tags:
-        - Password
-      summary: Change user password
-      description: >
-        Allows authenticated users to change their password. Requires the
-        current password
-
-        for verification and a new password that meets complexity requirements.
-
-
-        Password requirements:
-
-        - Minimum 8 characters, maximum 64 characters
-
-        - Must contain at least one special character
-
-        - Must contain at least one number
-
-        - Must contain at least one uppercase letter
-
-        - Must contain at least one lowercase letter
-
-
-        After successful password change:
-
-        - A notification is sent to the user
-
-        - If user had a NEW_PASSWORD_REQUIRED challenge, it will be cleared
-      operationId: individualChangePassword
-      security:
-        - bearerAuth: []
-      requestBody:
-        $ref: '#/components/requestBodies/ChangePassword'
-      responses:
-        '204':
-          description: Password successfully changed - No content returned
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                invalidPassword:
-                  value:
-                    errors:
-                      - code: INVALID_PASSWORD
-                        title: Invalid password
-                        details: Invalid password.
-                hashError:
-                  value:
-                    errors:
-                      - code: CANNOT_CREATE_HASH_PASSWORD
-                        title: Cannot create hash password
-                        details: Can't create hash password.
-                updateError:
-                  value:
-                    errors:
-                      - code: CAN_NOT_UPDATE_USER
-                        title: Cannot update user
-                        details: Can't update user.
-        '403':
-          description: Forbidden - User not authenticated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '422':
-          description: Unprocessable Entity - Validation error or password too weak
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                validationError:
-                  value:
-                    errors:
-                      previousPassword: previousPassword field is required
-                      proposedPassword: proposedPassword field must be at least 8 characters
-                      confirmPassword: confirmPassword must match proposedPassword
-                passwordTooWeak:
-                  value:
-                    errors:
-                      - code: PASSWORD_TOO_WEAK
-                        title: Password too weak
-                        details: password too weak
-                        target: field
-                        source: proposedPassword
   /branches/private/v1/delete-profile-otp:
     post:
       tags:

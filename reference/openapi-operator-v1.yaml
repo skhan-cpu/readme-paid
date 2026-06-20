@@ -37,8 +37,8 @@ info:
     ## Authentication
 
 
-    Operators authenticate with `POST /users/public/v1/auth/signin` using role
-    `"businessoperator"`.
+    See the **Authentication API** for sign-in, token refresh, profile, sign-out,
+    and password-change endpoints. Operators sign in with role `"businessoperator"`.
 
 
     | Token | Lifetime | Use |
@@ -49,7 +49,7 @@ info:
 
     | Full access token | ~10 minutes (default) | All authenticated endpoints |
 
-    | Refresh token | ~35 minutes (default) | Renew via `GET /users/public/v1/auth/refresh` |
+    | Refresh token | ~35 minutes (default) | Renew via the Authentication API |
 
 
     Required header on all private requests:
@@ -95,13 +95,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: your-org
+        default: wire-network
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com
     description: Production
     variables:
       tenant:
-        default: your-org
+        default: wire-network
         description: Your organization's subdomain (e.g. wire-network)
 
 components:

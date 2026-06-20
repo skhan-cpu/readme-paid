@@ -30,8 +30,9 @@ info:
     ## Authentication
 
 
-    All admin users authenticate with the same endpoint, passing their role in
-    the request body.
+    See the **Authentication API** for sign-in, token refresh, profile (`/me`),
+    sign-out, and password-change endpoints. They are shared across all user types
+    and documented in one place.
 
 
     | Token | Lifetime | Purpose |
@@ -40,7 +41,7 @@ info:
 
     | Access token | ~10 minutes (default) | All `/private/` endpoints |
 
-    | Refresh token | ~35 minutes (default) | Renew via `GET /users/public/v1/auth/refresh` |
+    | Refresh token | ~35 minutes (default) | Renew via the Authentication API |
 
 
     Include the access token in every private request:
@@ -106,13 +107,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: your-org
+        default: wire-network
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com
     description: Production
     variables:
       tenant:
-        default: your-org
+        default: wire-network
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
@@ -902,197 +903,6 @@ components:
           example: '2024-03-01T10:05:00Z'
 
 paths:
-
-  # ─────────────────────────────────────────────
-  # Authentication
-  # ─────────────────────────────────────────────
-
-  /users/public/v1/auth/signin:
-    post:
-      operationId: adminSignIn
-      summary: Sign in (all user types)
-      description: >
-        Authenticates any user type and returns access/refresh tokens. Pass the appropriate
-        role in the `roles` array depending on the user type signing in.
-
-        Returns an `accessToken` (~10 min default) and a `refreshToken` (~35 min default).
-
-        **Role → User type mapping:**
-        - `root`, `superadvisor`, `branchmanager`, `advisor` → Administration users
-        - `individual` → Individual customers
-        - `businessowner` → Business owners
-        - `businessoperator` → Business operators
-
-        **Login methods:** email address, phone number (E.164), or username.
-      tags: [Authentication]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AdminSignInRequest'
-            examples:
-              adminAdvisor:
-                summary: Sign in as Advisor
-                value:
-                  login: "advisor@example.com"
-                  password: "SecurePass123!"
-                  roles: ["advisor"]
-              adminRoot:
-                summary: Sign in as Root
-                value:
-                  login: "administrator@wirenetwork.com"
-                  password: "SecurePass123!"
-                  roles: ["root"]
-              individual:
-                summary: Sign in as Individual customer
-                value:
-                  login: "john.doe@example.com"
-                  password: "SecurePass123!"
-                  roles: ["individual"]
-              businessOwner:
-                summary: Sign in as Business Owner
-                value:
-                  login: "owner@example.com"
-                  password: "SecurePass123!"
-                  roles: ["businessowner"]
-              businessOperator:
-                summary: Sign in as Business Operator
-                value:
-                  login: "operator@example.com"
-                  password: "SecurePass123!"
-                  roles: ["businessoperator"]
-      responses:
-        '200':
-          description: Successful sign-in
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SignInResponse'
-        '400':
-          description: Invalid credentials or missing fields
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Invalid credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Role not permitted for this account or IP/user blocked
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /users/public/v1/auth/refresh:
-    get:
-      operationId: adminRefreshToken
-      summary: Refresh access token
-      description: >
-        Exchange a valid refresh token for a brand-new access token and refresh token pair.
-        Pass both tokens as HTTP headers (no request body).
-
-        **Important — single-use tokens:** Calling this endpoint immediately
-        invalidates both the old access token and the old refresh token.
-        You must save and use the new pair returned in the response.
-        Re-using the old tokens after a successful refresh will return 401.
-      tags: [Authentication]
-      parameters:
-        - in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-          description: "`Bearer <accessToken>` — the current (possibly expired) access token"
-          example: "Bearer eyJhbGci..."
-        - in: header
-          name: X-Refresh-Token
-          required: true
-          schema:
-            type: string
-          description: The refresh token returned at sign-in
-          example: "eyJhbGci..."
-      responses:
-        '200':
-          description: New access token issued
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RefreshResponse'
-        '401':
-          description: Refresh token expired or invalid — user must sign in again
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /users/private/v1/auth/me:
-    get:
-      operationId: adminGetProfile
-      summary: Get current admin profile
-      description: Returns the full profile for the authenticated admin user.
-      tags: [Authentication]
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/DeviceId'
-      responses:
-        '200':
-          description: Admin profile
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/AdminProfile'
-
-  /users/private/v1/auth/change_password:
-    post:
-      operationId: adminChangePassword
-      summary: Change admin password
-      description: >
-        Updates the authenticated admin user's password. Requires the current
-        password for verification.
-      tags: [Authentication]
-      security:
-        - BearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/DeviceId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [data]
-              properties:
-                data:
-                  type: object
-                  required: [previousPassword, proposedPassword, confirmPassword]
-                  properties:
-                    previousPassword:
-                      type: string
-                      description: The user's current password
-                    proposedPassword:
-                      type: string
-                      description: The new password
-                    confirmPassword:
-                      type: string
-                      description: Must exactly match proposedPassword
-      responses:
-        '200':
-          description: Password updated
-        '400':
-          description: Validation error — current password incorrect
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Branches

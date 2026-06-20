@@ -1,0 +1,523 @@
+openapi: 3.0.0
+info:
+  title: TAPP Cash Authentication API
+  version: 1.0.0
+  description: >
+    The **Authentication API** contains all shared authentication endpoints that
+    work for **every user type** — admin roles (root, superadvisor, branchmanager,
+    advisor), individual customers, business owners, and business operators.
+
+
+    All other TAPP Cash APIs assume you already hold a valid access token obtained
+    here.
+
+
+    ---
+
+
+    ## Sign in
+
+    Call `POST /users/public/v1/auth/signin` with your login credential and the
+    appropriate role. Returns an `accessToken` (~10 min) and a `refreshToken`
+    (~35 min).
+
+
+    ## Keep tokens fresh
+
+    Before the access token expires, call `GET /users/public/v1/auth/refresh`
+    with both tokens. **Both old tokens are immediately invalidated** — save the
+    new pair.
+
+
+    ## Required headers on private endpoints
+
+    ```
+    Authorization: Bearer <accessToken>
+    V-Client-Device-Id: <device-uuid>
+    ```
+
+
+    ---
+
+
+    ## Token lifetimes
+
+    | Token | Default lifetime | Notes |
+    |-------|-----------------|-------|
+    | Access token | ~10 minutes | Varies with tenant auto-logout settings |
+    | Refresh token | ~35 minutes | Single-use; exchanging it issues a new pair |
+
+
+    ---
+
+
+    ## Error format
+
+    ```json
+    {
+      "errors": [
+        {
+          "code": "ERROR_CODE",
+          "title": "Human-readable title",
+          "details": "Additional context",
+          "target": "common | field",
+          "source": "fieldName"
+        }
+      ]
+    }
+    ```
+
+x-readme:
+  proxy-enabled: true
+servers:
+  - url: https://api-{tenant}.stage2.tappbank.com
+    description: Staging
+    variables:
+      tenant:
+        default: wire-network
+        description: Your organization's subdomain (e.g. wire-network)
+  - url: https://api-{tenant}.tappcash.com
+    description: Production
+    variables:
+      tenant:
+        default: wire-network
+        description: Your organization's subdomain (e.g. wire-network)
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    DeviceId:
+      name: V-Client-Device-Id
+      in: header
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Device identifier for token binding.
+      example: 550e8400-e29b-41d4-a716-446655440000
+
+  schemas:
+    ErrorResponse:
+      description: Standard error envelope returned by all services.
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+
+    ErrorItem:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Human-readable error summary.
+          example: "login is required and cannot be empty"
+        details:
+          type: string
+          description: Additional context about the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+          example: REQUIRED
+        source:
+          type: string
+          description: The request field that caused the error.
+          example: login
+        target:
+          type: string
+          description: "`common` for general errors, `field` for field-level errors."
+          example: field
+        meta:
+          type: object
+          nullable: true
+
+    SignInRequest:
+      type: object
+      required: [login, password, roles]
+      properties:
+        login:
+          type: string
+          description: Email address, phone number (E.164), or username.
+          example: "advisor@example.com"
+        password:
+          type: string
+          format: password
+        roles:
+          type: array
+          description: >
+            Pass the single role that matches the user type signing in.
+
+            - `root`, `superadvisor`, `branchmanager`, `advisor` — Administration users
+
+            - `individual` — Individual customers
+
+            - `businessowner` — Business owners
+
+            - `businessoperator` — Business operators
+          items:
+            type: string
+            enum:
+              - root
+              - superadvisor
+              - branchmanager
+              - advisor
+              - individual
+              - businessowner
+              - businessoperator
+          example: ["advisor"]
+
+    SignInResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: JWT access token. Valid for ~10 minutes (default; varies with tenant auto-logout settings).
+              example: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9..."
+            refreshToken:
+              type: string
+              description: JWT refresh token. Valid for ~35 minutes (default; varies with tenant auto-logout settings).
+              example: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9..."
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                email:
+                  type: string
+                roleName:
+                  type: string
+
+    RefreshResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+              description: New JWT access token.
+              example: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9..."
+            refreshToken:
+              type: string
+              description: New JWT refresh token.
+              example: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    UserProfile:
+      description: >
+        The authenticated user's profile. Structure varies by role — all profiles
+        include at minimum `id`, `email`, `roleName`, `firstName`, and `lastName`.
+      type: object
+      additionalProperties: true
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        roleName:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phoneNumber:
+          type: string
+
+paths:
+
+  /users/public/v1/auth/signin:
+    post:
+      operationId: signIn
+      summary: Sign in
+      description: >
+        Authenticates any user type and returns an access token and refresh token.
+        Pass the role that matches the user type in the `roles` array.
+
+
+        Returns an `accessToken` (~10 min default) and a `refreshToken` (~35 min default).
+
+
+        **Role → User type mapping:**
+
+        - `root`, `superadvisor`, `branchmanager`, `advisor` → Administration users
+
+        - `individual` → Individual customers
+
+        - `businessowner` → Business owners
+
+        - `businessoperator` → Business operators
+
+
+        **Login methods:** email address, phone number (E.164), or username.
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+            examples:
+              advisor:
+                summary: Sign in as Advisor
+                value:
+                  login: "advisor@example.com"
+                  password: "SecurePass123!"
+                  roles: ["advisor"]
+              root:
+                summary: Sign in as Root
+                value:
+                  login: "administrator@wirenetwork.com"
+                  password: "SecurePass123!"
+                  roles: ["root"]
+              individual:
+                summary: Sign in as Individual customer
+                value:
+                  login: "john.doe@example.com"
+                  password: "SecurePass123!"
+                  roles: ["individual"]
+              businessOwner:
+                summary: Sign in as Business Owner
+                value:
+                  login: "owner@example.com"
+                  password: "SecurePass123!"
+                  roles: ["businessowner"]
+              businessOperator:
+                summary: Sign in as Business Operator
+                value:
+                  login: "operator@example.com"
+                  password: "SecurePass123!"
+                  roles: ["businessoperator"]
+      responses:
+        '200':
+          description: Successful sign-in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponse'
+        '400':
+          description: Invalid credentials or missing fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Role not permitted for this account or IP/user blocked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/public/v1/auth/refresh:
+    get:
+      operationId: refreshToken
+      summary: Refresh access token
+      description: >
+        Exchange a valid refresh token for a brand-new access token and refresh token pair.
+        Pass both tokens as HTTP headers — no request body.
+
+
+        **Important — single-use tokens:** Calling this endpoint immediately
+        invalidates both the old access token and the old refresh token.
+        You must save and use the new pair returned in the response.
+        Re-using the old tokens after a successful refresh will return `401`.
+      tags: [Authentication]
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: "`Bearer <accessToken>` — the current (possibly expired) access token"
+          example: "Bearer eyJhbGci..."
+        - in: header
+          name: X-Refresh-Token
+          required: true
+          schema:
+            type: string
+          description: The refresh token returned at sign-in
+          example: "eyJhbGci..."
+      responses:
+        '200':
+          description: New token pair issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Refresh token expired or invalid — user must sign in again
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/private/v1/auth/me:
+    get:
+      operationId: getProfile
+      summary: Get current user profile
+      description: >
+        Returns the full profile for the authenticated user. Works for all user
+        types — the response structure varies by role but always includes `id`,
+        `email`, `roleName`, `firstName`, and `lastName`.
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Cannot find user by access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                errors:
+                  - code: CANNOT_FIND_USER_BY_ACCESS_TOKEN
+                    title: Cannot find user by access token
+                    details: Can't find user.
+        '401':
+          description: Invalid or missing access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/private/v1/auth/logout:
+    delete:
+      operationId: signOut
+      summary: Sign out
+      description: >
+        Revokes the current access token, signing the user out. The token is
+        retrieved from the `Authorization` header and immediately invalidated.
+        After successful logout the token cannot be used for authentication.
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: Successfully signed out — no content returned
+        '401':
+          description: Access token not found or revocation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                tokenNotFound:
+                  value:
+                    errors:
+                      - code: UNAUTHORIZED
+                        title: Unauthorized
+                        details: Access token not found.
+                signOutFailed:
+                  value:
+                    errors:
+                      - code: UNAUTHORIZED
+                        title: Unauthorized
+                        details: Can't sign out.
+
+  /users/private/v1/auth/change_password:
+    post:
+      operationId: changePassword
+      summary: Change password
+      description: >
+        Updates the authenticated user's password. Requires the current password
+        for verification and a new password that meets complexity requirements.
+
+
+        **Password requirements:**
+
+        - 8–64 characters
+
+        - At least one uppercase letter, one lowercase letter, one number, and
+          one special character
+
+
+        After a successful change a notification is sent to the user.
+      tags: [Authentication]
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data:
+                  type: object
+                  required: [previousPassword, proposedPassword, confirmPassword]
+                  properties:
+                    previousPassword:
+                      type: string
+                      description: The user's current password
+                    proposedPassword:
+                      type: string
+                      description: The new password
+                    confirmPassword:
+                      type: string
+                      description: Must exactly match proposedPassword
+      responses:
+        '204':
+          description: Password successfully changed — no content returned
+        '400':
+          description: Validation error or incorrect current password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidPassword:
+                  value:
+                    errors:
+                      - code: INVALID_PASSWORD
+                        title: Invalid password
+                        details: Invalid password.
+        '403':
+          description: Forbidden — user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable entity — validation error or password too weak
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                passwordTooWeak:
+                  value:
+                    errors:
+                      - code: PASSWORD_TOO_WEAK
+                        title: Password too weak
+                        details: password too weak
+                        target: field
+                        source: proposedPassword
