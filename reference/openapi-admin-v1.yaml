@@ -533,59 +533,84 @@ components:
 
     CreateHeadBranchManagerRequest:
       type: object
-      required: [firstName, lastName, dateOfBirth, email, phoneNumber, SSN, address]
+      required: [name, dateOfBirth, email, phoneNumber, socialSecurityNumber, address]
       properties:
-        firstName:
+        name:
           type: string
-          example: "Alice"
-        lastName:
-          type: string
-          example: "Smith"
+          minLength: 2
+          maxLength: 50
+          example: "Alice Smith"
         dateOfBirth:
           type: string
           example: "01/15/1985"
-          description: "MM/DD/YYYY"
+          description: "Format: MM/DD/YYYY"
         email:
           type: string
           format: email
+          example: "alice.smith@example.com"
         phoneNumber:
           type: string
           pattern: "^\\+1\\d{10}$"
           example: "+12025550101"
-        SSN:
+        socialSecurityNumber:
           type: string
-          description: "Social Security Number"
+          description: "Format: XXX-XX-XXXX (e.g. 123-45-6789). Dashes are required."
+          example: "123-45-6789"
         address:
           $ref: '#/components/schemas/Address'
+        internalNotes:
+          type: string
+          maxLength: 255
+          example: "Assigned to downtown region"
 
     CreateAdvisorRequest:
       type: object
-      required: [firstName, lastName, dateOfBirth, email, phoneNumber, SSN, address]
+      required: [FirstName, LastName, dateOfBirth, email, phoneNumber, socialSecurityNumber, address, license]
       properties:
-        firstName:
+        FirstName:
           type: string
+          minLength: 2
+          maxLength: 255
           example: "Bob"
-        lastName:
+        LastName:
           type: string
+          minLength: 2
+          maxLength: 255
           example: "Jones"
         dateOfBirth:
           type: string
           example: "03/22/1990"
-          description: "MM/DD/YYYY"
+          description: "Format: MM/DD/YYYY"
         email:
           type: string
           format: email
+          example: "bob.jones@example.com"
         phoneNumber:
           type: string
           pattern: "^\\+1\\d{10}$"
           example: "+12025550102"
-        SSN:
+        socialSecurityNumber:
           type: string
+          description: "Format: XXX-XX-XXXX (e.g. 123-45-6789). Dashes are required."
+          example: "123-45-6789"
         license:
-          type: string
-          description: "Professional license number, if applicable"
+          type: object
+          required: [number, issuer]
+          properties:
+            number:
+              type: string
+              maxLength: 255
+              example: "LIC-12345"
+            issuer:
+              type: string
+              maxLength: 255
+              example: "Texas Department of Banking"
         address:
           $ref: '#/components/schemas/Address'
+        internalNotes:
+          type: string
+          maxLength: 255
+          example: "Assigned to downtown region"
 
     IndividualClient:
       type: object
@@ -1382,8 +1407,15 @@ paths:
       operationId: getMyBranch
       summary: Get my branch
       description: >
-        Returns the branch the calling user is assigned to. Available to Branch
-        Managers, Advisors, and Head Branch Managers.
+        Returns the branch the calling user is assigned to. Available to Head Branch
+        Managers, Branch Managers, and Advisors only.
+
+
+        **Root Advisors cannot use this endpoint** — they are not assigned to any specific
+        branch (they manage all branches). Root Advisors should use
+        `GET /branches/private/v1/branch` to list all branches or
+        `GET /branches/private/v1/branch/{branchId}` to get a specific branch.
+        Calling this endpoint as Root Advisor returns `RELATION_NOT_FOUND`.
       tags: [Branches]
       security:
         - BearerAuth: []
