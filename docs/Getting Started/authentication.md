@@ -130,8 +130,29 @@ sequenceDiagram
 
 ## Authentication Errors
 
-| Status | Meaning | Fix |
-|--------|---------|-----|
-| `401` | Missing or expired `accessToken` | Refresh with `GET /auth/refresh` |
-| `401` | Invalid `refreshToken` | Token expired — user must sign in again |
-| `403` | Valid token but wrong role or endpoint | Check token type and endpoint visibility (`public` vs `private`) |
+| Status | Code | Meaning | Fix |
+|--------|------|---------|-----|
+| `401` | — | Missing or expired `accessToken` | Refresh with `GET /auth/refresh` |
+| `401` | — | Invalid `refreshToken` | Token expired — user must sign in again |
+| `403` | `USERS_IP_IS_BLOCKED` | Requesting IP address is blocked | Contact your organization administrator to unblock the IP |
+| `403` | — | Valid token but wrong role or endpoint | Check token type and endpoint visibility (`public` vs `private`) |
+
+### IP Blocked Error
+
+If your server's IP address has been blocked by the organization, sign-in and all authenticated requests return:
+
+```json
+{
+  "status": 403,
+  "errors": [
+    {
+      "title": "Unauthorized",
+      "details": "",
+      "code": "USERS_IP_IS_BLOCKED",
+      "target": "common"
+    }
+  ]
+}
+```
+
+This is enforced at the gateway level before credentials are checked. Unblocking must be done by a Root or administrator account through the admin portal.
