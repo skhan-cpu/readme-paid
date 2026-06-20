@@ -1,9 +1,11 @@
 - check-invite-token
 - get-agreements
+- accept-invite
 - get-w9-terms
 - list-security-questions
 - submit-security-answers
 - get-security-answer-status
 - send-phone-otp
 - verify-phone-otp
+- complete-signup
 - token-exchange
