@@ -864,39 +864,6 @@ components:
           type: string
           format: date-time
 
-  parameters:
-    DeviceId:
-      name: V-Client-Device-Id
-      in: header
-      required: true
-      schema:
-        type: string
-        format: uuid
-      description: "Unique device identifier — generate once per device and reuse"
-
-    PageNumber:
-      name: page[number]
-      in: query
-      schema:
-        type: integer
-        default: 1
-
-    PageSize:
-      name: page[size]
-      in: query
-      schema:
-        type: integer
-        default: 20
-        maximum: 100
-
-    SortParam:
-      name: sort
-      in: query
-      schema:
-        type: string
-        example: "-createdAt"
-      description: "Field to sort by. Prefix with `-` for descending."
-
     Individual:
       description: An individual user's profile and associated relationship data.
       type: object
@@ -1090,6 +1057,39 @@ components:
           format: date-time
           example: '2024-03-01T10:05:00Z'
 
+  parameters:
+    DeviceId:
+      name: V-Client-Device-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: "Unique device identifier — generate once per device and reuse"
+
+    PageNumber:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+        default: 1
+
+    PageSize:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        example: "-createdAt"
+      description: "Field to sort by. Prefix with `-` for descending."
+
 paths:
 
   # ─────────────────────────────────────────────
@@ -1142,7 +1142,7 @@ paths:
         using the branch hierarchy endpoints.
 
 
-        **Access:** Root Advisor only..
+        **Access:** Root Advisor only.
       tags: [Branches]
       security:
         - BearerAuth: []
