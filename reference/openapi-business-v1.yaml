@@ -1046,48 +1046,6 @@ paths:
   # Authentication (returning users)
   # ─────────────────────────────────────────────
 
-  /users/public/v1/auth/signin:
-    post:
-      operationId: businessOwnerSignIn
-      summary: Sign in as Business Owner
-      description: >
-        Authenticates a returning Business Owner. Pass `"businessowner"` in the
-        `roles` array.
-      tags: [Authentication]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [login, password, roles]
-              properties:
-                login:
-                  type: string
-                  description: Email address, phone (E.164), or username.
-                password:
-                  type: string
-                roles:
-                  type: array
-                  items:
-                    type: string
-                  example: ["businessowner"]
-      responses:
-        '200':
-          description: Signed in — returns accessToken and refreshToken
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                      refreshToken:
-                        type: string
-
   # ─────────────────────────────────────────────
   # KYB Status
   # ─────────────────────────────────────────────

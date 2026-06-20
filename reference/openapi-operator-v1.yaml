@@ -650,48 +650,6 @@ paths:
   # Authentication (returning users)
   # ─────────────────────────────────────────────
 
-  /users/public/v1/auth/signin:
-    post:
-      operationId: operatorSignIn
-      summary: Sign in as Operator
-      description: >
-        Authenticates a returning Operator. Pass `"businessoperator"` in the
-        `roles` array.
-      tags: [Authentication]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [login, password, roles]
-              properties:
-                login:
-                  type: string
-                  description: Email address, phone (E.164), or username.
-                password:
-                  type: string
-                roles:
-                  type: array
-                  items:
-                    type: string
-                  example: ["businessoperator"]
-      responses:
-        '200':
-          description: Signed in
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                      refreshToken:
-                        type: string
-
   # ─────────────────────────────────────────────
   # KYC Status
   # ─────────────────────────────────────────────

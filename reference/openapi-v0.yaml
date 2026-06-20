@@ -399,112 +399,6 @@ servers:
         default: your-org
         description: Your organization's subdomain (e.g. wire-network)
 paths:
-  /users/public/v1/auth/signin:
-    post:
-      tags:
-        - Auth
-      summary: User sign in
-      description: |
-        Authenticates a user and returns access/refresh tokens.
-
-        **Process:**
-        1. Validates the client IP is not blocked
-        2. Validates login credentials (email/phone/username + password)
-        3. Executes pre-signin hooks (user blocking, role validation)
-        4. Authenticates user and generates tokens
-        5. Checks if user needs to complete profile verification
-        6. Updates last login information
-        7. Returns tokens and user data
-
-        **Login methods:**
-        - Email address
-        - Phone number (E.164 format)
-        - Username
-
-        **Optional role restriction:**
-        - If roles array is provided, user must have one of the specified roles
-      operationId: individualSignIn
-      parameters:
-        - in: header
-          name: V-Client-Device-Id
-          schema:
-            type: string
-          required: false
-          description: Mobile device identifier for token tracking
-        - in: header
-          name: X-Device-Id
-          schema:
-            type: string
-          required: false
-          description: Web device identifier for token tracking
-      requestBody:
-        $ref: '#/components/requestBodies/LogIn'
-      responses:
-        '200':
-          description: Successfully authenticated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessLogin'
-              examples:
-                successfulLogin:
-                  $ref: '#/components/examples/SuccessfulLogin'
-        '401':
-          description: Unauthorized - Invalid credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                errors:
-                  - code: INVALID_USERNAME_PASSWORD
-                    title: Invalid username or password
-                    details: Invalid username or password.
-        '403':
-          description: Forbidden - IP blocked, user blocked, or verification required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                ipBlocked:
-                  value:
-                    errors:
-                      - code: IP_IS_BLOCKED
-                        title: IP is blocked
-                        details: Your IP address has been blocked
-                userBlocked:
-                  value:
-                    errors:
-                      - code: USER_IS_BLOCKED
-                        title: User is blocked
-                        details: Sorry, user is blocked
-                unsupportedRole:
-                  value:
-                    errors:
-                      - code: UNSUPPORTED_ROLE
-                        title: Unsupported role
-                        details: Unsupported role
-                        meta:
-                          value: admin
-        '422':
-          description: Unprocessable Entity - Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                validationError:
-                  value:
-                    errors:
-                      login: login field is required with minimum 3 characters
-                      password: password field is required
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /users/private/v1/auth/me:
     get:
       tags:
@@ -739,9 +633,9 @@ paths:
   /branches/private/v1/individual:
     get:
       tags:
-        - Account Manager
+        - REMOVED_MOVED_TO_ADMIN
       summary: List individual customers
-      operationId: individualListAdvisees
+      operationId: individualListAdvisees_PLACEHOLDER_REMOVE
       security:
         - bearerAuth: []
       description: >
