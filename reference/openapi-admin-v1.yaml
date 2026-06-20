@@ -388,13 +388,9 @@ components:
         address:
           $ref: '#/components/schemas/Address'
         superadvisor:
-          description: Head Branch Manager to assign to this branch
-          allOf:
-            - $ref: '#/components/schemas/AdminPersonParams'
+          $ref: '#/components/schemas/AdminPersonParams'
         branchmanager:
-          description: Branch Manager to assign to this branch
-          allOf:
-            - $ref: '#/components/schemas/AdminPersonParams'
+          $ref: '#/components/schemas/AdminPersonParams'
 
     UpdateBranchRequest:
       type: object
