@@ -140,7 +140,7 @@ components:
 
     SignInRequest:
       type: object
-      required: [login, password, roles]
+      required: [login, password]
       properties:
         login:
           type: string
