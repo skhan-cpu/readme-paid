@@ -673,12 +673,14 @@ paths:
                   description: "New password the Business Owner is setting"
       responses:
         '403':
-          description: >
+          description: HTTP 403 with ErrorResponse body when the token or password is invalid.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-            **Success response** — HTTP 403 is intentional. Extract
+        '200':
+          description: >
+            Success — HTTP 403 is intentional for the invite-accept step. Extract
             `data.temporaryAccessToken` from the body.
           content:
             application/json:
@@ -2100,13 +2102,12 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: >
+            Account closure blocked — check `code` in errors array. Possible
+            codes: `PENDING_TRANSACTIONS`, `NON_ZERO_BALANCE`, `INSUFFICIENT_FUNDS`.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-            Account closure blocked — check `code` in errors array. Possible
-            codes: `PENDING_TRANSACTIONS`, `NON_ZERO_BALANCE`,
-            `INSUFFICIENT_FUNDS`
 
   /branches/private/v1/delete-profile:
     delete:

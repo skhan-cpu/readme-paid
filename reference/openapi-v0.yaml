@@ -674,18 +674,15 @@ paths:
                         target: common
         '403':
           description: >
+            HTTP 403 is intentional. Two cases: (1) invalid/expired invite token — ErrorResponse body;
+            (2) account created but additional onboarding steps required — TemporaryAccess body.
+            Extract `data.temporaryAccessToken` and use it for all subsequent onboarding calls.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            Account created, but additional steps are required. Extract
-            `temporaryAccessToken`
-
-            from `data` and use it for all subsequent onboarding calls.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TemporaryAccess'
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponse'
+                  - $ref: '#/components/schemas/TemporaryAccess'
               examples:
                 Additional actions required:
                   value:
@@ -1180,10 +1177,6 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '429':
           description: Rate limit exceeded. Check `Retry-After` header before retrying.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
           headers:
             Retry-After:
               description: Seconds to wait before the next allowed request.
@@ -2793,13 +2786,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFoundResponse'
         '409':
-          description: >-
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-            Conflict - Account cannot be deleted (e.g., has pending
-            transactions)
+          description: Conflict — account cannot be deleted (e.g., has pending transactions).
           content:
             application/json:
               schema:

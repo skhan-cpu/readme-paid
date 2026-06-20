@@ -400,12 +400,14 @@ paths:
                   type: string
       responses:
         '403':
-          description: >
+          description: HTTP 403 with ErrorResponse body when the token or password is invalid.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-            **Success** — Extract `data.temporaryAccessToken` from body.
+        '200':
+          description: >
+            Success — Extract `data.temporaryAccessToken` from body.
           content:
             application/json:
               schema:
