@@ -1,4 +1,5 @@
 - sign-in
 - refresh-token
 - get-profile
+- sign-out
 - change-password
