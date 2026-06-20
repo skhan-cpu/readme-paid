@@ -256,7 +256,7 @@ info:
     ## Date and Format Rules
 
 
-    - **Dates**: `YYYY-MM-DD` (e.g., `1990-03-20`)
+    - **Dates**: `MM/DD/YYYY` (e.g., `03/20/1990`) — applies to `dateOfBirth`, `employmentStartDate`, and other date fields
 
     - **Timestamps**: `YYYY-MM-DDTHH:MM:SSZ` (e.g., `2017-07-21T17:32:28Z`)
 
@@ -1358,7 +1358,7 @@ paths:
               $ref: '#/components/schemas/IndividualSignupParams'
             example:
               middleName: Michael
-              dateOfBirth: '1990-03-20'
+              dateOfBirth: '03/20/1990'
               socialSecurityNumber: 987-65-4321
               usCitizenshipStatus: Citizen
               address:
@@ -1382,14 +1382,14 @@ paths:
                 occupation: Marketing Manager
                 employer: Digital Solutions Inc
                 annualIncome: '65000.00'
-                employmentStartDate: '2018-09-01'
+                employmentStartDate: '09/01/2018'
                 incomeSources:
                   - name: Base Salary
                     amount: '4500.00'
                     frequency: Monthly
-                  - name: Quarterly Bonus
+                  - name: Annual Bonus
                     amount: '2000.00'
-                    frequency: Quarterly
+                    frequency: Annually
               transferActivity:
                 internationalTransferExpected: true
                 internationalTransferFrequency: OnceEveryFewMonths
@@ -3606,9 +3606,8 @@ components:
           example: Michael
         dateOfBirth:
           type: string
-          format: date
-          description: Date of birth in `YYYY-MM-DD` format. Must be a past date.
-          example: '1990-03-20'
+          description: Date of birth in `MM/DD/YYYY` format. Must be a past date.
+          example: '03/20/1990'
         socialSecurityNumber:
           type: string
           description: Social Security Number in `XXX-XX-XXXX` format.
@@ -3708,9 +3707,8 @@ components:
           example: '65000.00'
         employmentStartDate:
           type: string
-          format: date
-          description: Employment start date in `YYYY-MM-DD` format.
-          example: '2018-09-01'
+          description: Employment start date in `MM/DD/YYYY` format.
+          example: '09/01/2018'
         incomeSources:
           type: array
           description: Breakdown of income sources.
@@ -3733,10 +3731,7 @@ components:
                 type: string
                 description: How often this income is received.
                 enum:
-                  - Weekly
-                  - BiWeekly
                   - Monthly
-                  - Quarterly
                   - Annually
                 example: Monthly
     SignupTransferActivity:
@@ -3762,7 +3757,9 @@ components:
             - from_0_to_9999
             - from_10000_to_49999
             - from_50000_to_99999
-            - from_100000_and_above
+            - from_100000_to_249999
+            - from_250000_to_499999
+            - from_500000_to_max
           example: from_10000_to_49999
         internationalTransferCountries:
           type: array
@@ -3782,14 +3779,26 @@ components:
           description: >-
             How often cryptocurrency transactions are expected. `null` if not
             expected.
-          example: null
+          enum:
+            - SeveralPerMonth
+            - OncePerMonth
+            - OnceEveryFewMonths
+            - OnceOrTwicePerYear
+          example: OncePerMonth
         cryptocurrencyTransactionAmountRange:
           type: string
           nullable: true
           description: >-
             Expected dollar amount range per crypto transaction. `null` if not
             expected.
-          example: null
+          enum:
+            - from_0_to_9999
+            - from_10000_to_49999
+            - from_50000_to_99999
+            - from_100000_to_249999
+            - from_250000_to_499999
+            - from_500000_to_max
+          example: from_0_to_9999
         cashTransactionExpected:
           type: boolean
           description: Whether the user expects to make large cash transactions.
@@ -3809,7 +3818,9 @@ components:
             - from_0_to_9999
             - from_10000_to_49999
             - from_50000_to_99999
-            - from_100000_and_above
+            - from_100000_to_249999
+            - from_250000_to_499999
+            - from_500000_to_max
           example: from_0_to_9999
     User:
       description: Full user profile returned after a successful token exchange.
