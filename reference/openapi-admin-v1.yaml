@@ -1897,11 +1897,13 @@ paths:
       operationId: assignIndividualClient
       summary: Assign Individual client to a different Advisor
       description: >
-        Reassigns an Individual client from their current Advisor to a new
-        Advisor. The new Advisor must belong to the same branch.
+        Reassigns one or more Individual clients from their current Advisor to a
+        new Advisor. The new Advisor must belong to the same branch as the
+        calling Head Branch Manager.
 
 
-        **Access:** Head Branch Manager and Root Advisor.
+        **Access:** Head Branch Manager only. Root Advisor does not have permission
+        for this action.
       tags: [Individual Clients]
       security:
         - BearerAuth: []
@@ -2073,11 +2075,13 @@ paths:
       operationId: assignBusinessOwnerClient
       summary: Assign Business Owner client to a different Advisor
       description: >
-        Reassigns a Business Owner client to a new Advisor within the same
-        branch.
+        Reassigns one or more Business Owner clients to a new Advisor. The new
+        Advisor must belong to the same branch as the calling Head Branch
+        Manager.
 
 
-        **Access:** Head Branch Manager and Root Advisor.
+        **Access:** Head Branch Manager only. Root Advisor does not have
+        permission for this action.
       tags: [Business Owner Clients]
       security:
         - BearerAuth: []
