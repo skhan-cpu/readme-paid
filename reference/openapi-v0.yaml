@@ -3763,12 +3763,17 @@ components:
           example: from_10000_to_49999
         internationalTransferCountries:
           type: array
-          description: ISO 3166-1 alpha-3 country codes for expected transfer destinations.
+          description: >-
+            **3-letter** ISO 3166-1 alpha-3 country codes for expected transfer
+            destinations. Common mistake: `"US"` is invalid — use `"USA"`.
+            Other examples: `"CAN"` (Canada), `"MEX"` (Mexico), `"GBR"` (UK).
           items:
             type: string
+            minLength: 3
+            maxLength: 3
           example:
+            - USA
             - CAN
-            - MEX
         cryptocurrencyTransactionExpected:
           type: boolean
           description: Whether the user expects to make cryptocurrency transactions.
