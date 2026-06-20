@@ -522,14 +522,12 @@ components:
 
     UpdateBranchRequest:
       type: object
+      required: [description, address]
       properties:
-        branchName:
-          type: string
-          minLength: 2
-          maxLength: 50
         description:
           type: string
           maxLength: 255
+          example: "Serves the downtown metro area"
         address:
           $ref: '#/components/schemas/Address'
 
@@ -1188,6 +1186,7 @@ paths:
                       example: "78701"
                     country:
                       type: string
+                      description: "ISO 3166-1 alpha-2 country code (e.g. US, GB, CA)."
                       example: "US"
                 superadvisor:
                   type: object
@@ -1232,6 +1231,7 @@ paths:
                       example: "+15125550101"
                     socialSecurityNumber:
                       type: string
+                      description: "Format: XXX-XX-XXXX (e.g. 123-45-6789). Dashes are required."
                       example: "123-45-6789"
                     email:
                       type: string
