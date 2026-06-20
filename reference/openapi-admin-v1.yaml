@@ -829,12 +829,21 @@ paths:
           application/json:
             schema:
               type: object
-              required: [currentPassword, newPassword]
+              required: [data]
               properties:
-                currentPassword:
-                  type: string
-                newPassword:
-                  type: string
+                data:
+                  type: object
+                  required: [previousPassword, proposedPassword, confirmPassword]
+                  properties:
+                    previousPassword:
+                      type: string
+                      description: The user's current password
+                    proposedPassword:
+                      type: string
+                      description: The new password
+                    confirmPassword:
+                      type: string
+                      description: Must exactly match proposedPassword
       responses:
         '200':
           description: Password updated
