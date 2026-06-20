@@ -518,7 +518,7 @@ paths:
 
         The refresh token has a 30-day lifetime. Once it expires the user must
         sign in again.
-      operationId: refreshToken
+      operationId: individualRefreshToken
       parameters:
         - in: header
           name: Authorization
@@ -565,7 +565,7 @@ paths:
 
         The response includes all user details, settings, addresses, and other
         related information.
-      operationId: MeHandler
+      operationId: individualGetProfile
       security:
         - bearerAuth: []
       responses:
@@ -632,7 +632,7 @@ paths:
 
         After successful logout, the token can no longer be used for
         authentication.
-      operationId: SignOutHandler
+      operationId: individualSignOut
       security:
         - bearerAuth: []
       responses:
@@ -664,7 +664,7 @@ paths:
       tags:
         - Auth
       summary: Step 10 — Exchange for full access token
-      operationId: TokenExchange
+      operationId: individualTokenExchange
       description: >
         The final step of onboarding. Exchanges the temporary token for a full
 
@@ -790,7 +790,7 @@ paths:
       tags:
         - Account Manager
       summary: List individual customers
-      operationId: listIndividuals
+      operationId: individualListAdvisees
       security:
         - bearerAuth: []
       description: >
@@ -1106,7 +1106,7 @@ paths:
       tags:
         - Account Manager
       summary: Create individual customer invitation
-      operationId: inviteIndividual
+      operationId: individualInviteSelf
       security:
         - bearerAuth: []
       description: >
@@ -1347,7 +1347,7 @@ paths:
       tags:
         - Account Manager
       summary: Get individual customer by ID
-      operationId: getIndividualByID
+      operationId: individualGetProfile2
       security:
         - bearerAuth: []
       description: >
@@ -1672,7 +1672,7 @@ paths:
         | INVALID_REQUEST_PARAMETER              | 400    |
         field                   | Invalid query parameter or pagination
         value     |
-      operationId: listAdvisor
+      operationId: individualListAdvisor
       parameters:
         - in: query
           name: sort
@@ -1998,7 +1998,7 @@ paths:
       tags:
         - Invitation
       summary: Step 1 — Validate invitation token
-      operationId: checkInvitationToken
+      operationId: individualCheckInviteToken
       description: >
         Validates an invitation token and returns the associated role and phone
         number.
@@ -2077,7 +2077,7 @@ paths:
       tags:
         - Onboarding
       summary: Step 3 — Accept invitation & set password
-      operationId: acceptIndividualInvite
+      operationId: individualAcceptInvite
       description: >
         Completes the invitation acceptance step by setting the user's password.
 
@@ -2220,7 +2220,7 @@ paths:
       tags:
         - Invitation
       summary: Step 2 — Fetch platform agreements
-      operationId: AgreementsList
+      operationId: individualGetAgreements
       description: >
         Returns the list of agreements the user must review and accept before
         completing onboarding.
@@ -2296,7 +2296,7 @@ paths:
       tags:
         - Onboarding
       summary: Step 4 — Review W9 terms
-      operationId: getW9TermsAndConditions
+      operationId: individualGetW9Terms
       description: >
         Returns the W9 certification text that must be displayed to the user
         before they
@@ -2408,7 +2408,7 @@ paths:
       tags:
         - Security Questions
       summary: Step 5 — List security questions
-      operationId: ListSecurityQuestions
+      operationId: individualListSecurityQuestions
       description: >
         Returns all active security questions ordered by `displayOrder`. Present
         these to the
@@ -2482,7 +2482,7 @@ paths:
       tags:
         - Security Questions
       summary: Step 6 — Submit security answers
-      operationId: SubmitSecurityAnswers
+      operationId: individualSubmitSecurityAnswers
       description: >
         Submits exactly **three** (questionId, answer) pairs for the
         authenticated user.
@@ -2578,7 +2578,7 @@ paths:
       tags:
         - Security Questions
       summary: Step 6b — Check security answers status
-      operationId: GetSecurityAnswerStatus
+      operationId: individualGetSecurityAnswerStatus
       description: >
         Returns whether the user has already completed the security questions
         step.
@@ -2639,7 +2639,7 @@ paths:
       tags:
         - Phone Verification
       summary: Step 7 — Send phone OTP
-      operationId: GenerateNewPhoneCode
+      operationId: individualSendPhoneOTP
       description: >
         Generates a one-time passcode (OTP) and sends it via SMS to the user's
         registered
@@ -2726,7 +2726,7 @@ paths:
       tags:
         - Phone Verification
       summary: Step 8 — Verify phone OTP
-      operationId: CheckPhoneCode
+      operationId: individualVerifyPhoneOTP
       description: >
         Validates the OTP the user received via SMS. On success, marks the
         user's phone as
@@ -2797,7 +2797,7 @@ paths:
       tags:
         - Onboarding
       summary: Step 9 — Submit KYC information
-      operationId: signupIndividual
+      operationId: individualSignup
       description: >
         Submits the individual's personal, employment, and financial activity
         information to
@@ -3022,7 +3022,7 @@ paths:
       description: >-
         Responds with accounts collection associated with current user. Has
         includes of related models, filters, sortings, pagination.
-      operationId: showListOfAccounts
+      operationId: individualListAccounts
       parameters:
         - name: filter[searchNumberAndOwnerName]
           in: query
@@ -3143,7 +3143,7 @@ paths:
         Available for admins and users. Not allowed if user is not an account
         owner. Available for admins with one of permissions: 'view_accounts',
         'view_user_reports', 'initiate_execute_user_transfers'
-      operationId: getAccountById
+      operationId: individualGetAccount
       parameters:
         - name: id
           in: path
@@ -3180,7 +3180,7 @@ paths:
       tags:
         - Accounts
       summary: Shows an account by passed id.
-      operationId: getAccountDetailsById
+      operationId: individualGetAccountDetails
       parameters:
         - name: id
           in: path
@@ -3222,7 +3222,7 @@ paths:
       tags:
         - Transactions
       summary: Fetch transaction by id.
-      operationId: getTransactionById
+      operationId: individualGetTransaction
       parameters:
         - name: id
           in: path
@@ -3262,7 +3262,7 @@ paths:
       tags:
         - Transactions
       summary: Shows list of transactions for current user.
-      operationId: getUserTransactions
+      operationId: individualListTransactions
       parameters:
         - name: sort
           in: query
@@ -3406,7 +3406,7 @@ paths:
 
         | INTERNAL_ERROR           | 500    | Internal server
         error                                |
-      operationId: getBalanceChart
+      operationId: individualGetBalanceChart
       parameters:
         - name: accountIds
           in: query
@@ -3598,7 +3598,7 @@ paths:
 
         | INTERNAL_ERROR           | 500    | Internal server
         error                                |
-      operationId: getTransactionChart
+      operationId: individualGetTransactionChart
       parameters:
         - name: accountIds
           in: query
@@ -3766,7 +3766,7 @@ paths:
 
         | INTERNAL_ERROR           | 500    | Internal server
         error                                |
-      operationId: getTotalAvailablebalance
+      operationId: individualGetTotalBalance
       parameters:
         - name: accountIds
           in: query
@@ -3831,7 +3831,7 @@ paths:
       tags:
         - Accounts
       summary: Get account statement for specified month
-      operationId: generateMonthStatement
+      operationId: individualGetMonthStatement
       parameters:
         - name: accountId
           in: path
@@ -3874,7 +3874,7 @@ paths:
       summary: Makes request evaluation for TBA.
       description: |
         Available for users.
-      operationId: createTBARequestPreview
+      operationId: individualPreviewTBATransfer
       requestBody:
         content:
           application/json:
@@ -3917,7 +3917,7 @@ paths:
         - Internal Transfers
       summary: Creates a new request between accounts.
       description: Available for users.
-      operationId: createTBARequest
+      operationId: individualCreateTBATransfer
       requestBody:
         content:
           application/json:
@@ -3968,7 +3968,7 @@ paths:
       description: >-
         Creates authentication token for Banking-as-a-Service (BaaS) integration
         to connect external bank accounts
-      operationId: CreateBaasAuthToken
+      operationId: individualGetBaaSToken
       requestBody:
         required: true
         description: Authentication token request parameters
@@ -4045,7 +4045,7 @@ paths:
       description: >-
         Retrieves a paginated list of external bank accounts with filtering and
         search capabilities
-      operationId: GetAccounts
+      operationId: individualListExternalAccounts
       parameters:
         - in: header
           schema:
@@ -4196,7 +4196,7 @@ paths:
         - External Accounts
       summary: Get external account by ID
       description: Retrieves a specific external bank account by its unique identifier
-      operationId: GetAccountByID
+      operationId: individualGetExternalAccount
       parameters:
         - in: path
           name: accountId
@@ -4263,7 +4263,7 @@ paths:
         - External Accounts
       summary: Delete external account by ID
       description: Permanently removes an external bank account from the system
-      operationId: DeleteAccountByID
+      operationId: individualDeleteExternalAccount
       parameters:
         - in: path
           name: accountId
@@ -4333,7 +4333,7 @@ paths:
         - External Accounts
       summary: Get transfer limits
       description: Retrieves ACH transfer limits configured for external account transfers
-      operationId: GetTransferLimits
+      operationId: individualGetTransferLimits
       responses:
         '200':
           description: Transfer limits retrieved successfully
@@ -4408,7 +4408,7 @@ paths:
         - External Accounts
       summary: Get bank logo for external account
       description: Retrieves the bank logo image for the specified external account
-      operationId: GetAccountBankLogoByID
+      operationId: individualGetBankLogo
       parameters:
         - in: path
           name: accountId
@@ -4481,7 +4481,7 @@ paths:
       summary: >-
         Creates a new request between internal account and linked external
         account.
-      operationId: createEXTRequest
+      operationId: individualCreateACHTransfer
       requestBody:
         content:
           application/json:
@@ -4529,7 +4529,7 @@ paths:
       tags:
         - External Accounts
       summary: Makes evaluation of EXT request.
-      operationId: createEXTRequestPreview
+      operationId: individualCreateACHTransferPreview
       requestBody:
         content:
           application/json:
@@ -4572,7 +4572,7 @@ paths:
         - Notifications
       summary: Get list of notifications
       description: Available for users
-      operationId: getNotifications
+      operationId: individualListNotifications
       parameters:
         - name: limit
           in: query
@@ -4621,7 +4621,7 @@ paths:
         - Notifications
       summary: Mark notification as read
       description: Available for users
-      operationId: readNotification
+      operationId: individualReadNotification
       parameters:
         - name: id
           in: path
@@ -4680,7 +4680,7 @@ paths:
         - A notification is sent to the user
 
         - If user had a NEW_PASSWORD_REQUIRED challenge, it will be cleared
-      operationId: ChangePasswordHandler
+      operationId: individualChangePassword
       security:
         - bearerAuth: []
       requestBody:
@@ -4745,7 +4745,7 @@ paths:
       tags:
         - Account Closure
       summary: Send OTP for delete user profile
-      operationId: deleteProfileOTP
+      operationId: individualDeleteProfileOTP
       parameters:
         - in: header
           schema:
@@ -4849,7 +4849,7 @@ paths:
       tags:
         - Account Closure
       summary: Confirm profile deletion
-      operationId: deleteProfile
+      operationId: individualDeleteProfile
       description: >
         Permanently deletes the authenticated user's profile and closes all
         associated accounts.
@@ -4914,7 +4914,7 @@ paths:
 
         Use this after displaying the notification list to clear the unread
         badge.
-      operationId: markAllNotificationsRead
+      operationId: individualMarkAllNotificationsRead
       security:
         - bearerAuth: []
       responses:
@@ -4948,7 +4948,7 @@ paths:
 
         **KYC request statuses**: `pending`, `approved`, `rejected`,
         `incomplete`
-      operationId: getLatestKycRequest
+      operationId: individualGetKYCStatus
       security:
         - bearerAuth: []
       responses:

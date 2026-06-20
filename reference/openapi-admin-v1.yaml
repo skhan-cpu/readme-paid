@@ -1339,7 +1339,7 @@ paths:
                   meta:
                     $ref: '#/components/schemas/PaginationMeta'
     post:
-      operationId: inviteIndividual
+      operationId: adminInviteIndividual
       summary: Invite an Individual client
       description: >
         Sends an invitation email to the specified email address. The invited
