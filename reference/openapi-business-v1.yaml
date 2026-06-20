@@ -1093,9 +1093,13 @@ paths:
       operationId: boRefreshToken
       summary: Refresh access token
       description: >
-        Issues a new `accessToken` using a valid `refreshToken`. Call this when
-        the access token expires (30-minute lifetime) to avoid requiring the
-        user to re-login. Pass both tokens as HTTP headers — no request body.
+        Exchange a valid refresh token for a brand-new access token and refresh token pair.
+        Pass both tokens as HTTP headers (no request body).
+
+        **Important — single-use tokens:** Calling this endpoint immediately
+        invalidates both the old access token and the old refresh token.
+        You must save and use the new pair returned in the response.
+        Re-using the old tokens after a successful refresh will return 401.
       tags: [Authentication]
       parameters:
         - in: header

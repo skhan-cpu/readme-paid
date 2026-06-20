@@ -511,13 +511,13 @@ paths:
         - Auth
       summary: Refresh access token
       description: >
-        Exchange a valid refresh token for a new access token. Call this when
-        the access token expires (30-minute lifetime) to avoid forcing the user
-        to sign in again. Pass both tokens as HTTP headers — no request body.
+        Exchange a valid refresh token for a brand-new access token and refresh token pair.
+        Pass both tokens as HTTP headers (no request body).
 
-
-        The refresh token has a 30-day lifetime. Once it expires the user must
-        sign in again.
+        **Important — single-use tokens:** Calling this endpoint immediately
+        invalidates both the old access token and the old refresh token.
+        You must save and use the new pair returned in the response.
+        Re-using the old tokens after a successful refresh will return 401.
       operationId: individualRefreshToken
       parameters:
         - in: header
