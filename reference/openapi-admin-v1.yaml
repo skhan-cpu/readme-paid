@@ -116,6 +116,7 @@ servers:
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
+
   securitySchemes:
     BearerAuth:
       type: http
@@ -123,6 +124,40 @@ components:
       bearerFormat: JWT
 
   schemas:
+    ErrorResponse:
+      description: Standard error envelope returned by all services.
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ErrorItem:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Human-readable error summary.
+          example: "login is required and cannot be empty"
+        details:
+          type: string
+          description: Additional context about the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+          example: REQUIRED
+        source:
+          type: string
+          description: The request field that caused the error.
+          example: login
+        target:
+          type: string
+          description: "`common` for general errors, `field` for field-level errors."
+          example: field
+        meta:
+          type: object
+          nullable: true
+
     Address:
       type: object
       required: [address, city, state, zipCode, country]
@@ -702,8 +737,16 @@ paths:
                 $ref: '#/components/schemas/SignInResponse'
         '400':
           description: Invalid credentials or missing fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Role not permitted for this account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /users/public/v1/auth/refresh:
     post:
@@ -728,6 +771,10 @@ paths:
                 $ref: '#/components/schemas/RefreshResponse'
         '401':
           description: Refresh token expired or invalid — user must sign in again
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /users/private/v1/auth/me:
     get:
@@ -779,6 +826,10 @@ paths:
           description: Password updated
         '400':
           description: Validation error — current password incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Branches
@@ -863,6 +914,10 @@ paths:
                     $ref: '#/components/schemas/Branch'
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/branch/all:
     get:
@@ -947,6 +1002,10 @@ paths:
                     $ref: '#/components/schemas/Branch'
         '404':
           description: Branch not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       operationId: updateBranch
       summary: Update a branch
@@ -983,6 +1042,10 @@ paths:
                     $ref: '#/components/schemas/Branch'
         '404':
           description: Branch not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Admin Hierarchy — Create per Branch
@@ -1020,6 +1083,10 @@ paths:
           description: Head Branch Manager created
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/branch/{branchId}/branchmanager:
     post:
@@ -1051,6 +1118,10 @@ paths:
           description: Branch Manager created
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/branch/{branchId}/advisor:
     post:
@@ -1083,6 +1154,10 @@ paths:
           description: Advisor created
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Admin Role Lists
@@ -1291,6 +1366,10 @@ paths:
                     $ref: '#/components/schemas/IndividualClient'
         '400':
           description: Validation error or duplicate email
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/individual/{individualId}:
     get:
@@ -1321,6 +1400,10 @@ paths:
                     $ref: '#/components/schemas/IndividualClient'
         '404':
           description: Client not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/individual/assign:
     patch:
@@ -1354,6 +1437,10 @@ paths:
           description: Client reassigned
         '400':
           description: Advisor not in same branch
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Business Owner Client Management
@@ -1441,6 +1528,10 @@ paths:
                     $ref: '#/components/schemas/BusinessOwnerClient'
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/businessowner/{businessOwnerId}:
     get:
@@ -1473,6 +1564,10 @@ paths:
                     $ref: '#/components/schemas/BusinessOwnerClient'
         '404':
           description: Client not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/businessowner/assign:
     patch:
@@ -1506,6 +1601,10 @@ paths:
           description: Client reassigned
         '400':
           description: Advisor not in same branch
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Operator Management (Admin)
@@ -1537,6 +1636,10 @@ paths:
           description: Operator invitation sent
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/operator/{operatorId}:
     get:
@@ -1567,6 +1670,10 @@ paths:
                     $ref: '#/components/schemas/AdminOperator'
         '404':
           description: Operator not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       operationId: updateOperatorAdmin
       summary: Update Operator permissions
@@ -1597,6 +1704,10 @@ paths:
           description: Operator updated
         '404':
           description: Operator not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Approval Settings
@@ -1662,6 +1773,10 @@ paths:
                     $ref: '#/components/schemas/ApprovalSettings'
         '403':
           description: Only Branch Managers can update approval settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Account Viewing (Admin scope)
@@ -1739,6 +1854,10 @@ paths:
                     $ref: '#/components/schemas/Account'
         '404':
           description: Account not found or not in scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /accounts/private/v1/account/{accountId}/bank-details:
     get:
@@ -1866,3 +1985,7 @@ paths:
                     $ref: '#/components/schemas/ExternalAccount'
         '404':
           description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

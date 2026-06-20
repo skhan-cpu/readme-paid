@@ -1977,6 +1977,10 @@ paths:
                         title: Invalid branch ID format
         '401':
           description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Authorization error
           content:
@@ -2186,6 +2190,10 @@ paths:
                         target: common
         '403':
           description: >
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
             Account created, but additional steps are required. Extract
             `temporaryAccessToken`
 
@@ -2688,6 +2696,10 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '429':
           description: Rate limit exceeded. Check `Retry-After` header before retrying.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
           headers:
             Retry-After:
               description: Seconds to wait before the next allowed request.
@@ -3538,6 +3550,10 @@ paths:
                 $ref: '#/components/schemas/ForbiddenResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /accounts/private/v1/transactions/transactions-chart:
     get:
       security:
@@ -3706,6 +3722,10 @@ paths:
                 $ref: '#/components/schemas/ForbiddenResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /accounts/private/v1/balance/total:
     get:
       security:
@@ -3801,6 +3821,10 @@ paths:
                 $ref: '#/components/schemas/ForbiddenResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /accounts/private/v1/account/{accountId}/statements/{monthYear}:
     get:
       security:
@@ -4161,6 +4185,10 @@ paths:
                 $ref: '#/components/schemas/NotFoundResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /external-accounts/private/v1/account/{accountId}:
     get:
       security:
@@ -4282,6 +4310,10 @@ paths:
                 $ref: '#/components/schemas/NotFoundResponse'
         '409':
           description: >-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
             Conflict - Account cannot be deleted (e.g., has pending
             transactions)
           content:
@@ -4290,6 +4322,10 @@ paths:
                 $ref: '#/components/schemas/ConflictResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /external-accounts/private/v1/account/transfer-limits:
     get:
       security:
@@ -4361,6 +4397,10 @@ paths:
                 $ref: '#/components/schemas/NotFoundResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /external-accounts/private/v1/account/{accountId}/bank-logo:
     get:
       security:
@@ -4558,10 +4598,22 @@ paths:
                   $ref: '#/components/schemas/Notification'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /notifications/private/v1/notifications/{id}:
     delete:
       security:
@@ -4583,10 +4635,22 @@ paths:
           description: Accepted
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /users/private/v1/auth/change_password:
     post:
       tags:
@@ -4771,8 +4835,16 @@ paths:
                         source: filter
         '401':
           description: Authentication error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Authorization error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /branches/private/v1/delete-profile:
     delete:
       tags:
@@ -4816,8 +4888,16 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
         '401':
           description: Authentication error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Authorization error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Deletion blocked — user still has balance or pending transactions.
           content:
@@ -4843,8 +4923,16 @@ paths:
           description: All notifications marked as read successfully.
         '401':
           description: Unauthorized — missing or invalid access token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden — token does not have sufficient permissions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /kyc/private/v1/requests/last:
     get:
       tags:
@@ -4895,8 +4983,16 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
         '401':
           description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:

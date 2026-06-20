@@ -88,6 +88,7 @@ servers:
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
+
   securitySchemes:
     BearerAuth:
       type: http
@@ -95,6 +96,40 @@ components:
       bearerFormat: JWT
 
   schemas:
+    ErrorResponse:
+      description: Standard error envelope returned by all services.
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorItem'
+    ErrorItem:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Human-readable error summary.
+          example: "login is required and cannot be empty"
+        details:
+          type: string
+          description: Additional context about the error.
+        code:
+          type: string
+          description: Machine-readable error code.
+          example: REQUIRED
+        source:
+          type: string
+          description: The request field that caused the error.
+          example: login
+        target:
+          type: string
+          description: "`common` for general errors, `field` for field-level errors."
+          example: field
+        meta:
+          type: object
+          nullable: true
+
     Address:
       type: object
       required: [address, city, state, zipCode, country]
@@ -561,6 +596,10 @@ paths:
                         example: "+12025550104"
         '400':
           description: Token expired or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/public/v1/common/agreements:
     get:
@@ -635,6 +674,10 @@ paths:
       responses:
         '403':
           description: >
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
             **Success response** — HTTP 403 is intentional. Extract
             `data.temporaryAccessToken` from the body.
           content:
@@ -751,6 +794,10 @@ paths:
           description: Answers accepted
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /users/private/v1/limited/generate-new-phone-code:
     post:
@@ -802,6 +849,10 @@ paths:
           description: Phone verified
         '400':
           description: Incorrect or expired OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/limited/businessowner/signup:
     post:
@@ -939,10 +990,22 @@ paths:
           description: KYB submission accepted — review is processing asynchronously
         '400':
           description: Validation error — see errors array for field-level details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Temporary token missing or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Signup already completed for this account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /users/private/v1/limited/token-exchange:
     put:
@@ -1049,6 +1112,10 @@ paths:
           description: New access token issued
         '401':
           description: Refresh token expired — user must sign in again
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # KYB Status
@@ -1486,6 +1553,10 @@ paths:
           description: ACH transfer initiated
         '400':
           description: Validation error or transfer limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Auto-Payments
@@ -1741,6 +1812,10 @@ paths:
           description: Operator invitation sent
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /branches/private/v1/operator/{operatorId}:
     get:
@@ -2090,8 +2165,16 @@ paths:
           description: OTP sent to registered phone number
         '409':
           description: Pending transactions block closure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: >
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
             Account closure blocked — check `code` in errors array. Possible
             codes: `PENDING_TRANSACTIONS`, `NON_ZERO_BALANCE`,
             `INSUFFICIENT_FUNDS`
@@ -2124,8 +2207,16 @@ paths:
           description: Account permanently closed
         '400':
           description: Incorrect OTP
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '422':
           description: Closure blockers still present
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # ─────────────────────────────────────────────
   # Notifications
