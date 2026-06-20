@@ -89,8 +89,18 @@ info:
     Forbidden`.
 
 servers:
-  - url: https://api.tappcash.com
+  - url: https://api-{tenant}.tappcash.com
     description: Production
+    variables:
+      tenant:
+        default: your-org
+        description: Your organization's subdomain (e.g. wire-network)
+  - url: https://api-{tenant}.stage2.tappbank.com
+    description: Staging
+    variables:
+      tenant:
+        default: your-org
+        description: Your organization's subdomain (e.g. wire-network)
 
 components:
   securitySchemes:

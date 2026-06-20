@@ -383,6 +383,19 @@ tags:
     description: >-
       Two-step account deletion — request an OTP, then confirm. Deletion is
       blocked if the user has a positive balance or pending transactions.
+servers:
+  - url: https://api-{tenant}.tappcash.com
+    description: Production
+    variables:
+      tenant:
+        default: your-org
+        description: Your organization's subdomain (e.g. wire-network)
+  - url: https://api-{tenant}.stage2.tappbank.com
+    description: Staging
+    variables:
+      tenant:
+        default: your-org
+        description: Your organization's subdomain (e.g. wire-network)
 paths:
   /users/public/v1/auth/signin:
     post:
