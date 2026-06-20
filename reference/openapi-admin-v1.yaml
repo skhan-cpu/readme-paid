@@ -1142,7 +1142,7 @@ paths:
         using the branch hierarchy endpoints.
 
 
-        **Access:** Root Advisor only.
+        **Access:** Root Advisor only..
       tags: [Branches]
       security:
         - BearerAuth: []
