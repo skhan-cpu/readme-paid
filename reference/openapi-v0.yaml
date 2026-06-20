@@ -423,7 +423,7 @@ paths:
 
         **Optional role restriction:**
         - If roles array is provided, user must have one of the specified roles
-      operationId: SignInHandler
+      operationId: individualSignIn
       parameters:
         - in: header
           name: V-Client-Device-Id

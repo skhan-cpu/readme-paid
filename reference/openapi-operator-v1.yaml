@@ -601,7 +601,7 @@ paths:
 
   /users/public/v1/auth/signin:
     post:
-      operationId: opSignIn
+      operationId: operatorSignIn
       summary: Sign in as Operator
       description: >
         Authenticates a returning Operator. Pass `"businessoperator"` in the

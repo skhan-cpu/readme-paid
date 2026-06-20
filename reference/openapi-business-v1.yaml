@@ -985,7 +985,7 @@ paths:
 
   /users/public/v1/auth/signin:
     post:
-      operationId: boSignIn
+      operationId: businessOwnerSignIn
       summary: Sign in as Business Owner
       description: >
         Authenticates a returning Business Owner. Pass `"businessowner"` in the
