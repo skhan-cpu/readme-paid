@@ -1110,8 +1110,8 @@ components:
       in: query
       schema:
         type: string
-        example: "-createdAt"
-      description: "Field to sort by. Prefix with `-` for descending."
+        example: "-userCreatedAt"
+      description: "Field to sort by. Prefix with `-` for descending order. Valid fields depend on the endpoint — see each endpoint's description."
 
 paths:
 
@@ -1130,6 +1130,10 @@ paths:
 
 
         **Access:** Root Advisor only.
+
+
+        **Valid `sort` fields:** `createdAt`, `id`, `name`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Branches]
       security:
         - BearerAuth: []
@@ -1634,6 +1638,10 @@ paths:
         user's role: Root Advisor sees all; Head Branch Manager sees Advisors
         in their managed branches; Branch Manager sees Advisors in their
         branch.
+
+
+        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Admin Hierarchy]
       security:
         - BearerAuth: []
