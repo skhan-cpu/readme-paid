@@ -1685,6 +1685,10 @@ paths:
 
 
         **Access:** Root Advisor only.
+
+
+        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Admin Hierarchy]
       security:
         - BearerAuth: []
@@ -1717,6 +1721,10 @@ paths:
 
 
         **Access:** Root Advisor and Head Branch Manager.
+
+
+        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Admin Hierarchy]
       security:
         - BearerAuth: []
@@ -1756,6 +1764,10 @@ paths:
         Returns a paginated list of Individual clients in the calling user's
         scope. Advisors see only their portfolio; Root Advisors see all clients
         across all branches.
+
+
+        **Valid `sort` fields:** `createdAt`, `id`, `name`, `branchName`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Individual Clients]
       security:
         - BearerAuth: []
@@ -1924,6 +1936,10 @@ paths:
         Returns a paginated list of Business Owner clients in the calling
         user's scope. Scope is determined by role — Advisors see their own
         portfolio; Root Advisors see all clients.
+
+
+        **Valid `sort` fields:** `createdAt`, `id`, `name`, `branchName`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Business Owner Clients]
       security:
         - BearerAuth: []
