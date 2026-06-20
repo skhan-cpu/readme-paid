@@ -1841,16 +1841,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InviteIndividualRequest'
-            example:
-              firstName: "Jane"
-              lastName: "Doe"
-              phoneNumber: "+12025550103"
-              email: "jane.doe@example.com"
-              advisorID: "550e8400-e29b-41d4-a716-446655440000"
+              type: object
+              required: [firstName, lastName, phoneNumber, email, advisorID]
+              properties:
+                firstName:
+                  type: string
+                  minLength: 2
+                  maxLength: 255
+                  example: "Jane"
+                lastName:
+                  type: string
+                  minLength: 2
+                  maxLength: 255
+                  example: "Doe"
+                phoneNumber:
+                  type: string
+                  pattern: "^\\+1\\d{10}$"
+                  description: "E.164 format, US numbers only"
+                  example: "+12025550103"
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: "jane.doe@gmail.com"
+                advisorID:
+                  type: string
+                  format: uuid
+                  description: "UUID of the Advisor this client will be assigned to"
+                  example: "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '201':
-          description: Invitation sent successfully. No data is returned in the response body.
+          description: Invitation sent successfully. No response body is returned.
         '400':
           description: Validation error or duplicate email
           content:
