@@ -5236,8 +5236,9 @@ components:
         usCitizenshipStatus:
           type: string
           description: >-
-            US citizenship status (e.g., `Citizen`, `PermanentResident`,
-            `NonResident`).
+            US citizenship status (e.g., `Citizen`, `ResidentAlien`,
+            `NonResidentAlien`).
+          enum: [Citizen, ResidentAlien, NonResidentAlien]
           example: Citizen
         address:
           $ref: '#/components/schemas/SignupAddress'

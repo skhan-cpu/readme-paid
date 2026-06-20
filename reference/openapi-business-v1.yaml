@@ -202,7 +202,7 @@ components:
           type: boolean
         internationalTransferFrequency:
           type: string
-          enum: [Never, OncePerMonth, SeveralPerMonth, SeveralPerWeek, Daily]
+          enum: [OncePerMonth, SeveralPerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
         internationalTransferAmountRange:
           type: string
           example: "from_10000_to_49999"
@@ -288,7 +288,7 @@ components:
           $ref: '#/components/schemas/Employment'
         usCitizenshipStatus:
           type: string
-          enum: [Citizen, PermanentResident, NonResident]
+          enum: [Citizen, ResidentAlien, NonResidentAlien]
         w9:
           $ref: '#/components/schemas/W9Certification'
           description: "Required for Business Owner role"
