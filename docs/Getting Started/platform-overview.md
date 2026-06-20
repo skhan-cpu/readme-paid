@@ -77,14 +77,33 @@ flowchart TD
 
 | Environment | Base URL                                                    |
 |-------------|-------------------------------------------------------------|
-| Staging     | `https://api-test.stage2.tappbank.com`                      |
-| Production  | Contact `support@tappcash.com` |
+| Staging     | `https://api-{tenant}.stage2.tappbank.com`                  |
+| Production  | `https://api-{tenant}.tappcash.com`                         |
 
-All API paths are appended to the base URL. Example:
+Replace `{tenant}` with your organization's assigned tenant identifier. For example, if your tenant is `acme`:
 
 ```
-POST https://api-test.stage2.tappbank.com/users/public/v1/auth/signin
+POST https://api-acme.stage2.tappbank.com/users/public/v1/auth/signin
 ```
+
+Contact `support@tappcash.com` to obtain your tenant identifier and production credentials.
+
+> **Staging shortcut:** The shared test environment is available at `https://api-test.stage2.tappbank.com` — useful for initial exploration before your tenant is provisioned.
+
+---
+
+## Selecting Your Tenant in the API Reference
+
+When using the **Try It** feature in the API Reference pages, a server selector appears at the top of each endpoint. You must choose the correct server and enter your tenant identifier before sending requests.
+
+1. Open any API Reference endpoint (e.g., Sign In).
+2. Click the **Server** dropdown — it defaults to the shared staging URL.
+3. Select **Staging (custom tenant)** or **Production** if your organization has a dedicated tenant.
+4. Replace the `{tenant}` variable in the URL field with your tenant identifier (e.g., `acme`).
+5. Add your Bearer token in the **Authorization** section.
+6. Click **Try It** to send the request.
+
+If you are just getting started and do not yet have a tenant, use the default staging server (`https://api-test.stage2.tappbank.com`) with the test credentials provided during onboarding.
 
 ---
 
