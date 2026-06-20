@@ -1,6 +1,6 @@
 ---
 api:
   file: openapi-v0.yaml
-  operationId: getW9TermsAndConditions
+  operationId: individualGetW9Terms
 hidden: false
 ---

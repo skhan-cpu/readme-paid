@@ -1,6 +1,6 @@
 ---
 api:
-  file: openapi-v0.yaml
-  operationId: SignInHandler
+  file: openapi-auth-v1.yaml
+  operationId: signIn
 hidden: false
 ---

@@ -1,6 +1,6 @@
 ---
 api:
-  file: openapi-v0.yaml
+  file: openapi-auth-v1.yaml
   operationId: refreshToken
 hidden: false
 ---

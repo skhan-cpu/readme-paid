@@ -1,6 +1,6 @@
 ---
 api:
   file: openapi-v0.yaml
-  operationId: getLatestKycRequest
+  operationId: individualGetKYCStatus
 hidden: false
 ---

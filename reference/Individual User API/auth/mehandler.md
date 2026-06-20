@@ -1,6 +1,6 @@
 ---
 api:
-  file: openapi-v0.yaml
-  operationId: MeHandler
+  file: openapi-auth-v1.yaml
+  operationId: getProfile
 hidden: false
 ---

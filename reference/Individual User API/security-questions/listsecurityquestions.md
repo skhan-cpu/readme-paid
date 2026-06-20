@@ -1,6 +1,6 @@
 ---
 api:
   file: openapi-v0.yaml
-  operationId: ListSecurityQuestions
+  operationId: individualListSecurityQuestions
 hidden: false
 ---

@@ -1,6 +1,6 @@
 ---
 api:
-  file: openapi-v0.yaml
-  operationId: ChangePasswordHandler
+  file: openapi-auth-v1.yaml
+  operationId: changePassword
 hidden: false
 ---

@@ -1,6 +1,6 @@
 ---
 api:
   file: openapi-v0.yaml
-  operationId: createEXTRequest
+  operationId: individualCreateACHTransfer
 hidden: false
 ---

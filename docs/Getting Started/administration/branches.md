@@ -116,13 +116,15 @@ Upload a CSV file as `multipart/form-data`. Contact `support@tappcash.com` for t
 
 Returns full branch details including assigned Head Branch Manager and Branch Manager.
 
-**Get your own branch (Branch Manager / Advisor):**
+**Get your own branch (Head Branch Manager / Branch Manager / Advisor):**
 
 `GET /branches/private/v1/branch/my`
 
-- **Auth**: Branch Manager or Advisor access token
+- **Auth**: Head Branch Manager, Branch Manager, or Advisor access token
 
 Returns the branch the calling user is assigned to.
+
+> **Root Advisor cannot use this endpoint.** The Root Advisor manages all branches and is not assigned to any specific one. Calling this endpoint as Root Advisor returns `RELATION_NOT_FOUND`. Use `GET /branches/private/v1/branch` to list all branches, or `GET /branches/private/v1/branch/:id` to get a specific branch by ID.
 
 ---
 
@@ -132,11 +134,10 @@ Returns the branch the calling user is assigned to.
 
 - **Auth**: Root Advisor access token
 
-Send only the fields you want to change:
+Both `description` and `address` are required:
 
 ```json
 {
-  "branchName": "Updated Branch Name",
   "description": "Updated description",
   "address": {
     "address": "456 Oak Ave",
@@ -147,6 +148,8 @@ Send only the fields you want to change:
   }
 }
 ```
+
+> `branchName` cannot be changed after creation.
 
 ---
 
