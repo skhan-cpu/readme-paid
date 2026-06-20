@@ -316,9 +316,65 @@ components:
         phoneNumber:
           type: string
 
+    AdminPersonParams:
+      type: object
+      required: [name, dateOfBirth, address, phoneNumber, socialSecurityNumber, email]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Alice Smith"
+        dateOfBirth:
+          type: string
+          description: "Format: MM/DD/YYYY"
+          example: "01/15/1985"
+        address:
+          type: object
+          required: [address, city, state, zipCode, country]
+          properties:
+            address:
+              type: string
+              maxLength: 255
+              example: "123 Main St"
+            city:
+              type: string
+              minLength: 2
+              maxLength: 60
+              example: "Austin"
+            state:
+              type: string
+              minLength: 2
+              maxLength: 50
+              example: "TX"
+            zipCode:
+              type: string
+              example: "78701"
+            country:
+              type: string
+              example: "US"
+        phoneNumber:
+          type: string
+          description: "E.164 format"
+          example: "+15125550101"
+        socialSecurityNumber:
+          type: string
+          example: "123-45-6789"
+        email:
+          type: string
+          maxLength: 255
+          example: "alice.smith@example.com"
+        internalNotes:
+          type: string
+          maxLength: 255
+          example: "Assigned to downtown region"
+        profileImageID:
+          type: integer
+          example: 42
+
     CreateBranchRequest:
       type: object
-      required: [branchName, address]
+      required: [branchName, address, superadvisor, branchmanager]
       properties:
         branchName:
           type: string
@@ -327,10 +383,18 @@ components:
           example: "Downtown Branch"
         description:
           type: string
-          maxLength: 255
+          maxLength: 655
           example: "Serves the downtown metro area"
         address:
           $ref: '#/components/schemas/Address'
+        superadvisor:
+          description: Head Branch Manager to assign to this branch
+          allOf:
+            - $ref: '#/components/schemas/AdminPersonParams'
+        branchmanager:
+          description: Branch Manager to assign to this branch
+          allOf:
+            - $ref: '#/components/schemas/AdminPersonParams'
 
     UpdateBranchRequest:
       type: object
@@ -975,6 +1039,30 @@ paths:
                 state: "TX"
                 zipCode: "78701"
                 country: "US"
+              superadvisor:
+                name: "Alice Smith"
+                dateOfBirth: "01/15/1985"
+                email: "alice.smith@example.com"
+                phoneNumber: "+15125550101"
+                socialSecurityNumber: "123-45-6789"
+                address:
+                  address: "456 Oak Ave"
+                  city: "Austin"
+                  state: "TX"
+                  zipCode: "78702"
+                  country: "US"
+              branchmanager:
+                name: "Bob Jones"
+                dateOfBirth: "03/22/1988"
+                email: "bob.jones@example.com"
+                phoneNumber: "+15125550202"
+                socialSecurityNumber: "987-65-4321"
+                address:
+                  address: "789 Pine Rd"
+                  city: "Austin"
+                  state: "TX"
+                  zipCode: "78703"
+                  country: "US"
       responses:
         '201':
           description: Branch created
