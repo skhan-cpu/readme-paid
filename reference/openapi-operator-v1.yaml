@@ -613,11 +613,11 @@ paths:
           application/json:
             schema:
               type: object
-              required: [email, password, roles]
+              required: [login, password, roles]
               properties:
-                email:
+                login:
                   type: string
-                  format: email
+                  description: Email address, phone (E.164), or username.
                 password:
                   type: string
                 roles:

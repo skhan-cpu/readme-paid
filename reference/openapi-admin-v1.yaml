@@ -159,11 +159,11 @@ components:
 
     AdminSignInRequest:
       type: object
-      required: [email, password, roles]
+      required: [login, password, roles]
       properties:
-        email:
+        login:
           type: string
-          format: email
+          description: Email address, phone (E.164), or username.
           example: "advisor@example.com"
         password:
           type: string
@@ -690,7 +690,7 @@ paths:
             schema:
               $ref: '#/components/schemas/AdminSignInRequest'
             example:
-              email: "advisor@example.com"
+              login: "advisor@example.com"
               password: "SecurePass123!"
               roles: ["advisor"]
       responses:
