@@ -1,4 +1,0 @@
----
-title: Invitation
-hidden: false
----
