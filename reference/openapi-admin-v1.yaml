@@ -103,8 +103,10 @@ info:
 x-readme:
   proxy-enabled: true
 servers:
+  - url: https://api-test.stage2.tappbank.com
+    description: Staging (test tenant)
   - url: https://api-{tenant}.stage2.tappbank.com
-    description: Staging
+    description: Staging (custom tenant)
     variables:
       tenant:
         default: test
@@ -644,13 +646,17 @@ components:
 
     InviteIndividualRequest:
       type: object
-      required: [firstName, lastName, phoneNumber, email]
+      required: [firstName, lastName, phoneNumber, email, advisorID]
       properties:
         firstName:
           type: string
+          minLength: 2
+          maxLength: 255
           example: "Jane"
         lastName:
           type: string
+          minLength: 2
+          maxLength: 255
           example: "Doe"
         phoneNumber:
           type: string
@@ -660,6 +666,11 @@ components:
           type: string
           format: email
           example: "jane.doe@example.com"
+        advisorID:
+          type: string
+          format: uuid
+          description: "UUID of the Advisor this client will be assigned to"
+          example: "550e8400-e29b-41d4-a716-446655440000"
 
     AssignClientRequest:
       type: object
@@ -1836,16 +1847,10 @@ paths:
               lastName: "Doe"
               phoneNumber: "+12025550103"
               email: "jane.doe@example.com"
+              advisorID: "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '201':
-          description: Invitation sent
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/IndividualClient'
+          description: Invitation sent successfully. No data is returned in the response body.
         '400':
           description: Validation error or duplicate email
           content:
@@ -1908,17 +1913,25 @@ paths:
           application/json:
             schema:
               type: object
-              required: [individualId, advisorId]
+              required: [advisorID, userIDs]
               properties:
-                individualId:
+                advisorID:
                   type: string
-                advisorId:
-                  type: string
+                  format: uuid
+                  description: "UUID of the new Advisor to assign the client(s) to"
+                  example: "cef038d1-e394-49a1-bbe9-e72aa88a36bd"
+                userIDs:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: "Array of Individual client UUIDs to reassign"
+                  example: ["0ab436c2-d1c3-433a-ba86-24efc48a6228"]
       responses:
         '200':
-          description: Client reassigned
+          description: Client(s) reassigned successfully
         '400':
-          description: Advisor not in same branch
+          description: Validation error or Advisor not in same branch
           content:
             application/json:
               schema:
@@ -2076,17 +2089,25 @@ paths:
           application/json:
             schema:
               type: object
-              required: [businessOwnerId, advisorId]
+              required: [advisorID, businessOwnerIDs]
               properties:
-                businessOwnerId:
+                advisorID:
                   type: string
-                advisorId:
-                  type: string
+                  format: uuid
+                  description: "UUID of the new Advisor to assign the client(s) to"
+                  example: "cef038d1-e394-49a1-bbe9-e72aa88a36bd"
+                businessOwnerIDs:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: "Array of Business Owner client UUIDs to reassign"
+                  example: ["0ab436c2-d1c3-433a-ba86-24efc48a6228"]
       responses:
         '200':
-          description: Client reassigned
+          description: Client(s) reassigned successfully
         '400':
-          description: Advisor not in same branch
+          description: Validation error or Advisor not in same branch
           content:
             application/json:
               schema:
