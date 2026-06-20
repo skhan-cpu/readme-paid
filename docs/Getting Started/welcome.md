@@ -50,10 +50,31 @@ End-to-end integration patterns with every API call in sequence.
 
 ## Base URL
 
-| Environment | Base URL                                                                                 |
-|-------------|------------------------------------------------------------------------------------------|
-| Staging     | `https://api-test.stage2.tappbank.com`                                                   |
-| Production  | Contact `support@tappcash.com` for your production base URL |
+Your base URL follows the pattern `https://api-{tenant}.stage2.tappbank.com` where `{tenant}` is your organization's subdomain.
+
+| Environment | Base URL pattern |
+|-------------|-----------------|
+| Staging     | `https://api-{tenant}.stage2.tappbank.com` |
+| Production  | `https://api-{tenant}.tappcash.com` |
+
+Contact `support@tappcash.com` to get your tenant name.
+
+---
+
+## Selecting Your Tenant in the API Reference
+
+Every endpoint in the **API Reference** has a **Try It** panel that lets you make live requests directly from the docs. For it to work, you must set your tenant name first.
+
+**How to set your tenant:**
+
+1. Open any endpoint page in the API Reference (e.g. [Sign in](/reference/authentication/sign-in))
+2. In the **Try It** panel on the right, click the server URL dropdown at the top — it shows the current environment
+3. Look for the **`tenant`** variable field and replace `test` with your actual tenant name (e.g. `wire-network`)
+4. Your requests will now go to `https://api-{your-tenant}.stage2.tappbank.com`
+
+> If you skip this step and leave the tenant as `test`, requests will fail or return a CORS error because `api-test` is a placeholder and may not resolve to your organization's environment.
+
+The tenant setting persists for your browser session across all endpoints in the same spec section.
 
 ---
 
@@ -65,8 +86,8 @@ All requests to private endpoints require a Bearer token in the `Authorization` 
 Authorization: Bearer <your_token>
 ```
 
-Tokens are issued by `POST /users/public/v1/auth/signin`. Access tokens expire after **30 minutes** — use
-`POST /users/public/v1/auth/refresh` with your refresh token to get a new one without re-login.
+Tokens are issued by `POST /users/public/v1/auth/signin`. Access tokens expire after **~10 minutes** — use
+`GET /users/public/v1/auth/refresh` with your refresh token to get a new pair without re-login.
 
 To obtain credentials, contact `support@tappcash.com`.
 
