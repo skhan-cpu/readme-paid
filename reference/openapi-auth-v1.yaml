@@ -74,13 +74,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: wire-network
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com
     description: Production
     variables:
       tenant:
-        default: wire-network
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
