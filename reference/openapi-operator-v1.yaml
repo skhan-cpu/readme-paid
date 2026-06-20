@@ -47,9 +47,9 @@ info:
 
     | Temporary access token | Session | `/limited/` onboarding endpoints only |
 
-    | Full access token | 30 minutes | All authenticated endpoints |
+    | Full access token | ~10 minutes (default) | All authenticated endpoints |
 
-    | Refresh token | 30 days | Renew via `POST /users/public/v1/auth/refresh` |
+    | Refresh token | ~35 minutes (default) | Renew via `GET /users/public/v1/auth/refresh` |
 
 
     Required header on all private requests:

@@ -38,9 +38,9 @@ info:
 
     |-------|----------|---------|
 
-    | Access token | 30 minutes | All `/private/` endpoints |
+    | Access token | ~10 minutes (default) | All `/private/` endpoints |
 
-    | Refresh token | 30 days | Renew via `POST /users/public/v1/auth/refresh` |
+    | Refresh token | ~35 minutes (default) | Renew via `GET /users/public/v1/auth/refresh` |
 
 
     Include the access token in every private request:
@@ -218,10 +218,10 @@ components:
           properties:
             accessToken:
               type: string
-              description: JWT valid for 30 minutes
+              description: JWT valid for ~10 minutes (default; varies with tenant auto-logout settings)
             refreshToken:
               type: string
-              description: JWT valid for 30 days
+              description: JWT valid for ~35 minutes (default; varies with tenant auto-logout settings)
             user:
               type: object
               properties:
@@ -716,7 +716,7 @@ paths:
         Authenticates a Root Advisor, Head Branch Manager, Branch Manager, or
         Advisor. Pass the user's role in the `roles` array.
 
-        Returns a 30-minute `accessToken` and a 30-day `refreshToken`.
+        Returns an `accessToken` (~10 min default) and a `refreshToken` (~35 min default).
       tags: [Authentication]
       requestBody:
         required: true

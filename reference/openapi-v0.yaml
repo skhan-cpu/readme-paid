@@ -232,9 +232,9 @@ info:
     | Temporary access token | Session | `/limited/` endpoints only (steps 4–9)
     |
 
-    | Full access token | 30 minutes | All authenticated endpoints |
+    | Full access token | ~10 minutes (default) | All authenticated endpoints |
 
-    | Refresh token | 30 days | Renew access token via
+    | Refresh token | ~35 minutes (default) | Renew access token via
     `/users/public/v1/auth/refresh` |
 
 
@@ -644,7 +644,7 @@ paths:
         3. Use `accessToken` for all API requests: `Authorization: Bearer
         <accessToken>`.
 
-        4. When the access token expires (30 minutes), call
+        4. When the access token expires (~10 minutes by default), call
         `/users/public/v1/auth/refresh`
            with both tokens to get a new pair.
 
@@ -697,11 +697,11 @@ paths:
                     properties:
                       accessToken:
                         type: string
-                        description: JWT access token. Valid for 30 minutes.
+                        description: JWT access token. Valid for ~10 minutes (default).
                         example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
                       refreshToken:
                         type: string
-                        description: JWT refresh token. Valid for 30 days.
+                        description: JWT refresh token. Valid for ~35 minutes (default).
                         example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
                       user:
                         $ref: '#/components/schemas/User'
@@ -5438,13 +5438,13 @@ components:
             accessToken:
               type: string
               description: >-
-                JWT access token. Valid for 30 minutes. Use in the Authorization
+                JWT access token. Valid for ~10 minutes (default). Use in the Authorization
                 header: Bearer <token>.
               example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
             refreshToken:
               type: string
               description: >-
-                Opaque refresh token. Valid for 30 days. Use to obtain a new
+                Opaque refresh token. Valid for ~35 minutes (default). Use to obtain a new
                 access token.
               example: LUFrryIYVKo4SOQUdlzp6-BMWLn34YwW...
             challengeName:
