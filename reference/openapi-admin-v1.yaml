@@ -99,6 +99,8 @@ info:
 
     ```
 
+x-readme:
+  proxy-enabled: true
 servers:
   - url: https://api-{tenant}.tappcash.com
     description: Production

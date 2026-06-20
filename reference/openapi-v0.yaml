@@ -383,6 +383,8 @@ tags:
     description: >-
       Two-step account deletion — request an OTP, then confirm. Deletion is
       blocked if the user has a positive balance or pending transactions.
+x-readme:
+  proxy-enabled: true
 servers:
   - url: https://api-{tenant}.tappcash.com
     description: Production

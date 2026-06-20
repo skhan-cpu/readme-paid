@@ -88,6 +88,8 @@ info:
     Attempting an operation without the required permission returns `403
     Forbidden`.
 
+x-readme:
+  proxy-enabled: true
 servers:
   - url: https://api-{tenant}.tappcash.com
     description: Production
