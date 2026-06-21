@@ -1,4 +1,4 @@
 ---
-title: Org API
+title: Sessions
 hidden: false
 ---

@@ -6,7 +6,7 @@ api:
 hidden: false
 ---
 
-Accepts the invitation and links the user to their branch and advisor.
+Accepts the invitation and sets the user's password. A `200` means the account is immediately active. A `403` means the account is created but additional onboarding steps (phone verification, KYC) are required — continue with steps 4–9 using your org session.
 
 > **Path differs per user type** — use the correct URL for your user type:
 > - **Individual**: `POST /branches/public/v1/individual/invites/accept`

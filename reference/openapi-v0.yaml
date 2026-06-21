@@ -58,14 +58,12 @@ info:
     ---
 
 
-    ## Steps 1–10 — Individual User Onboarding
+    ## Steps 1–9 — Individual User Onboarding
 
 
-    Follow these steps **in order**. Steps 1–3 require no auth. Steps 4–9 use
-    the
+    Follow these steps **in order**. Steps 1–3 are public (no auth). Steps 4–9
 
-    **temporary token** from step 3. Step 10 exchanges it for a full access
-    token.
+    require your org session headers (`X-Session-Id` + `X-Client-Id`).
 
 
     | Step | Method | Endpoint | Auth |
@@ -79,29 +77,25 @@ info:
     None |
 
     | 3. Accept invite + set password | `POST` |
-    `/branches/public/v1/individual/invites/accept` | None → returns **temporary
-    token** |
+    `/branches/public/v1/individual/invites/accept` | None |
 
     | 4. Review W9 terms | `GET` | `/branches/private/v1/limited/w9/terms` |
-    Temporary token |
+    Org session |
 
     | 5. List security questions | `GET` |
-    `/users/private/v1/limited/security-questions` | Temporary token |
+    `/users/private/v1/limited/security-questions` | Org session |
 
     | 6. Submit security answers | `POST` |
-    `/users/private/v1/limited/security-questions/answers` | Temporary token |
+    `/users/private/v1/limited/security-questions/answers` | Org session |
 
     | 7. Send phone OTP | `POST` |
-    `/users/private/v1/limited/generate-new-phone-code` | Temporary token |
+    `/users/private/v1/limited/generate-new-phone-code` | Org session |
 
     | 8. Verify phone OTP | `PUT` | `/users/private/v1/limited/check-phone-code`
-    | Temporary token |
+    | Org session |
 
     | 9. Submit KYC information | `POST` |
-    `/branches/private/v1/limited/individual/signup` | Temporary token |
-
-    | 10. Exchange for full access token | `PUT` |
-    `/users/private/v1/limited/token-exchange` | Temporary token |
+    `/branches/private/v1/limited/individual/signup` | Org session |
 
 
     ---
@@ -114,9 +108,7 @@ info:
     features:
 
 
-    > **Authentication endpoints** (sign in, refresh, profile, sign out, change
-    password) are documented in the **Authentication API** — they work identically
-    for all user types.
+
 
 
     | Feature | Method | Endpoint | Description |
@@ -177,41 +169,21 @@ info:
     ## Authentication
 
 
-    ### Temporary token (steps 4–9)
-
-
-    Step 3 returns HTTP `403` with a `temporaryAccessToken` when additional
-    onboarding steps are
-
-    required. Use it exclusively for `/limited/` endpoints:
+    Steps 4–9 require your org session headers on every request:
 
 
     ```
 
-    Authorization: Bearer <temporaryAccessToken>
+    X-Session-Id: <sessionId>
+
+    X-Client-Id:  <clientId>
 
     ```
 
 
-    ### Full access token (step 10+)
-
-
-    Exchange the temporary token via `/users/private/v1/limited/token-exchange`.
-    Use the returned
-
-    `accessToken` for all authenticated API calls.
-
-
-    | Token | Lifetime | Purpose |
-
-    |-------|----------|---------|
-
-    | Temporary access token | Session | `/limited/` endpoints only (steps 4–9)
-    |
-
-    | Full access token | ~10 minutes (default) | All authenticated endpoints |
-
-    | Refresh token | ~35 minutes (default) | Renew via the Authentication API |
+    Obtain a session via `POST /entrypoint/org/v1/sessions` before starting the
+    onboarding flow. See [Sessions](/reference/sessions/create-session) for
+    details.
 
 
     > **Tip:** Decode any JWT at [jwt.io](https://jwt.io/) to read the `exp`,
@@ -350,135 +322,6 @@ servers:
         default: test
         description: Your organization's subdomain (e.g. wire-network)
 paths:
-  /users/private/v1/limited/token-exchange:
-    put:
-      security:
-        - OrgSessionAuth: []
-          ClientIdAuth: []
-      tags:
-        - Auth
-      summary: Step 10 — Exchange for full access token
-      operationId: individualTokenExchange
-      description: >
-        The final step of onboarding. Exchanges the temporary token for a full
-
-        `accessToken` + `refreshToken` pair that can be used to access all
-        authenticated APIs.
-
-
-        This endpoint first verifies that the user has completed all required
-        verifications
-
-        (phone confirmation, KYC submission, etc.). If any required step is
-        still incomplete,
-
-        the exchange is refused with a `403`.
-
-
-        **When to call:** After step 9 (individual signup) returns `200`.
-
-
-        **After a successful exchange:**
-
-        1. Discard the temporary token.
-
-        2. Store the `accessToken` and `refreshToken` securely.
-
-        3. Use `accessToken` for all API requests: `Authorization: Bearer
-        <accessToken>`.
-
-        4. When the access token expires (~10 minutes by default), call
-        `/users/public/v1/auth/refresh`
-           with both tokens to get a new pair.
-
-        **Optional device headers** allow the server to track which device the
-        token is
-
-        bound to, enabling per-device token management.
-
-
-        **Possible error codes:**
-
-
-        | Code | Status | Description |
-
-        |------|--------|-------------|
-
-        | `UNAUTHORIZED` | 401 | Missing or invalid token |
-
-        | `IP_IS_BLOCKED` | 403 | Requesting IP is blocked |
-
-        | `VERIFICATIONS_INCOMPLETE` | 403 | User has not completed all required
-        steps |
-      parameters:
-        - in: header
-          name: V-Client-Device-Id
-          schema:
-            type: string
-          required: false
-          description: Mobile device identifier for token binding.
-          example: 550e8400-e29b-41d4-a716-446655440000
-        - in: header
-          name: X-Device-Id
-          schema:
-            type: string
-          required: false
-          description: Web device identifier for token binding.
-      responses:
-        '200':
-          description: Tokens issued. Use `accessToken` for all subsequent API calls.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  data:
-                    type: object
-                    properties:
-                      accessToken:
-                        type: string
-                        description: JWT access token. Valid for ~10 minutes (default).
-                        example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
-                      refreshToken:
-                        type: string
-                        description: JWT refresh token. Valid for ~35 minutes (default).
-                        example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
-                      user:
-                        $ref: '#/components/schemas/User'
-        '401':
-          description: Unauthorized — missing or invalid token.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: IP blocked or required verifications not yet complete.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                IP blocked:
-                  value:
-                    errors:
-                      - code: IP_IS_BLOCKED
-                        title: IP is blocked
-                        details: Your IP address has been blocked
-        '422':
-          description: User not found.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          description: Internal server error.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
   /branches/public/v1/common/invites/check:
     get:
       tags:
@@ -573,12 +416,8 @@ paths:
 
 
         On `403`, the account is created but **additional actions are required**
-        (e.g., phone
-
-        verification, KYC). The response body contains a `temporaryAccessToken`
-        — store it and
-
-        use it as the `Authorization: Bearer` header for all subsequent
+        (e.g., phone verification, KYC). Continue the onboarding flow using
+        your org session (`X-Session-Id` + `X-Client-Id`) for all subsequent
         `/limited/` endpoints.
 
 
@@ -675,20 +514,16 @@ paths:
                         target: common
         '403':
           description: >
-            HTTP 403 is intentional. Two cases: (1) invalid/expired invite token — ErrorResponse body;
-            (2) account created but additional onboarding steps required — TemporaryAccess body.
-            Extract `data.temporaryAccessToken` and use it for all subsequent onboarding calls.
+            Two cases: (1) invalid/expired invite token — error response body;
+            (2) account created but additional onboarding steps required —
+            continue with steps 4–9 using your org session headers.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/ErrorResponse'
-                  - $ref: '#/components/schemas/TemporaryAccess'
+                $ref: '#/components/schemas/ErrorResponse'
               examples:
                 Additional actions required:
                   value:
-                    data:
-                      temporaryAccessToken: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
                     errors:
                       - code: required additional actions
                         target: common
@@ -3462,56 +3297,7 @@ components:
                   fields:
                     - phoneNumber
                     - kyc
-    TemporaryAccess:
-      description: >
-        Response returned when account creation succeeds but additional
-        onboarding steps are
 
-        required. Extract `data.temporaryAccessToken` and use it for all
-        subsequent `/limited/`
-
-        endpoint calls.
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            temporaryAccessToken:
-              type: string
-              description: Short-lived token granting access to `/limited/` endpoints only.
-              example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              code:
-                type: string
-                example: required additional actions
-              target:
-                type: string
-                example: common
-              title:
-                type: string
-                example: Forbidden
-              statusCode:
-                type: integer
-                example: 403
-              meta:
-                type: object
-                properties:
-                  fields:
-                    type: array
-                    description: List of onboarding steps still required.
-                    items:
-                      type: string
-                      enum:
-                        - phoneNumber
-                        - kyc
-                        - kyb
-                    example:
-                      - phoneNumber
-                      - kyc
     ErrorResponse:
       description: Standard error envelope used by the `tapp-users` service.
       type: object

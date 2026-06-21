@@ -2,6 +2,11 @@
 title: Onboarding
 hidden: false
 ---
-These endpoints handle the onboarding flow for all client user types — Individual, Business Owner, and Operator. The URL paths are identical across all three types; the Bearer token identifies which user type is making the request.
+These endpoints handle the onboarding flow for all client user types — Individual, Business Owner, and Operator.
 
-The accept-invite and signup steps differ per user type and are documented in each user type's API section.
+Steps 1–3 are public (no auth required). Steps 4–9 require your org session headers on every request:
+
+```
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
+```
