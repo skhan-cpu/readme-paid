@@ -6,7 +6,7 @@ api:
 hidden: false
 ---
 
-> This endpoint is shared across Individual, Business Owner, and Operator user types.
+> Available to Individual, Business Owner, and Operator users for their own accounts, and to admin roles (Advisor, Root Advisor, Branch Manager, etc.) to initiate transfers on behalf of their clients.
 
 ## Role-Based Access
 
