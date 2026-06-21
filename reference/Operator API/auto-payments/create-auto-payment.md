@@ -1,7 +1,0 @@
----
-title: Create auto-payment
-api:
-  file: openapi-operator-v1.yaml
-  operationId: opCreateAutoPayment
-hidden: false
----
