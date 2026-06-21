@@ -158,7 +158,7 @@ Before rendering any UI, confirm the invite link is still valid.
 
 ```json
 {
-  "dateOfBirth": "1990-03-20",
+  "dateOfBirth": "03/20/1990",
   "socialSecurityNumber": "987-65-4321",
   "usCitizenshipStatus": "Citizen",
   "address": {
@@ -166,7 +166,7 @@ Before rendering any UI, confirm the invite link is still valid.
     "city": "New York",
     "state": "NY",
     "zipCode": "10001",
-    "country": "US"
+    "country": "USA"
   },
   "w9": {
     "isSubjectToBackupWithholding": false,

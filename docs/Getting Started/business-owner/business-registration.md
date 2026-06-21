@@ -121,13 +121,13 @@ Submit the business entity details and beneficial owner information.
     "city": "Austin",
     "state": "TX",
     "zipCode": "78701",
-    "country": "US"
+    "country": "USA"
   },
   "beneficialOwners": [
     {
       "firstName": "Jane",
       "lastName": "Doe",
-      "dateOfBirth": "1985-06-15",
+      "dateOfBirth": "06/15/1985",
       "ownershipPercentage": 51
     }
   ]
