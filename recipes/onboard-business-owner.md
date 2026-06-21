@@ -86,13 +86,13 @@ curl -X POST https://api-test.stage2.tappbank.com/branches/private/v1/business-o
       "city": "Austin",
       "state": "TX",
       "zipCode": "78701",
-      "country": "US"
+      "country": "USA"
     },
     "beneficialOwners": [
       {
         "firstName": "Jane",
         "lastName": "Doe",
-        "dateOfBirth": "1985-06-15",
+        "dateOfBirth": "06/15/1985",
         "ownershipPercentage": 51
       }
     ]

@@ -152,7 +152,7 @@ curl -X POST https://api-test.stage2.tappbank.com/branches/private/v1/limited/in
   -H "Authorization: Bearer <temporaryAccessToken>" \
   -H "Content-Type: application/json" \
   -d '{
-    "dateOfBirth": "1990-03-20",
+    "dateOfBirth": "03/20/1990",
     "socialSecurityNumber": "987-65-4321",
     "usCitizenshipStatus": "Citizen",
     "address": {
@@ -160,7 +160,7 @@ curl -X POST https://api-test.stage2.tappbank.com/branches/private/v1/limited/in
       "city": "New York",
       "state": "NY",
       "zipCode": "10001",
-      "country": "US"
+      "country": "USA"
     },
     "w9": {
       "isSubjectToBackupWithholding": false,
