@@ -107,10 +107,16 @@ servers:
 components:
 
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    OrgSessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Id
+      description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+    ClientIdAuth:
+      type: apiKey
+      in: header
+      name: X-Client-Id
+      description: The ClientId (ci_test_… or ci_live_…) used to create the session.
 
   schemas:
     ErrorResponse:
@@ -435,7 +441,8 @@ paths:
         acknowledge.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -450,7 +457,8 @@ paths:
         Returns the security questions for the Operator to answer.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -463,7 +471,8 @@ paths:
       summary: Step 6 — Submit security answers
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -497,7 +506,8 @@ paths:
         number.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -510,7 +520,8 @@ paths:
       summary: Step 8 — Verify phone OTP
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -544,7 +555,8 @@ paths:
         status.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -629,7 +641,8 @@ paths:
         `refreshToken`. Onboarding is complete after this step.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -676,7 +689,8 @@ paths:
         | `rejected` | KYC failed — check `errors` for rejection reasons |
       tags: [KYC Status]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -712,7 +726,8 @@ paths:
         enable in your UI.
       tags: [Profile]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -756,7 +771,8 @@ paths:
         permissions.
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -780,7 +796,8 @@ paths:
       summary: Get account details
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: accountId
@@ -807,7 +824,8 @@ paths:
         Returns the aggregate balance across all the Business Owner's accounts.
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -844,7 +862,8 @@ paths:
         `transferFunds` permission.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -885,7 +904,8 @@ paths:
         pending-approval before executing.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -934,7 +954,8 @@ paths:
         Calculates fees for an ACH transfer. Requires `transferACH` permission.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -970,7 +991,8 @@ paths:
         Executes an ACH pull or push. Requires `transferACH` permission.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1014,7 +1036,8 @@ paths:
         permission.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1053,7 +1076,8 @@ paths:
         Requires `autoPay` permission.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1114,7 +1138,8 @@ paths:
         `autoPay` permission.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1140,7 +1165,8 @@ paths:
         Cancels a scheduled auto-payment. Requires `autoPay` permission.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: autoPaymentId

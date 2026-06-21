@@ -25,10 +25,10 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 ## Quickstart
 
 <Cards>
-  <Card title="1. Get Credentials" icon="fa-duotone fa-key">Email `support@tappcash.com` with your org name and environment to receive Root Advisor credentials and your staging base URL.</Card>
-  <Card title="2. Admin Hierarchy" href="/docs/onboarding" icon="fa-duotone fa-sitemap">Sign in as Root Advisor, change your temporary password, create branches, and assign admin roles.</Card>
-  <Card title="3. Invite a Client" href="/docs/individual-registration" icon="fa-duotone fa-paper-plane">Send your first invitation — Individual for KYC or Business Owner for KYB — and the client begins onboarding.</Card>
-  <Card title="4. Move Money" href="/docs/individual-move-money" icon="fa-duotone fa-money-bill-transfer">Preview and execute a TBA transfer between accounts, or link an external bank via Plaid for ACH.</Card>
+  <Card title="1. Get Credentials" icon="fa-duotone fa-key">A Tech Admin enables API access for your organization and issues a `clientId` + `clientSecret` from the admin portal.</Card>
+  <Card title="2. Create a Session" href="/docs/org-api" icon="fa-duotone fa-server">POST your credentials to `/entrypoint/org/v1/sessions` — receive a `sessionId` valid for 24 hours.</Card>
+  <Card title="3. Call Endpoints" href="/docs/authentication" icon="fa-duotone fa-plug">Send `X-Session-Id` and `X-Client-Id` headers on every request.</Card>
+  <Card title="4. Revoke Session" href="/recipes/org-api-session" icon="fa-duotone fa-right-from-bracket">Call `DELETE /entrypoint/org/v1/sessions/{id}` on logout or job completion.</Card>
 </Cards>
 
 ---
@@ -38,6 +38,7 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 End-to-end integration patterns with every API call in sequence.
 
 <Cards>
+  <Card title="Org API Session" href="/recipes/org-api-session" icon="fa-duotone fa-server">ClientId + ClientSecret → sessionId → call endpoints with session headers → revoke on logout.</Card>
   <Card title="Onboard an Individual" href="/recipes/onboard-individual" icon="fa-duotone fa-id-card">Advisor invite → 10-step KYC (W9, security questions, phone OTP, identity) → full access token and live accounts.</Card>
   <Card title="Business Onboarding" href="/recipes/onboard-business-owner" icon="fa-duotone fa-users-gear">5-step KYB → invite Operators with scoped permissions (`transferFunds`, `autoPay`) → Operator KYC.</Card>
   <Card title="ACH Transfer" href="/recipes/ach-transfer" icon="fa-duotone fa-building-columns">BaaS token → Plaid Link → list external accounts → preview fees → execute pull or push.</Card>
@@ -80,14 +81,14 @@ The tenant setting persists for your browser session across all endpoints in the
 
 ## Authentication
 
-All requests to private endpoints require a Bearer token in the `Authorization` header.
+All requests use **session-based authentication**. Include these two headers on every API call:
 
 ```
-Authorization: Bearer <your_token>
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
 ```
 
-Tokens are issued by `POST /users/public/v1/auth/signin`. Access tokens expire after **~10 minutes** — use
-`GET /users/public/v1/auth/refresh` with your refresh token to get a new pair without re-login.
+Sessions are obtained from `POST /entrypoint/org/v1/sessions` using your `clientId` and `clientSecret`. Sessions are valid for **24 hours**.
 
 To obtain credentials, contact `support@tappcash.com`.
 

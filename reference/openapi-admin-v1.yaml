@@ -121,10 +121,16 @@ servers:
 components:
 
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    OrgSessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Id
+      description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+    ClientIdAuth:
+      type: apiKey
+      in: header
+      name: X-Client-Id
+      description: The ClientId (ci_test_… or ci_live_…) used to create the session.
 
   schemas:
     ErrorResponse:
@@ -1147,7 +1153,8 @@ paths:
         Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Branches]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1183,7 +1190,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Branches]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1401,7 +1409,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Branches]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -1433,7 +1442,8 @@ paths:
         Calling this endpoint as Root Advisor returns `RELATION_NOT_FOUND`.
       tags: [Branches]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -1459,7 +1469,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Branches]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: branchId
@@ -1493,7 +1504,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Branches]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: branchId
@@ -1541,7 +1553,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Admin Hierarchy]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: branchId
@@ -1576,7 +1589,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Admin Hierarchy]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: branchId
@@ -1612,7 +1626,8 @@ paths:
         **Access:** Root Advisor only.
       tags: [Admin Hierarchy]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: branchId
@@ -1655,7 +1670,8 @@ paths:
         Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Admin Hierarchy]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1702,7 +1718,8 @@ paths:
         Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Admin Hierarchy]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1738,7 +1755,8 @@ paths:
         Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Admin Hierarchy]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1781,7 +1799,8 @@ paths:
         Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
       tags: [Individual Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1833,7 +1852,8 @@ paths:
         **Access:** Advisor only.
       tags: [Individual Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1888,7 +1908,8 @@ paths:
         status, verification tier, and any rejection errors.
       tags: [Individual Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: individualId
@@ -1927,7 +1948,8 @@ paths:
         for this action.
       tags: [Individual Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1978,7 +2000,8 @@ paths:
         Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Business Owner Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -2023,7 +2046,8 @@ paths:
         **Access:** Advisor only.
       tags: [Business Owner Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -2066,7 +2090,8 @@ paths:
         information, and KYB verification status.
       tags: [Business Owner Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: businessOwnerId
@@ -2105,7 +2130,8 @@ paths:
         permission for this action.
       tags: [Business Owner Clients]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -2154,7 +2180,8 @@ paths:
         **Access:** Advisor only.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -2182,7 +2209,8 @@ paths:
         and onboarding status.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: operatorId
@@ -2214,7 +2242,8 @@ paths:
         permissions object — any permission not included is set to `false`.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: operatorId
@@ -2257,7 +2286,8 @@ paths:
         **Access:** Branch Manager (or higher).
       tags: [Approval Settings]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -2282,7 +2312,8 @@ paths:
         **Access:** Branch Manager only.
       tags: [Approval Settings]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -2327,7 +2358,8 @@ paths:
         Advisors see all accounts organization-wide.
       tags: [Account Management]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -2366,7 +2398,8 @@ paths:
         available balance, and account settings.
       tags: [Account Management]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: accountId
@@ -2400,7 +2433,8 @@ paths:
         the specified account.
       tags: [Account Management]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: accountId
@@ -2442,7 +2476,8 @@ paths:
         | Advisor | Clients in their portfolio |
       tags: [Account Management]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -2464,7 +2499,8 @@ paths:
         client.
       tags: [Account Management]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -2497,7 +2533,8 @@ paths:
         client.
       tags: [Account Management]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: accountId

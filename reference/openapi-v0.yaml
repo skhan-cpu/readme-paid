@@ -353,7 +353,8 @@ paths:
   /users/private/v1/limited/token-exchange:
     put:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Auth
       summary: Step 10 — Exchange for full access token
@@ -774,7 +775,8 @@ paths:
   /branches/private/v1/limited/w9/terms:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Onboarding
       summary: Step 4 — Review W9 terms
@@ -886,7 +888,8 @@ paths:
   /users/private/v1/limited/security-questions:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Security Questions
       summary: Step 5 — List security questions
@@ -960,7 +963,8 @@ paths:
   /users/private/v1/limited/security-questions/answers:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Security Questions
       summary: Step 6 — Submit security answers
@@ -1056,7 +1060,8 @@ paths:
   /users/private/v1/limited/security-questions/answers/status:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Security Questions
       summary: Step 6b — Check security answers status
@@ -1117,7 +1122,8 @@ paths:
   /users/private/v1/limited/generate-new-phone-code:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Phone Verification
       summary: Step 7 — Send phone OTP
@@ -1200,7 +1206,8 @@ paths:
   /users/private/v1/limited/check-phone-code:
     put:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Phone Verification
       summary: Step 8 — Verify phone OTP
@@ -1271,7 +1278,8 @@ paths:
   /branches/private/v1/limited/individual/signup:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Onboarding
       summary: Step 9 — Submit KYC information
@@ -1493,7 +1501,8 @@ paths:
   /accounts/private/v1/account:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Accounts
       summary: Show list of accounts for active user.
@@ -1613,7 +1622,8 @@ paths:
   /accounts/private/v1/account/{id}:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Accounts
       summary: Shows an account by passed id.
@@ -1654,7 +1664,8 @@ paths:
   /accounts/private/v1/account/{id}/bank-details:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Accounts
       summary: Shows an account by passed id.
@@ -1696,7 +1707,8 @@ paths:
   /accounts/private/v1/transactions/{id}:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Transactions
       summary: Fetch transaction by id.
@@ -1736,7 +1748,8 @@ paths:
   /accounts/private/v1/transactions:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Transactions
       summary: Shows list of transactions for current user.
@@ -1859,7 +1872,8 @@ paths:
   /accounts/private/v1/transactions/balance-chart:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Transactions
       summary: Get balance chart data
@@ -2034,7 +2048,8 @@ paths:
   /accounts/private/v1/transactions/transactions-chart:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Transactions
       summary: Get transaction sums chart data
@@ -2206,7 +2221,8 @@ paths:
   /accounts/private/v1/balance/total:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Balance
       summary: Fetch total available balance with pending transactions.
@@ -2305,7 +2321,8 @@ paths:
   /accounts/private/v1/account/{accountId}/statements/{monthYear}:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Accounts
       summary: Get account statement for specified month
@@ -2346,7 +2363,8 @@ paths:
   /accounts/private/v1/tba-requests/preview:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Internal Transfers
       summary: Makes request evaluation for TBA.
@@ -2390,7 +2408,8 @@ paths:
   /accounts/private/v1/tba-requests:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Internal Transfers
       summary: Creates a new request between accounts.
@@ -2439,7 +2458,8 @@ paths:
   /external-accounts/private/v1/baas/auth-token:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: Create BaaS authentication token
@@ -2516,7 +2536,8 @@ paths:
   /external-accounts/private/v1/account:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: List external accounts
@@ -2669,7 +2690,8 @@ paths:
   /external-accounts/private/v1/account/{accountId}:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: Get external account by ID
@@ -2736,7 +2758,8 @@ paths:
                 $ref: '#/components/schemas/NotFoundResponse'
     delete:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: Delete external account by ID
@@ -2800,7 +2823,8 @@ paths:
   /external-accounts/private/v1/account/transfer-limits:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: Get transfer limits
@@ -2875,7 +2899,8 @@ paths:
   /external-accounts/private/v1/account/{accountId}/bank-logo:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: Get bank logo for external account
@@ -2949,7 +2974,8 @@ paths:
       tags:
         - External Accounts
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       summary: >-
         Creates a new request between internal account and linked external
         account.
@@ -2997,7 +3023,8 @@ paths:
   /accounts/private/v1/ext-requests/preview:
     post:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - External Accounts
       summary: Makes evaluation of EXT request.
@@ -3039,7 +3066,8 @@ paths:
   /notifications/private/v1/notifications:
     get:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Notifications
       summary: Get list of notifications
@@ -3088,7 +3116,8 @@ paths:
   /notifications/private/v1/notifications/{id}:
     delete:
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       tags:
         - Notifications
       summary: Mark notification as read
@@ -3244,7 +3273,8 @@ paths:
 
         transactions before calling this endpoint.
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       requestBody:
         required: true
         content:
@@ -3298,7 +3328,8 @@ paths:
         badge.
       operationId: individualMarkAllNotificationsRead
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       responses:
         '200':
           description: All notifications marked as read successfully.
@@ -3332,7 +3363,8 @@ paths:
         `incomplete`
       operationId: individualGetKYCStatus
       security:
-        - bearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       responses:
         '200':
           description: Latest KYC request returned successfully.
@@ -3376,26 +3408,17 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: >
-        Pass the JWT token in the `Authorization` header:
+    OrgSessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Id
+      description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+    ClientIdAuth:
+      type: apiKey
+      in: header
+      name: X-Client-Id
+      description: The ClientId (ci_test_… or ci_live_…) used to create the session.
 
-        ```
-
-        Authorization: Bearer <token>
-
-        ```
-
-        During onboarding (steps 4–9), use the **temporary access token**
-        returned in the
-
-        `403` response from `/branches/public/v1/individual/invites/accept`.
-
-        After step 10, use the **full access token** from
-        `/users/private/v1/limited/token-exchange`.
   schemas:
     ResponseError:
       description: Standard error envelope used by the `tapp-branches` service.

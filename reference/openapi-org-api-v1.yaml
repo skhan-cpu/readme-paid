@@ -1,0 +1,330 @@
+openapi: 3.0.0
+info:
+  title: TAPP Cash Org API
+  version: 1.0.0
+  description: >
+    The **Org API** enables organizations to integrate with TAPP Cash
+    programmatically using **ClientId + ClientSecret** credentials instead of
+    email and password.
+
+
+    This API is separate from the UI-based authentication flow. It is intended
+    for server-to-server integrations where your backend calls TAPP Cash on
+    behalf of your users or for automated system operations.
+
+
+    ---
+
+
+    ## Getting started
+
+    1. A **Tech Admin** enables API access for your organization and generates
+       credentials via the admin portal.
+    2. Your backend stores the `clientId` and `clientSecret` securely.
+       **The `clientSecret` is shown only once** — treat it like a password.
+    3. Call `POST /entrypoint/org/v1/sessions` to get a `sessionId`.
+    4. Include `X-Session-Id` and `X-Client-Id` on every subsequent request.
+    5. Call `DELETE /entrypoint/org/v1/sessions/{id}` to log out.
+
+
+    ---
+
+
+    ## Environments
+
+    Credentials are environment-specific. The prefix on your `clientId` tells
+    you which environment it targets:
+
+    | Prefix | Environment | Notes |
+    |--------|-------------|-------|
+    | `ci_test_` | Sandbox | Safe for testing; no real money moved |
+    | `ci_live_` | Production | Real data, real transactions |
+
+    Client secret prefixes mirror this: `cs_test_` for sandbox, `cs_live_` for
+    production.
+
+
+    ---
+
+
+    ## Required headers on authenticated endpoints
+
+    ```
+    X-Session-Id: <sessionId>
+    X-Client-Id:  <clientId>
+    ```
+
+    The gateway validates that the `sessionId` was created by the supplied
+    `clientId`. A session from Client A cannot be used with Client B's
+    `clientId`.
+
+
+    ---
+
+
+    ## Acting on behalf of a user
+
+    When your backend calls on behalf of a specific user (e.g. to make a
+    transfer for a customer), include `customerUid` when creating the session.
+    The session is then scoped to that user and all downstream audit logs record
+    it as a `User` action rather than a `System` action.
+
+    | `customerUid` in session | `deviceSessionType` | Meaning |
+    |--------------------------|---------------------|---------|
+    | absent / null | `System` | Org backend acting autonomously |
+    | provided | `User` | Acting on behalf of a specific customer |
+
+
+    ---
+
+
+    ## Session lifetime
+
+    Sessions expire after **24 hours**. You can also revoke a session explicitly
+    by calling `DELETE /entrypoint/org/v1/sessions/{id}`.
+
+
+    ---
+
+
+    ## IP whitelisting
+
+    Credentials can be locked to specific IP addresses. If your credential has
+    an IP whitelist configured, requests from any other IP are rejected with
+    `403 Forbidden`.
+
+
+    ---
+
+
+    ## Error format
+
+    ```json
+    {
+      "errors": [
+        {
+          "code": "ERROR_CODE",
+          "title": "Human-readable title",
+          "details": "Additional context",
+          "target": "common | field",
+          "source": "fieldName"
+        }
+      ]
+    }
+    ```
+
+x-readme:
+  proxy-enabled: true
+
+servers:
+  - url: https://api-{tenant}.stage2.tappbank.com
+    description: Staging
+    variables:
+      tenant:
+        default: test
+        description: Your organization's subdomain (e.g. wire-network)
+  - url: https://api-{tenant}.tappcash.com
+    description: Production
+    variables:
+      tenant:
+        default: test
+        description: Your organization's subdomain (e.g. wire-network)
+
+components:
+
+  securitySchemes:
+    OrgSessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Id
+      description: >
+        Session ID obtained from `POST /entrypoint/org/v1/sessions`.
+        Must be combined with the `X-Client-Id` header on every request.
+
+  parameters:
+    ClientId:
+      name: X-Client-Id
+      in: header
+      required: true
+      description: >
+        The ClientId (`ci_test_…` or `ci_live_…`) used to create the session.
+        The gateway verifies that the session belongs to this credential.
+      schema:
+        type: string
+        example: ci_live_3f7a9c2e-1234-5678-abcd-ef0123456789
+
+    SessionId:
+      name: X-Session-Id
+      in: header
+      required: true
+      description: Session ID returned from the login endpoint.
+      schema:
+        type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+
+  schemas:
+
+    OrgSession:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            sessionId:
+              type: string
+              description: Use this as the `X-Session-Id` header on all subsequent requests.
+              example: 550e8400-e29b-41d4-a716-446655440000
+            expiresAt:
+              type: string
+              format: date-time
+              example: '2026-06-22T10:00:00Z'
+
+    Error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              title:
+                type: string
+              details:
+                type: string
+              target:
+                type: string
+                enum: [common, field]
+              source:
+                type: string
+
+paths:
+
+  /entrypoint/org/v1/sessions:
+    post:
+      operationId: orgSessionCreate
+      summary: Create session (login)
+      description: >
+        Authenticates your organization using `clientId` and `clientSecret`.
+        Returns a `sessionId` valid for **24 hours**.
+
+
+        Optionally pass `customerUid` to scope the session to a specific user
+        (sets `deviceSessionType` to `User`). Omit it for system-level
+        operations (`deviceSessionType: System`).
+
+
+        **The `clientSecret` is never sent again after this call.** Store the
+        returned `sessionId` and pass it on every subsequent request via the
+        `X-Session-Id` header alongside `X-Client-Id`.
+      tags:
+        - Sessions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - clientId
+                - clientSecret
+              properties:
+                clientId:
+                  type: string
+                  description: >
+                    Your ClientId. Prefix indicates environment:
+                    `ci_test_…` = sandbox, `ci_live_…` = production.
+                  example: ci_live_3f7a9c2e-1234-5678-abcd-ef0123456789
+                clientSecret:
+                  type: string
+                  description: >
+                    Your ClientSecret. Shown **once** at credential creation.
+                    Keep it secret — treat it like a password.
+                  example: cs_live_abc123...
+                customerUid:
+                  type: string
+                  nullable: true
+                  description: >
+                    The `customerUid` of the end-user this session acts on
+                    behalf of. Omit for autonomous system operations.
+                  example: usr_7f3a9b12-0000-0000-0000-000000000000
+            examples:
+              system_session:
+                summary: System session (no specific user)
+                value:
+                  clientId: ci_live_3f7a9c2e-1234-5678-abcd-ef0123456789
+                  clientSecret: cs_live_abc123xyz789
+              user_session:
+                summary: User session (acting on behalf of a customer)
+                value:
+                  clientId: ci_live_3f7a9c2e-1234-5678-abcd-ef0123456789
+                  clientSecret: cs_live_abc123xyz789
+                  customerUid: usr_7f3a9b12-0000-0000-0000-000000000000
+      responses:
+        '201':
+          description: Session created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgSession'
+              example:
+                data:
+                  sessionId: 550e8400-e29b-41d4-a716-446655440000
+                  expiresAt: '2026-06-22T10:00:00Z'
+        '401':
+          description: Invalid `clientId` or `clientSecret`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: >
+            API access is not enabled for this organization, the credential is
+            revoked, or the request IP is not whitelisted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /entrypoint/org/v1/sessions/{id}:
+    delete:
+      operationId: orgSessionRevoke
+      summary: Revoke session (logout)
+      description: >
+        Immediately invalidates the session. Use this when your backend is done
+        acting on a user's behalf or when a user explicitly logs out of your
+        integration.
+
+
+        The `X-Session-Id` header must match the `{id}` path parameter — you
+        can only revoke a session you currently hold.
+      tags:
+        - Sessions
+      security:
+        - OrgSessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/ClientId'
+        - name: id
+          in: path
+          required: true
+          description: The `sessionId` to revoke.
+          schema:
+            type: string
+            example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '204':
+          description: Session revoked successfully.
+        '401':
+          description: Session not found, already expired, or header mismatch.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Session does not belong to the authenticated organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

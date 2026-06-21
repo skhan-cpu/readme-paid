@@ -90,10 +90,16 @@ servers:
 components:
 
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    OrgSessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Id
+      description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+    ClientIdAuth:
+      type: apiKey
+      in: header
+      name: X-Client-Id
+      description: The ClientId (ci_test_… or ci_live_…) used to create the session.
 
   schemas:
     ErrorResponse:
@@ -714,7 +720,8 @@ paths:
         acknowledge these terms as part of onboarding.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -740,7 +747,8 @@ paths:
         Display these and collect answers for step 6.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -770,7 +778,8 @@ paths:
         in step 5.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -810,7 +819,8 @@ paths:
         on file.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -832,7 +842,8 @@ paths:
         completed before submitting KYB information.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -889,7 +900,8 @@ paths:
         `businessActivity`, `taxIdentificationNumberType`
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1019,7 +1031,8 @@ paths:
         Owner can access all business banking features.
       tags: [Onboarding]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1073,7 +1086,8 @@ paths:
         | `rejected` | KYB failed — see `errors` for reasons |
       tags: [KYB Status]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -1109,7 +1123,8 @@ paths:
         Returns all accounts belonging to the authenticated Business Owner.
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1138,7 +1153,8 @@ paths:
         and account settings.
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: accountId
@@ -1166,7 +1182,8 @@ paths:
         display account details for incoming wire transfers.
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: accountId
@@ -1203,7 +1220,8 @@ paths:
         accounts, including available and pending amounts.
       tags: [Accounts]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -1241,7 +1259,8 @@ paths:
         to the user for confirmation.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1297,7 +1316,8 @@ paths:
         response before calling.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1348,7 +1368,8 @@ paths:
         the user to select and connect their external bank account.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1380,7 +1401,8 @@ paths:
         Plaid.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1407,7 +1429,8 @@ paths:
         linked external bank account. Always preview before executing.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1458,7 +1481,8 @@ paths:
         external bank account. Confirm amounts from the preview before calling.
       tags: [Transfers]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1502,7 +1526,8 @@ paths:
         amount that will be sent each period. Preview before creating.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1552,7 +1577,8 @@ paths:
         manually, or limit reached).
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1610,7 +1636,8 @@ paths:
         including their status and next scheduled run date.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1639,7 +1666,8 @@ paths:
         the next scheduled payment.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: autoPaymentId
@@ -1667,7 +1695,8 @@ paths:
         immediately — no further payments will be processed.
       tags: [Auto-Payments]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: autoPaymentId
@@ -1693,7 +1722,8 @@ paths:
         activate their account.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -1756,7 +1786,8 @@ paths:
         Returns the Operator's profile and current permissions.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: operatorId
@@ -1782,7 +1813,8 @@ paths:
         permissions object — any permission not included is revoked.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: operatorId
@@ -1820,7 +1852,8 @@ paths:
         account.
       tags: [Operators]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1855,7 +1888,8 @@ paths:
         account.
       tags: [Transactions]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -1913,7 +1947,8 @@ paths:
         recipient account information.
       tags: [Transactions]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: transactionId
@@ -1973,7 +2008,8 @@ paths:
         account balance trend over a selected period.
       tags: [Transactions]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: period
@@ -2006,7 +2042,8 @@ paths:
         accounts. Each file can be downloaded via the file endpoint.
       tags: [Account Statements]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -2044,7 +2081,8 @@ paths:
         valid file UIDs from `GET /accounts/private/v1/account/statements`.
       tags: [Account Statements]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - name: fileUid
@@ -2088,7 +2126,8 @@ paths:
         in the errors array.
       tags: [Account Closure]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -2118,7 +2157,8 @@ paths:
         step 1. **This action is irreversible.**
       tags: [Account Closure]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:
@@ -2161,7 +2201,8 @@ paths:
         newest first.
       tags: [Notifications]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
         - $ref: '#/components/parameters/PageNumber'
@@ -2200,7 +2241,8 @@ paths:
         the notification bell.
       tags: [Notifications]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       responses:
@@ -2226,7 +2268,8 @@ paths:
         zero.
       tags: [Notifications]
       security:
-        - BearerAuth: []
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
       requestBody:

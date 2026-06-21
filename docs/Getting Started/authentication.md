@@ -3,50 +3,29 @@ title: Authentication
 hidden: false
 ---
 
-Every request to a private endpoint requires a valid Bearer token in the `Authorization` header — covering token types, issuance, refresh, and the full token lifecycle.
+All requests to the TAPP Cash API use **session-based authentication**. You obtain a `sessionId` by exchanging your `clientId` and `clientSecret`, then pass it on every request via headers.
+
+---
+
+## Required Headers
 
 ```
-Authorization: Bearer <your_token>
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
 ```
 
----
-
-## Token Types
-
-TAPP Cash uses two token types depending on where the user is in the flow.
-
-| Token | Lifetime | Used for |
-|-------|----------|----------|
-| `accessToken` | ~10 minutes | All private API calls after sign-in or token exchange |
-| `refreshToken` | ~35 minutes | Obtaining a new `accessToken` without re-login |
-| `temporaryAccessToken` | Session | Individual user onboarding steps 4–9 only |
-
-> **Note:** Actual lifetimes may be shorter if your organization has auto-logout enabled in settings. The values above are the platform defaults.
+Both headers are required on every authenticated endpoint. The gateway verifies that the `sessionId` was issued to the supplied `clientId` — a session from one credential cannot be used with another.
 
 ---
 
-## Token Lifetime by Account Type
+## Getting a Session
 
-Lifetimes vary by account type:
-
-| Account type | `accessToken` lifetime | `refreshToken` lifetime |
-|---|---|---|
-| Root account | 30 minutes | 7 days |
-| All other accounts (admin roles, individual, business) | ~10 minutes (default) | ~35 minutes (default) |
-
-The **Root account** (`administrator@<your-org>.com`) is granted extended token lifetimes to support API automation and long-running integrations. All other user types — advisors, branch managers, individual customers, business owners, and operators — use the standard short-lived defaults.
-
----
-
-## Sign In
-
-`POST /users/public/v1/auth/signin`
+`POST /entrypoint/org/v1/sessions`
 
 ```json
 {
-  "login": "user@example.com",
-  "password": "YourPassword123!",
-  "roles": ["individual"]
+  "clientId": "ci_test_3f7a9c2e-1234-5678-abcd-ef0123456789",
+  "clientSecret": "cs_test_AbCdEf123..."
 }
 ```
 
@@ -55,104 +34,70 @@ The **Root account** (`administrator@<your-org>.com`) is granted extended token 
 ```json
 {
   "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
+    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+    "expiresAt": "2026-06-22T10:00:00Z"
   }
 }
 ```
 
-Pass the role that matches the user type signing in: `root`, `superadvisor`, `branchmanager`, `advisor`, `individual`, `businessowner`, or `businessoperator`.
+Sessions are valid for **24 hours**. Reuse the `sessionId` across requests until it expires or you revoke it.
 
 ---
 
-## Refresh an Expired Access Token
-
-`GET /users/public/v1/auth/refresh`
-
-Pass both tokens as request headers — no request body required:
-
-```
-Authorization: Bearer <accessToken>
-X-Refresh-Token: <refreshToken>
-```
-
-Returns a new `accessToken` and `refreshToken` pair. Call this automatically when any private endpoint returns `401`. Do not prompt the user to re-login unless the refresh token itself has also expired.
-
-> **Important — single-use tokens:** Each refresh call immediately invalidates the old access token and refresh token. Save the new pair and discard the old one. Re-using old tokens after a successful refresh returns `401`.
-
----
-
-## Get Current User Profile
-
-`GET /users/private/v1/auth/me`
-
-Returns the authenticated user's full profile using the current access token. Useful for confirming token validity and loading user context on app launch.
-
----
-
-## Token Lifecycle
+## Session Lifecycle
 
 ```mermaid
 sequenceDiagram
-    participant App
-    participant API
+    participant Backend as Your Backend
+    participant API as TAPP Cash API
 
-    Note over App,API: Individual Onboarding
-    App->>API: POST /invites/accept
-    API-->>App: 403 + temporaryAccessToken
+    Backend->>API: POST /entrypoint/org/v1/sessions<br/>{clientId, clientSecret}
+    API-->>Backend: {sessionId, expiresAt}
 
-    App->>API: Limited endpoints (steps 4–9)
-    Note right of App: Uses temporaryAccessToken
+    loop Every API call
+        Backend->>API: Request + X-Session-Id + X-Client-Id
+        API-->>Backend: Response
+    end
 
-    App->>API: PUT /token-exchange
-    API-->>App: accessToken + refreshToken
-
-    Note over App,API: Normal usage
-    App->>API: Any private endpoint
-    Note right of App: Uses accessToken
-
-    Note over App,API: Access token expires
-    App->>API: GET /auth/refresh (headers: Authorization + X-Refresh-Token)
-    API-->>App: New accessToken + refreshToken pair
+    Backend->>API: DELETE /entrypoint/org/v1/sessions/{id}
+    API-->>Backend: 204 No Content
 ```
 
 ---
 
-## Token Scopes
+## Revoking a Session
 
-| Token | Accessible endpoints |
-|-------|---------------------|
-| Account manager `accessToken` | `/branches/private/*` — manage individuals, send invitations |
-| Individual `accessToken` | `/accounts/private/*`, `/notifications/private/*`, `/kyc/private/*`, `/branches/private/v1/delete-profile*` |
-| `temporaryAccessToken` | `/branches/private/v1/limited/*`, `/users/private/v1/limited/*` — onboarding steps only |
+`DELETE /entrypoint/org/v1/sessions/{id}`
+
+```
+X-Session-Id: 550e8400-e29b-41d4-a716-446655440000
+X-Client-Id:  ci_test_3f7a9c2e-1234-5678-abcd-ef0123456789
+```
+
+Call this on user logout or when a job completes. Sessions that are not explicitly revoked expire automatically after 24 hours.
+
+---
+
+## Credentials
+
+Credentials are issued by `support@tappcash.com` and are environment-specific:
+
+| ClientId prefix | ClientSecret prefix | Environment |
+|-----------------|---------------------|-------------|
+| `ci_test_` | `cs_test_` | Sandbox |
+| `ci_live_` | `cs_live_` | Production |
+
+The `clientSecret` is shown **once** at creation. Store it in a secrets manager — it cannot be retrieved again.
 
 ---
 
 ## Authentication Errors
 
-| Status | Code | Meaning | Fix |
-|--------|------|---------|-----|
-| `401` | — | Missing or expired `accessToken` | Refresh with `GET /auth/refresh` |
-| `401` | — | Invalid `refreshToken` | Token expired — user must sign in again |
-| `403` | `USERS_IP_IS_BLOCKED` | Requesting IP address is blocked | Contact your organization administrator to unblock the IP |
-| `403` | — | Valid token but wrong role or endpoint | Check token type and endpoint visibility (`public` vs `private`) |
-
-### IP Blocked Error
-
-If your server's IP address has been blocked by the organization, sign-in and all authenticated requests return:
-
-```json
-{
-  "status": 403,
-  "errors": [
-    {
-      "title": "Unauthorized",
-      "details": "",
-      "code": "USERS_IP_IS_BLOCKED",
-      "target": "common"
-    }
-  ]
-}
-```
-
-This is enforced at the gateway level before credentials are checked. Unblocking must be done by a Root or administrator account through the admin portal.
+| Status | Meaning | Fix |
+|--------|---------|-----|
+| `401` | Invalid `clientId` or `clientSecret` | Check credentials |
+| `401` | Session expired or not found | Create a new session |
+| `401` | `clientId` / `sessionId` mismatch | Ensure both headers match the same credential |
+| `403` | API access not enabled | Contact `support@tappcash.com` |
+| `403` | IP not whitelisted | Contact `support@tappcash.com` to update your IP whitelist |
+| `403` | Credential revoked | A new credential must be issued |
