@@ -25,15 +25,14 @@ After receiving credentials from `support@tappcash.com`, the Root Advisor sets u
 
 ```mermaid
 flowchart TD
-    A["Sign in with provided credentials\nPOST /users/public/v1/auth/signin"]
-    B["Change temporary password\nPOST /users/private/v1/auth/change_password"]
+    A["Authenticate\nPOST /entrypoint/org/v1/sessions"]
     C["Create branches\n(one per operating region or team)"]
     D["Create Head Branch Managers\n(optional — for large organizations)"]
     E["Create Branch Managers\n(assign to branches)"]
     F["Create Advisors\n(assign to branches)"]
     G(["Organization is ready\nAdvisors can now invite clients"])
 
-    A --> B --> C --> D --> E --> F --> G
+    A --> C --> D --> E --> F --> G
 ```
 
 Branches, Head Branch Managers, Branch Managers, and Advisors can be created in any order, but creating branches first makes it easier to assign admin users to them during creation.

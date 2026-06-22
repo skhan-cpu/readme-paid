@@ -3,7 +3,7 @@ title: Onboarding
 hidden: false
 ---
 
-Getting started with TAPP Cash involves three phases: requesting credentials, signing in and configuring your environment, and setting up your admin hierarchy to begin inviting clients.
+Getting started with TAPP Cash involves four phases: requesting credentials, building your admin hierarchy, inviting clients, and monitoring their onboarding journey.
 
 ---
 
@@ -20,81 +20,71 @@ Email `support@tappcash.com` with the following details:
 | Environment   | Staging or Production                             |
 | Use case      | Brief description of what you are integrating     |
 
-The team will review your request, create your Root Advisor account, and reply with your `login` (email) and a temporary password.
+The team will review your request, provision your organization, and issue your **Root Advisor** credentials (`clientId` and `clientSecret`). See [Authentication](/docs/authentication) for how to use these credentials to create a session.
 
 > Credentials are environment-specific — staging credentials will not work against the production base URL.
 
 ---
 
-## Step 2 — Sign In
+## Step 2 — Set Up Your Admin Hierarchy
 
-`POST /users/public/v1/auth/signin`
+Once credentials are provisioned, the Root Advisor builds the organization structure before any clients can be invited. **Every admin role and every client belongs to a Branch — creating a Branch is always the first action.**
 
-```json
-{
-  "login": "admin@yourorg.com",
-  "password": "TemporaryPassword123!"
-}
-```
-
-**Response:**
-
-```json
-{
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
-  }
-}
-```
-
-Store both tokens. The `accessToken` expires after **30 minutes**. The `refreshToken` is valid for **30 days**.
-
-On first sign-in you will be prompted to change your temporary password via `POST /users/private/v1/auth/change_password`.
-
----
-
-## Step 3 — Refresh an Expired Token
-
-`POST /users/public/v1/auth/refresh`
-
-Pass the `refreshToken` in the request body to obtain a new `accessToken` without re-login. Call this automatically whenever you receive a `401` on a private endpoint.
-
-```json
-{
-  "refreshToken": "LUF..."
-}
-```
-
----
-
-## Step 4 — Set Up Your Admin Hierarchy
-
-Once signed in as Root Advisor, build out your organization's admin structure before inviting clients. The hierarchy flows downward:
+### Hierarchy Overview
 
 ```mermaid
-flowchart LR
-    Root["Root Advisor"] --> HBM["Head Branch Manager"]
-    Root --> BM["Branch Manager"]
-    HBM --> Advisor["Advisor"]
-    BM --> Advisor
+flowchart TD
+    Root["Root Advisor\n(receives credentials)"]
+    Branch["Branch\n(must be created first)"]
+    HBM["Head Branch Manager\n(optional)"]
+    BM["Branch Manager\n(optional)"]
+    Advisor["Advisor\n(invites and manages clients)"]
+    Clients["Individual & Business Owner Clients"]
+
+    Root -->|"1. Create branch"| Branch
+    Branch -->|"2a. Assign"| HBM
+    Branch -->|"2b. Assign"| BM
+    Branch -->|"2c. Assign"| Advisor
+    Advisor -->|"3. Invite"| Clients
 ```
 
-Each **Advisor** is the front-line role that directly invites and manages client users. Depending on your organization's size, you may operate with a single Advisor or a full hierarchy of Head Branch Managers, Branch Managers, and Advisors.
+### 2a — Create a Branch
 
-> Detailed steps for creating and managing each admin tier are covered in the Admin Roles guide.
+`POST /branches/private/v1/branch`
+
+A Branch is the container that groups admin users and client portfolios. **All advisors, branch managers, and clients are assigned to a branch.** Create at least one branch before creating any other admin roles.
+
+```json
+{
+  "name": "Main Branch"
+}
+```
+
+### 2b — Create Admin Roles for the Branch
+
+With a branch in place, the Root Advisor creates the admin roles that will manage it. All role creation endpoints accept a `branchId` to assign the new admin to their branch.
+
+| Role | Endpoint | Purpose |
+|------|----------|---------|
+| Head Branch Manager | `POST /branches/private/v1/superadvisor` | Oversees an entire branch; can manage Branch Managers and Advisors |
+| Branch Manager | `POST /branches/private/v1/branchmanager` | Day-to-day branch operations |
+| Advisor | `POST /branches/private/v1/advisor` | Front-line role that directly invites and manages clients |
+
+> Detailed request bodies and setup steps for each role are covered in the [Administration Guide](/docs/administration).
+
+Once an Advisor's account is approved and active, they can begin inviting clients.
 
 ---
 
-## Step 5 — Invite Your First Client
+## Step 3 — Invite Clients
 
-Advisors can invite two types of clients: **Individual** users and **Business Owner** users. Both follow an invitation-based flow — the client receives an email and completes their own onboarding steps.
+Advisors invite two types of clients: **Individual** users and **Business Owner** users. Both follow an invitation-based flow — the Advisor triggers the invite, the client receives an email, and completes their own onboarding independently.
 
-**Invite an Individual**
+### Invite an Individual
 
 `POST /branches/private/v1/individual`
 
-- **Auth**: Advisor access token
+- **Auth**: Advisor session
 
 ```json
 {
@@ -105,26 +95,75 @@ Advisors can invite two types of clients: **Individual** users and **Business Ow
 }
 ```
 
-On success, the individual record is created with `status: "invited"` and an invitation email is dispatched automatically. The user then follows the [Individual Account](/docs/individual-user) onboarding steps.
+On success the individual record is created with `status: "invited"` and an invitation email is dispatched automatically.
 
-**Invite a Business Owner**
+### Invite a Business Owner
 
-Business Owner invitations follow the same pattern. The Business Owner receives an email, accepts the invite, completes KYB verification, and their business accounts become active. They can then invite Operators to manage their accounts on their behalf.
+`POST /branches/private/v1/businessowner`
 
-> See the Business Owner guide for the full KYB and Operator management flow.
+- **Auth**: Advisor session
+
+Same pattern as Individual. The Business Owner receives an email, accepts the invite, completes KYB verification, and their business accounts become active. They can then invite Operators to manage accounts on their behalf.
 
 ---
 
-## Step 6 — List and Monitor Clients
+## Step 4 — Client Onboarding Journey
+
+After the Advisor sends the invitation, the client completes their onboarding steps independently. The Advisor can monitor progress via the client list endpoint.
+
+### Individual Client Flow
+
+```mermaid
+flowchart LR
+    Invite["Advisor sends invite\nstatus: invited"]
+    Accept["Client accepts invite\nand sets up profile"]
+    KYC["Client completes KYC\n(phone OTP, W9, security questions,\nidentity verification)"]
+    Pending["KYC under review\nstatus: pending"]
+    Approved["KYC approved\nstatus: active"]
+    Active["Accounts active\nClient can use all features"]
+
+    Invite --> Accept --> KYC --> Pending --> Approved --> Active
+```
+
+Once KYC is approved and `status` becomes `active`, the client can:
+
+- Move money (TBA and ACH transfers)
+- View account statements
+- Manage external accounts
+- Receive and manage notifications
+- Set up auto-payments
+- Request account closure
+
+### Business Owner Client Flow
+
+```mermaid
+flowchart LR
+    Invite["Advisor sends invite"]
+    Accept["BO accepts invite\nand sets up profile"]
+    KYB["Business Owner completes KYB\n(business verification)"]
+    Approved["KYB approved\nstatus: active"]
+    Active["Business accounts active"]
+    Operators["BO can invite Operators\nwith scoped permissions"]
+
+    Invite --> Accept --> KYB --> Approved --> Active --> Operators
+```
+
+After KYB approval, the Business Owner can invite **Operators** — team members granted scoped permissions (`transferFunds`, `autoPay`) to act on the business accounts.
+
+---
+
+## Step 5 — Monitor Clients
+
+Use the admin endpoints to list and track client status across your portfolio.
+
+### List Individual Clients
 
 `GET /branches/private/v1/individual`
 
-- **Auth**: Advisor access token
-- Returns a paginated list of all Individual clients under this Advisor's branch.
-
 ```
 GET /branches/private/v1/individual?page[number]=1&page[size]=20
-Authorization: Bearer <advisor_token>
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
 ```
 
 **Response (abbreviated):**
@@ -149,14 +188,20 @@ Authorization: Bearer <advisor_token>
 }
 ```
 
-`GET /branches/private/v1/individual/{id}` returns the full profile for a single individual. Use the `id` returned by the list endpoint.
+`GET /branches/private/v1/individual/{id}` returns the full profile for a single client, including KYC status and assigned Advisor.
+
+### List Business Owner Clients
+
+`GET /branches/private/v1/businessowner`
+
+Same pagination and filter pattern as individual clients.
 
 ---
 
-## Authentication Errors
+## Common Errors
 
-| Status | Cause                            | Fix                                                                     |
-|--------|----------------------------------|-------------------------------------------------------------------------|
-| `401`  | Missing or expired `accessToken` | Call `POST /users/public/v1/auth/refresh` with your `refreshToken`      |
-| `401`  | Invalid credentials              | Verify `login` and `password`; contact support if locked out            |
-| `403`  | Valid token but wrong role       | Ensure you are using the correct token for the endpoint's required role |
+| Status | Cause | Fix |
+|--------|-------|-----|
+| `401` | Missing or expired session | Create a new session via `POST /entrypoint/org/v1/sessions` |
+| `403` | Valid session but insufficient role | Ensure the credential has the required permission for this endpoint |
+| `404` | Branch or client not found | Verify the `branchId` or client `id` in the request |
