@@ -309,6 +309,18 @@ tags:
 x-readme:
   proxy-enabled: true
 servers:
+  - url: https://api-{tenant}.stage2.tappbank.com/org
+    description: Staging — Org API
+    variables:
+      tenant:
+        default: testing
+        description: Your organization's subdomain (e.g. wire-network)
+  - url: https://api-{tenant}.tappcash.com/org
+    description: Production — Org API
+    variables:
+      tenant:
+        default: testing
+        description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.stage2.tappbank.com
     description: Staging
     variables:
