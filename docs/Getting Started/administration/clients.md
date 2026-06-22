@@ -77,19 +77,6 @@ An invitation email is sent to the client immediately.
 
 Returns the full client profile including KYC status, personal details, and assigned Advisor.
 
-### Assign a Client to a Different Advisor
-
-`PATCH /branches/private/v1/individual/assign`
-
-- **Auth**: Head Branch Manager access token
-
-```json
-{
-  "individualId": "<client-id>",
-  "advisorId": "<new-advisor-id>"
-}
-```
-
 ### Import Individual Clients in Bulk
 
 `POST /branches/private/v1/branch/import-individuals`
@@ -292,7 +279,6 @@ flowchart LR
 | List all business owner clients | ✓ | ✓ | ✓ | ✓ |
 | Invite individual | | | | ✓ |
 | Invite business owner | | | | ✓ |
-| Assign client to different advisor | ✓ | ✓ | | |
 | View client accounts | ✓ | ✓ | ✓ | ✓ |
 | Export individual balance sheet | ✓ | ✓ | ✓ | ✓ |
 | Import clients in bulk | ✓ | ✓ | | |

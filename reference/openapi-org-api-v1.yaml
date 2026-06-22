@@ -209,6 +209,133 @@ components:
               description: Always `active` when the endpoint returns 200.
               example: active
 
+    PhysicalAddress:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 916
+        address:
+          type: string
+          example: "123 Main St"
+        addressSecondLine:
+          type: string
+          example: ""
+        city:
+          type: string
+          example: "Detroit"
+        countryIsoTwo:
+          type: string
+          example: "US"
+        region:
+          type: string
+          example: "MI"
+        zipCode:
+          type: string
+          example: "48201"
+        description:
+          type: string
+          example: ""
+        name:
+          type: string
+          example: ""
+        phoneNumber:
+          type: string
+          example: ""
+        latitude:
+          type: number
+          example: 0
+        longitude:
+          type: number
+          example: 0
+
+    UserProfile:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        data:
+          type: object
+          properties:
+            uid:
+              type: string
+              description: Unique user identifier.
+              example: "801cdaf3-dfc1-4661-8f84-b01213306181"
+            username:
+              type: string
+              example: "801cdaf3-dfc1-4661-8f84-b01213306181"
+            firstName:
+              type: string
+              example: "Alice"
+            lastName:
+              type: string
+              example: "Smith"
+            email:
+              type: string
+              format: email
+              example: "alice@example.com"
+            phoneNumber:
+              type: string
+              example: "+14154826457"
+            dateOfBirth:
+              type: string
+              format: date
+              example: "2002-12-12"
+            language:
+              type: string
+              example: "en"
+            roleName:
+              type: string
+              description: Role assigned to this user (e.g. `individual`, `advisor`).
+              example: "individual"
+            status:
+              type: string
+              enum: [active, inactive, pending]
+              example: "active"
+            isEmailConfirmed:
+              type: boolean
+              example: true
+            isPhoneConfirmed:
+              type: boolean
+              example: true
+            profileImageId:
+              type: string
+              nullable: true
+              example: null
+            createdAt:
+              type: string
+              format: date-time
+              example: "2026-06-17T13:44:34Z"
+            updatedAt:
+              type: string
+              format: date-time
+              example: "2026-06-22T20:50:24Z"
+            lastLoginAt:
+              type: string
+              format: date-time
+              example: "2026-06-22T20:50:24Z"
+            lastActedAct:
+              type: string
+              format: date-time
+              example: "2026-06-17T13:44:34Z"
+            physicalAddresses:
+              type: array
+              items:
+                $ref: '#/components/schemas/PhysicalAddress'
+            mailingAddresses:
+              type: array
+              items:
+                $ref: '#/components/schemas/PhysicalAddress'
+            attributes:
+              type: object
+              description: >
+                Additional user attributes. Fields vary by user type and
+                organization configuration.
+              additionalProperties: true
+              example:
+                social_security_number: "***-**-3782"
+
     Error:
       type: object
       properties:
@@ -408,6 +535,86 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Session does not belong to the authenticated organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /org/users/private/v1/auth/me:
+    get:
+      operationId: getUserProfile
+      summary: Get current user profile
+      description: >
+        Returns the full profile of the user associated with the current session.
+
+
+        For **User sessions** (created with a `customerUid`), this returns the
+        profile of that specific customer.
+
+
+        For **System sessions** (no `customerUid`), this returns the profile of
+        the organization's root system user.
+
+
+        Use this endpoint to:
+
+        - **Fetch customer details** such as name, email, phone, date of birth,
+          and physical addresses after creating a user-scoped session.
+
+        - **Confirm session identity** — verify which user the current session
+          is acting on behalf of before performing sensitive operations.
+      tags:
+        - Sessions
+      security:
+        - OrgSessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: User profile returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+              example:
+                status: 200
+                data:
+                  attributes:
+                    social_security_number: "737-37-3782"
+                  createdAt: "2026-06-17T13:44:34Z"
+                  dateOfBirth: "2002-12-12"
+                  email: "alice@example.com"
+                  firstName: "Alice"
+                  isEmailConfirmed: true
+                  isPhoneConfirmed: true
+                  language: "en"
+                  lastActedAct: "2026-06-17T13:44:34Z"
+                  lastLoginAt: "2026-06-22T20:50:24Z"
+                  lastName: "Smith"
+                  mailingAddresses: []
+                  phoneNumber: "+14154826457"
+                  physicalAddresses:
+                    - id: 916
+                      address: "123 Main St"
+                      addressSecondLine: ""
+                      city: "Detroit"
+                      countryIsoTwo: "US"
+                      region: "MI"
+                      zipCode: "48201"
+                      description: ""
+                      name: ""
+                      phoneNumber: ""
+                      latitude: 0
+                      longitude: 0
+                  profileImageId: null
+                  roleName: "individual"
+                  status: "active"
+                  uid: "801cdaf3-dfc1-4661-8f84-b01213306181"
+                  updatedAt: "2026-06-22T20:50:24Z"
+                  username: "801cdaf3-dfc1-4661-8f84-b01213306181"
+        '401':
+          description: Session not found, expired, revoked, or `X-Client-Id` mismatch.
           content:
             application/json:
               schema:
