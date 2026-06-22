@@ -179,6 +179,40 @@ components:
               format: date-time
               example: '2026-06-22T10:00:00Z'
 
+    OrgSessionMe:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            sessionId:
+              type: string
+              description: The active session ID.
+              example: 550e8400-e29b-41d4-a716-446655440000
+            businessId:
+              type: string
+              description: The organization this session belongs to.
+              example: business:2uV1l3yfe4ROfyJ0btU0LgLkyH8
+            customerUid:
+              type: string
+              nullable: true
+              description: >
+                The end-user this session is scoped to, or `null` for
+                system-level sessions.
+              example: usr_7f3a9b12-0000-0000-0000-000000000000
+            deviceSessionType:
+              type: string
+              enum: [System, User]
+              description: >
+                `System` — acting autonomously on behalf of the org.
+                `User` — acting on behalf of a specific customer.
+              example: System
+            status:
+              type: string
+              enum: [active]
+              description: Always `active` when the endpoint returns 200.
+              example: active
+
     Error:
       type: object
       properties:
@@ -282,6 +316,60 @@ paths:
           description: >
             API access is not enabled for this organization, the credential is
             revoked, or the request IP is not whitelisted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /entrypoint/org/v1/sessions/me:
+    get:
+      operationId: orgSessionCheck
+      summary: Check session (health check)
+      description: >
+        Verifies that your current session is still active and returns the
+        identity context it carries.
+
+
+        Use this endpoint to:
+
+        - **Confirm a session is valid** before making business API calls.
+
+        - **Inspect scope** — see whether the session is a `System` session or
+          is scoped to a specific `customerUid`.
+
+        - **Diagnose auth failures** — if subsequent API calls return `401`,
+          call this endpoint first to rule out an expired or revoked session.
+
+
+        Returns `200` with session details when the session is active.
+        Returns `401` if the session is missing, expired, or the
+        `X-Client-Id` does not match the session's credential.
+
+
+        This endpoint validates itself internally — no gateway fwdauth is
+        required to call it.
+      tags:
+        - Sessions
+      parameters:
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Session is active.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrgSessionMe'
+              example:
+                data:
+                  sessionId: 550e8400-e29b-41d4-a716-446655440000
+                  businessId: business:2uV1l3yfe4ROfyJ0btU0LgLkyH8
+                  customerUid: null
+                  deviceSessionType: System
+                  status: active
+        '401':
+          description: >
+            Session not found, expired, revoked, or `X-Client-Id` mismatch.
           content:
             application/json:
               schema:
