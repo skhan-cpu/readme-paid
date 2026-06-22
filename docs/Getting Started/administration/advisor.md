@@ -23,46 +23,26 @@ The Advisor is the front-line admin role your integration will use most frequent
 
 ```mermaid
 flowchart TD
-    A["Sign in\nPOST /users/public/v1/auth/signin"]
+    A["Authenticate<br/>POST /entrypoint/org/v1/sessions"]
     B{"Primary tasks"}
-    B --> C["Invite new clients\n(Individual or Business Owner)"]
-    B --> D["Monitor client onboarding\ntrack status: invited → active"]
-    B --> E["View client accounts\nand balances"]
-    B --> F["Review transfer requests\nand transfer history"]
-    B --> G["View reports\nand chat with clients"]
+    B --> C["Invite new clients<br/>(Individual or Business Owner)"]
+    B --> D["Monitor client onboarding<br/>track status: invited → active"]
+    B --> E["View client accounts<br/>and balances"]
+    B --> F["Review transfer requests<br/>and transfer history"]
+    B --> G["View reports<br/>and chat with clients"]
 
     A --> B
 ```
 
 ---
 
-## Step 1 — Sign In
+## Authentication
 
-`POST /users/public/v1/auth/signin`
-
-```json
-{
-  "login": "advisor@yourorg.com",
-  "password": "Password123!"
-}
-```
-
-**Response:**
-
-```json
-{
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
-  }
-}
-```
-
-The `accessToken` expires after **30 minutes**. Refresh it with `POST /users/public/v1/auth/refresh`.
+Use your organization's `clientId` and `clientSecret` to create a session. See [Authentication](/docs/authentication) for the full flow. Include `X-Session-Id` and `X-Client-Id` on every request.
 
 ---
 
-## Step 2 — Invite an Individual Client
+## Step 1 — Invite an Individual Client
 
 `POST /branches/private/v1/individual`
 
@@ -111,7 +91,8 @@ On success, an invitation email is sent and the Business Owner record is created
 
 ```
 GET /branches/private/v1/individual?page[number]=1&page[size]=20
-Authorization: Bearer <advisor_token>
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
 ```
 
 Filter by onboarding status to track who still needs to complete their registration:

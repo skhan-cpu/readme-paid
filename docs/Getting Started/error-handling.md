@@ -38,7 +38,7 @@ Every TAPP Cash error response uses a consistent envelope with an `errors` array
 | Code | Meaning | What to do |
 |------|---------|------------|
 | `400` | Bad request — validation or business rule failure | Check the `errors` array for field-level details and fix the request |
-| `401` | Unauthorized — missing or expired token | Refresh with `POST /auth/refresh`; re-login if refresh token is also expired |
+| `401` | Unauthorized — missing or expired session | Create a new session via `POST /entrypoint/org/v1/sessions` |
 | `403` | Forbidden — valid token but wrong role or endpoint | Verify you are using the correct token type for the endpoint |
 | `404` | Resource not found | Check the ID or path in your request |
 | `409` | Conflict — resource state prevents the operation | e.g., pending transactions block account closure |
@@ -56,8 +56,8 @@ Every TAPP Cash error response uses a consistent envelope with an `errors` array
 { "errors": [{ "code": "UNAUTHORIZED", "title": "Token expired or missing" }] }
 ```
 
-**Cause:** Access token expired (30-minute lifetime) or not included in the request.
-**Fix:** Call `POST /users/public/v1/auth/refresh` with your `refreshToken` to get a new `accessToken`.
+**Cause:** Session expired (24-hour lifetime) or `X-Session-Id` / `X-Client-Id` headers missing or mismatched.
+**Fix:** Create a new session via `POST /entrypoint/org/v1/sessions` and retry the request.
 
 ---
 

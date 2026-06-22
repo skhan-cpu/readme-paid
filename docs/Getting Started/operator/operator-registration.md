@@ -229,13 +229,12 @@ V-Client-Device-Id: <device-uuid>
 ```json
 {
   "data": {
-    "accessToken": "<full_access_token>",
-    "refreshToken": "<refresh_token>"
+    "accessToken": "<full_access_token>"
   }
 }
 ```
 
-Store both tokens. Use `accessToken` for all subsequent requests (30-minute lifetime). Use `refreshToken` to renew it without re-login (30-day lifetime).
+Store the `accessToken` — the Operator is now fully onboarded and can use all permitted features.
 
 ---
 

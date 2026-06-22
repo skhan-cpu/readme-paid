@@ -8,7 +8,7 @@ Definitions for key terms used throughout the TAPP Cash API documentation.
 ## A
 
 **Access Token**
-A short-lived JWT (30-minute lifetime) used to authenticate requests to private API endpoints. Issued by `POST /users/public/v1/auth/signin` or `POST /users/private/v1/limited/token-exchange`. Refresh it with `POST /users/public/v1/auth/refresh`.
+A short-lived credential issued after a user completes onboarding, used to authenticate requests to private API endpoints on behalf of that user.
 
 **ACH (Automated Clearing House)**
 A US electronic funds transfer network used to move money between TAPP Cash accounts and external bank accounts. TAPP Cash supports both ACH pull (inbound) and ACH push (outbound).
@@ -27,7 +27,7 @@ A recurring scheduled transfer set up by a client or Operator. Runs automaticall
 The underlying financial infrastructure provider. TAPP Cash uses a BaaS partner to handle external account linking and ACH transfers. The BaaS auth token is required to initialize the Plaid Link session.
 
 **Bearer Token**
-The authentication scheme used by TAPP Cash. Pass your `accessToken` in the `Authorization` header as `Authorization: Bearer <token>`.
+An authorization header scheme used by some client-facing endpoints. For server-to-server integration, authentication uses `X-Session-Id` and `X-Client-Id` headers instead — see [Authentication](/docs/authentication).
 
 **Branch**
 The organizational unit that groups Advisors and their client portfolios. Every Advisor belongs to exactly one branch. Branch Managers configure approval settings per branch.
@@ -83,8 +83,8 @@ A transaction or transfer status meaning the request has been submitted but not 
 
 ## R
 
-**Refresh Token**
-A long-lived token (30-day lifetime) used to obtain a new `accessToken` without requiring the user to re-login. Pass it to `POST /users/public/v1/auth/refresh`.
+**Session**
+A server-to-server authentication credential (`sessionId`) obtained by calling `POST /entrypoint/org/v1/sessions` with a `clientId` and `clientSecret`. Valid for 24 hours. Pass it in the `X-Session-Id` header on every authenticated request.
 
 **Role**
 Determines which endpoints a token can access. TAPP Cash has seven roles: `root` (Root Advisor), `superadvisor` (Head Branch Manager), `branchmanager` (Branch Manager), `advisor` (Advisor), `businessowner` (Business Owner), `individual` (Individual), and `businessoperator` (Operator). Calling an endpoint outside your role returns `403 Forbidden`.

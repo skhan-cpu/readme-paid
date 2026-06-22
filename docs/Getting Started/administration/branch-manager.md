@@ -24,31 +24,22 @@ Branch Managers manage Advisors within their branch and control the transfer app
 
 ```mermaid
 flowchart TD
-    A["Sign in\nPOST /users/public/v1/auth/signin"]
-    B["View branch Advisors\nGET /branches/private/v1/advisor"]
+    A["Authenticate<br/>POST /entrypoint/org/v1/sessions"]
+    B["View branch Advisors<br/>GET /branches/private/v1/advisor"]
     C{"Daily tasks"}
-    C --> D["Review pending transfer requests\nfrom branch clients"]
-    C --> E["Approve or reject\ntransfer requests"]
-    C --> F["Configure approval settings\nif needed"]
-    C --> G["View client portfolios\nand reports"]
+    C --> D["Review pending transfer requests<br/>from branch clients"]
+    C --> E["Approve or reject<br/>transfer requests"]
+    C --> F["Configure approval settings<br/>if needed"]
+    C --> G["View client portfolios<br/>and reports"]
 
     A --> B --> C
 ```
 
 ---
 
-## Sign In
+## Authentication
 
-`POST /users/public/v1/auth/signin`
-
-```json
-{
-  "login": "branchmanager@yourorg.com",
-  "password": "Password123!"
-}
-```
-
-The `accessToken` expires after **30 minutes**. Refresh it with `POST /users/public/v1/auth/refresh`.
+Use your organization's `clientId` and `clientSecret` to create a session. See [Authentication](/docs/authentication) for the full flow. Include `X-Session-Id` and `X-Client-Id` on every request.
 
 ---
 
@@ -64,7 +55,8 @@ Branch Managers can create and manage Advisor accounts within their branch.
 
 ```
 GET /branches/private/v1/advisor?filter[branchID]=eq:<branch-uuid>&page[number]=1&page[size]=20
-Authorization: Bearer <branch_manager_token>
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
 ```
 
 ---
