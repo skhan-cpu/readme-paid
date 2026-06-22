@@ -1,5 +1,5 @@
 ---
-title: Create Branch Manager for a branch
+title: Create Branch Manager
 api:
   file: openapi-admin-v1.yaml
   operationId: createBranchManager

@@ -157,15 +157,15 @@ Both `description` and `address` are required:
 
 After creating a branch, assign Head Branch Managers, Branch Managers, and Advisors to it. These calls are made by the Root Advisor.
 
-**Create Head Branch Manager for a branch:**
+**Create Head Branch Manager:**
 
 `POST /branches/private/v1/branch/:id/superadvisor`
 
-**Create Branch Manager for a branch:**
+**Create Branch Manager:**
 
 `POST /branches/private/v1/branch/:id/branchmanager`
 
-**Create Advisor for a branch:**
+**Create Advisor:**
 
 `POST /branches/private/v1/branch/:id/advisor`
 

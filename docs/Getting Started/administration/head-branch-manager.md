@@ -37,29 +37,9 @@ flowchart TD
 
 ---
 
-## Sign In
+## Authentication
 
-`POST /users/public/v1/auth/signin`
-
-```json
-{
-  "login": "headbranch@yourorg.com",
-  "password": "Password123!"
-}
-```
-
-**Response:**
-
-```json
-{
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
-  }
-}
-```
-
-The `accessToken` expires after **30 minutes**. Refresh it with `POST /users/public/v1/auth/refresh`.
+Use your organization's `clientId` and `clientSecret` to create a session. See [Authentication](/docs/authentication) for the full flow. Include `X-Session-Id` and `X-Client-Id` on every request.
 
 ---
 

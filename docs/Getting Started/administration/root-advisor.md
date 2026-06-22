@@ -39,40 +39,16 @@ Branches, Head Branch Managers, Branch Managers, and Advisors can be created in 
 
 ---
 
-## Step 1 — Sign In
+## Step 1 — Authenticate
 
-`POST /users/public/v1/auth/signin`
+Use your `clientId` and `clientSecret` to create a session. See [Authentication](/docs/authentication) for the full flow.
 
-```json
-{
-  "login": "rootadvisor@yourorg.com",
-  "password": "TemporaryPassword123!"
-}
+```
+POST /entrypoint/org/v1/sessions
+X-Client-Id: <clientId>
 ```
 
-**Response:**
-
-```json
-{
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
-  }
-}
-```
-
-On first sign-in, change the temporary password immediately:
-
-`POST /users/private/v1/auth/change_password`
-
-- **Auth**: Root Advisor access token
-
-```json
-{
-  "currentPassword": "TemporaryPassword123!",
-  "newPassword": "StrongNewPassword456!"
-}
-```
+All subsequent requests must include `X-Session-Id` and `X-Client-Id` headers.
 
 ---
 
@@ -106,7 +82,8 @@ Once the hierarchy is set up and Advisors start inviting clients, the Root Advis
 
 ```
 GET /branches/private/v1/advisor?page[number]=1&page[size]=20
-Authorization: Bearer <root_advisor_token>
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
 ```
 
 **List Individual clients across all branches:**
@@ -118,14 +95,9 @@ Authorization: Bearer <root_advisor_token>
 
 ---
 
-## Token Handling
+## Session Handling
 
-| Token          | Lifetime   | How to renew                                                                |
-|----------------|------------|-----------------------------------------------------------------------------|
-| `accessToken`  | 30 minutes | `POST /users/public/v1/auth/refresh` with `refreshToken`                   |
-| `refreshToken` | 30 days    | Sign in again                                                               |
-
-Refresh proactively — call refresh whenever you receive `401` on a private endpoint.
+Sessions expire after **24 hours**. When you receive `401`, create a new session via `POST /entrypoint/org/v1/sessions` and retry the request.
 
 ---
 

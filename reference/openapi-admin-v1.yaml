@@ -1541,7 +1541,7 @@ paths:
   /branches/private/v1/branch/{branchId}/superadvisor:
     post:
       operationId: createHeadBranchManager
-      summary: Create Head Branch Manager for a branch
+      summary: Create Head Branch Manager
       description: >
         Creates and assigns a Head Branch Manager (Super Advisor) to the
         specified branch. The created user receives a welcome email with login
@@ -1579,7 +1579,7 @@ paths:
   /branches/private/v1/branch/{branchId}/branchmanager:
     post:
       operationId: createBranchManager
-      summary: Create Branch Manager for a branch
+      summary: Create Branch Manager
       description: >
         Creates and assigns a Branch Manager to the specified branch.
 
@@ -1615,7 +1615,7 @@ paths:
   /branches/private/v1/branch/{branchId}/advisor:
     post:
       operationId: createAdvisor
-      summary: Create Advisor for a branch
+      summary: Create Advisor
       description: >
         Creates and assigns an Advisor to the specified branch. Advisors are
         the front-line admin role that invites and manages client portfolios.

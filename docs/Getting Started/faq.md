@@ -7,13 +7,13 @@ Frequently asked questions about integrating with the TAPP Cash API.
 
 ## Authentication
 
-**How do I get an API key?**
+**How do I get credentials?**
 
-Contact `support@tappcash.com` with your name, organization, environment (staging or production), and a brief description of your use case. The team will provision your organization's credentials and reply with your login email and a temporary password.
+Contact `support@tappcash.com` with your name, organization, environment (staging or production), and a brief description of your use case. The team will provision your organization and issue a `clientId` and `clientSecret`.
 
-**My access token expired. What do I do?**
+**My session expired. What do I do?**
 
-Call `POST /users/public/v1/auth/refresh` with your `refreshToken` to get a new `accessToken` without re-login. Access tokens expire after 30 minutes. If your refresh token has also expired (30-day lifetime), the user must sign in again.
+Call `POST /entrypoint/org/v1/sessions` with your `clientId` and `clientSecret` to create a new session. Sessions expire after 24 hours. See [Authentication](/docs/authentication) for the full flow.
 
 **Can I use the same credentials for staging and production?**
 

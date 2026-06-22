@@ -1,5 +1,5 @@
 ---
-title: Create Advisor for a branch
+title: Create Advisor
 api:
   file: openapi-admin-v1.yaml
   operationId: createAdvisor
