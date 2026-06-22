@@ -44,7 +44,6 @@ End-to-end integration patterns with every API call in sequence.
   <Card title="ACH Transfer" href="/recipes/ach-transfer" icon="fa-duotone fa-building-columns">BaaS token → Plaid Link → list external accounts → preview fees → execute pull or push.</Card>
   <Card title="Auto-Payment" href="/recipes/auto-payment" icon="fa-duotone fa-calendar-check">Preview fee → create with stop condition (end date, spend cap, or until cancelled) → cancel when needed.</Card>
   <Card title="Transfer Approval" href="/recipes/transfer-approval" icon="fa-duotone fa-shield-check">Enable branch approval → client submits → `pending_approval` → Branch Manager approves or rejects.</Card>
-  <Card title="Token Refresh" href="/recipes/token-refresh" icon="fa-duotone fa-rotate">Sign in → use access token → auto-refresh on 401 → re-auth when refresh token expires.</Card>
 </Cards>
 
 ---
