@@ -1125,7 +1125,7 @@ components:
       in: query
       schema:
         type: string
-        example: "-userCreatedAt"
+        example: "-createdAt"
       description: "Field to sort by. Prefix with `-` for descending order. Valid fields depend on the endpoint — see each endpoint's description."
 
 paths:
@@ -1664,8 +1664,8 @@ paths:
         branch.
 
 
-        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
-        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
+        **Valid `sort` fields:** `createdAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Admin Hierarchy]
       security:
         - OrgSessionAuth: []
@@ -1712,8 +1712,8 @@ paths:
         **Access:** Root Advisor only.
 
 
-        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
-        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
+        **Valid `sort` fields:** `createdAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Admin Hierarchy]
       security:
         - OrgSessionAuth: []
@@ -1749,8 +1749,8 @@ paths:
         **Access:** Root Advisor and Head Branch Manager.
 
 
-        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
-        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
+        **Valid `sort` fields:** `createdAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Admin Hierarchy]
       security:
         - OrgSessionAuth: []
@@ -1793,8 +1793,8 @@ paths:
         across all branches.
 
 
-        **Valid `sort` fields:** `userCreatedAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
-        Prefix with `-` for descending (e.g. `sort=-userCreatedAt`).
+        **Valid `sort` fields:** `createdAt`, `branchCreatedAt`, `userName`, `status`, `userID`.
+        Prefix with `-` for descending (e.g. `sort=-createdAt`).
       tags: [Individual Clients]
       security:
         - OrgSessionAuth: []
