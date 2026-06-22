@@ -1,12 +1,11 @@
 - welcome
 - platform-overview
-- org-api
 - onboarding
+- authentication
 - administration
 - individual-user
 - business-owner
 - operator
-- authentication
 - auto-payments
 - api-response
 - error-handling
