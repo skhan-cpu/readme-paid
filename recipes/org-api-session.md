@@ -1,5 +1,5 @@
 ---
-title: Org API Session (Server-to-Server Auth)
+title: API Session (Server-to-Server Auth)
 description: Create a session with ClientId + ClientSecret, make API calls with the session headers, then revoke the session on logout or job completion.
 hidden: false
 recipe:

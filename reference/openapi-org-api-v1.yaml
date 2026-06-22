@@ -1,16 +1,12 @@
 openapi: 3.0.0
 info:
-  title: TAPP Cash Org API
+  title: TAPP Cash API
   version: 1.0.0
   description: >
-    The **Org API** enables organizations to integrate with TAPP Cash
-    programmatically using **ClientId + ClientSecret** credentials instead of
-    email and password.
-
-
-    This API is separate from the UI-based authentication flow. It is intended
-    for server-to-server integrations where your backend calls TAPP Cash on
-    behalf of your users or for automated system operations.
+    The **TAPP Cash API** enables organizations to integrate programmatically
+    using **ClientId + ClientSecret** credentials for server-to-server
+    integrations where your backend calls TAPP Cash on behalf of your users
+    or for automated system operations.
 
 
     ---

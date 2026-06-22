@@ -26,7 +26,7 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 
 <Cards>
   <Card title="1. Get Credentials" icon="fa-duotone fa-key">A Tech Admin enables API access for your organization and issues a `clientId` + `clientSecret` from the admin portal.</Card>
-  <Card title="2. Create a Session" href="/docs/org-api" icon="fa-duotone fa-server">POST your credentials to `/entrypoint/org/v1/sessions` — receive a `sessionId` valid for 24 hours.</Card>
+  <Card title="2. Create a Session" href="/docs/authentication" icon="fa-duotone fa-server">POST your credentials to `/entrypoint/org/v1/sessions` — receive a `sessionId` valid for 24 hours.</Card>
   <Card title="3. Call Endpoints" href="/docs/authentication" icon="fa-duotone fa-plug">Send `X-Session-Id` and `X-Client-Id` headers on every request.</Card>
   <Card title="4. Revoke Session" href="/recipes/org-api-session" icon="fa-duotone fa-right-from-bracket">Call `DELETE /entrypoint/org/v1/sessions/{id}` on logout or job completion.</Card>
 </Cards>
@@ -38,7 +38,7 @@ These docs are for engineering teams integrating the TAPP Cash API on behalf of 
 End-to-end integration patterns with every API call in sequence.
 
 <Cards>
-  <Card title="Org API Session" href="/recipes/org-api-session" icon="fa-duotone fa-server">ClientId + ClientSecret → sessionId → call endpoints with session headers → revoke on logout.</Card>
+  <Card title="API Session" href="/recipes/org-api-session" icon="fa-duotone fa-server">ClientId + ClientSecret → sessionId → call endpoints with session headers → revoke on logout.</Card>
   <Card title="Onboard an Individual" href="/recipes/onboard-individual" icon="fa-duotone fa-id-card">Advisor invite → 10-step KYC (W9, security questions, phone OTP, identity) → full access token and live accounts.</Card>
   <Card title="Business Onboarding" href="/recipes/onboard-business-owner" icon="fa-duotone fa-users-gear">5-step KYB → invite Operators with scoped permissions (`transferFunds`, `autoPay`) → Operator KYC.</Card>
   <Card title="ACH Transfer" href="/recipes/ach-transfer" icon="fa-duotone fa-building-columns">BaaS token → Plaid Link → list external accounts → preview fees → execute pull or push.</Card>

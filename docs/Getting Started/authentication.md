@@ -3,9 +3,7 @@ title: Authentication
 hidden: false
 ---
 
-The **Org API** is for organizations that want to call TAPP Cash from their own backend — automated jobs, backend services, and server-to-server integrations. It uses **API key authentication** (ClientId + ClientSecret) instead of the email-and-password flow used by the UI.
-
-> **This is not the UI auth flow.** The email + password sign-in is for human users accessing the admin or client portal. The Org API is for machines.
+The **TAPP Cash API** uses **API key authentication** (ClientId + ClientSecret) for server-to-server integrations — automated jobs, backend services, and any backend that calls TAPP Cash directly.
 
 ---
 
