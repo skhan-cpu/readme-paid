@@ -34,11 +34,11 @@ Once credentials are provisioned, the Root Advisor builds the organization struc
 
 ```mermaid
 flowchart TD
-    Root["Root Advisor\n(receives credentials)"]
-    Branch["Branch\n(must be created first)"]
-    HBM["Head Branch Manager\n(optional)"]
-    BM["Branch Manager\n(optional)"]
-    Advisor["Advisor\n(invites and manages clients)"]
+    Root["Root Advisor<br/>(receives credentials)"]
+    Branch["Branch<br/>(must be created first)"]
+    HBM["Head Branch Manager<br/>(optional)"]
+    BM["Branch Manager<br/>(optional)"]
+    Advisor["Advisor<br/>(invites and manages clients)"]
     Clients["Individual & Business Owner Clients"]
 
     Root -->|"1. Create branch"| Branch
@@ -115,12 +115,12 @@ After the Advisor sends the invitation, the client completes their onboarding st
 
 ```mermaid
 flowchart LR
-    Invite["Advisor sends invite\nstatus: invited"]
-    Accept["Client accepts invite\nand sets up profile"]
-    KYC["Client completes KYC\n(phone OTP, W9, security questions,\nidentity verification)"]
-    Pending["KYC under review\nstatus: pending"]
-    Approved["KYC approved\nstatus: active"]
-    Active["Accounts active\nClient can use all features"]
+    Invite["Advisor sends invite<br/>status: invited"]
+    Accept["Client accepts invite<br/>and sets up profile"]
+    KYC["Client completes KYC<br/>(phone OTP, W9, security questions,<br/>identity verification)"]
+    Pending["KYC under review<br/>status: pending"]
+    Approved["KYC approved<br/>status: active"]
+    Active["Accounts active<br/>Client can use all features"]
 
     Invite --> Accept --> KYC --> Pending --> Approved --> Active
 ```
@@ -139,11 +139,11 @@ Once KYC is approved and `status` becomes `active`, the client can:
 ```mermaid
 flowchart LR
     Invite["Advisor sends invite"]
-    Accept["BO accepts invite\nand sets up profile"]
-    KYB["Business Owner completes KYB\n(business verification)"]
-    Approved["KYB approved\nstatus: active"]
+    Accept["BO accepts invite<br/>and sets up profile"]
+    KYB["Business Owner completes KYB<br/>(business verification)"]
+    Approved["KYB approved<br/>status: active"]
     Active["Business accounts active"]
-    Operators["BO can invite Operators\nwith scoped permissions"]
+    Operators["BO can invite Operators<br/>with scoped permissions"]
 
     Invite --> Accept --> KYB --> Approved --> Active --> Operators
 ```

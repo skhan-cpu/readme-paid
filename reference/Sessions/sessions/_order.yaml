@@ -1,3 +1,4 @@
 - create-session
-- check-session
+- validate-session
+- get-user-profile
 - revoke-session

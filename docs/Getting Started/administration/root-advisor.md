@@ -25,12 +25,12 @@ After receiving credentials from `support@tappcash.com`, the Root Advisor sets u
 
 ```mermaid
 flowchart TD
-    A["Authenticate\nPOST /entrypoint/org/v1/sessions"]
-    C["Create branches\n(one per operating region or team)"]
-    D["Create Head Branch Managers\n(optional — for large organizations)"]
-    E["Create Branch Managers\n(assign to branches)"]
-    F["Create Advisors\n(assign to branches)"]
-    G(["Organization is ready\nAdvisors can now invite clients"])
+    A["Authenticate<br/>POST /entrypoint/org/v1/sessions"]
+    C["Create branches<br/>(one per operating region or team)"]
+    D["Create Head Branch Managers<br/>(optional — for large organizations)"]
+    E["Create Branch Managers<br/>(assign to branches)"]
+    F["Create Advisors<br/>(assign to branches)"]
+    G(["Organization is ready<br/>Advisors can now invite clients"])
 
     A --> C --> D --> E --> F --> G
 ```
