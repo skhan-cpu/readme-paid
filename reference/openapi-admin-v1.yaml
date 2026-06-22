@@ -103,19 +103,17 @@ info:
 x-readme:
   proxy-enabled: true
 servers:
-  - url: https://api-test.stage2.tappbank.com
-    description: Staging (test tenant)
   - url: https://api-{tenant}.stage2.tappbank.com
-    description: Staging (custom tenant)
+    description: Staging
     variables:
       tenant:
-        default: test
+        default: testing
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com
     description: Production
     variables:
       tenant:
-        default: test
+        default: testing
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
