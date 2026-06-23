@@ -14,25 +14,25 @@ flowchart TD
     A["Advisor sends invitation\nPOST /branches/private/v1/businessowner"]
     A --> B(["Business Owner receives invitation email"])
 
-    B --> C["Step 1 — Validate invitation token"]
+    B --> C["Validate invitation token"]
     C -->|invalid / expired| ERR(["Contact Advisor to resend"])
     C -->|valid — returns customerUid| SESSION["Create scoped session with customerUid"]
 
-    SESSION --> D["Step 2 — Fetch platform agreements"]
+    SESSION --> D["Fetch platform agreements"]
     D --> E["User reads and accepts each agreement"]
 
-    E --> F["Step 3 — Accept invitation"]
+    E --> F["Accept invitation"]
     F -->|200 — immediately active| DONE1(["Onboarding complete — accounts are live"])
-    F -->|403 — additional steps required| G["Step 4 — Review W9 terms"]
+    F -->|403 — additional steps required| G["Review W9 terms"]
 
-    G --> H["Step 5 — List security questions"]
-    H --> I["Step 6 — Submit security answers"]
-    I --> J["Step 7 — Send phone OTP"]
-    J --> K["Step 8 — Verify phone OTP"]
-    K --> L["Step 9 — Submit KYB information"]
+    G --> H["List security questions"]
+    H --> I["Submit security answers"]
+    I --> J["Send phone OTP"]
+    J --> K["Verify phone OTP"]
+    K --> L["Submit KYB information"]
     L -->|400 – field errors| ERR2["Show validation errors and let user correct"]
     ERR2 --> L
-    L -->|200 – KYB pending| M["Step 10 — Poll KYB status"]
+    L -->|200 – KYB pending| M["Poll KYB status"]
     M -->|pending| M
     M -->|active| DONE2(["Onboarding complete — accounts are live"])
     M -->|rejected| REJ(["Contact support"])
