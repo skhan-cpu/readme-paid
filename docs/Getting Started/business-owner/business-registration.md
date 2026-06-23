@@ -11,45 +11,85 @@ Business Owner onboarding begins with an Advisor invitation and ends with KYB ap
 
 ```mermaid
 flowchart TD
-    A["Advisor sends invitation\nPOST /branches/private/v1/business-owner"]
-    B(["Business Owner receives invitation email"])
+    A["Advisor sends invitation\nPOST /branches/private/v1/businessowner"]
+    A --> B(["Business Owner receives invitation email"])
+
     B --> C["Step 1 — Validate invitation token"]
     C -->|invalid / expired| ERR(["Contact Advisor to resend"])
-    C -->|valid| D["Step 2 — Fetch and accept platform agreements"]
-    D --> E["Step 3 — Accept invitation\nand set password"]
-    E -->|Returns temporaryAccessToken| F{{"Store temporaryAccessToken"}}
-    F --> G["Step 4 — Complete KYB form\n(business details + beneficial owners)"]
-    G -->|Validation errors| G
-    G -->|Submitted| H["KYB pending review"]
-    H --> I["Step 5 — Exchange for full access token"]
-    I --> J{{"Store accessToken + refreshToken"}}
-    J --> K(["Business accounts active"])
+    C -->|valid — returns customerUid| SESSION["Create scoped session with customerUid"]
+
+    SESSION --> D["Step 2 — Fetch platform agreements"]
+    D --> E["User reads and accepts each agreement"]
+
+    E --> F["Step 3 — Accept invitation"]
+    F -->|200 — immediately active| DONE1(["Onboarding complete — accounts are live"])
+    F -->|403 — additional steps required| G["Step 4 — Review W9 terms"]
+
+    G --> H["Step 5 — List security questions"]
+    H --> I["Step 6 — Submit security answers"]
+    I --> J["Step 7 — Send phone OTP"]
+    J --> K["Step 8 — Verify phone OTP"]
+    K --> L["Step 9 — Submit KYB information"]
+    L -->|400 – field errors| ERR2["Show validation errors and let user correct"]
+    ERR2 --> L
+    L -->|200 – KYB pending| M["Step 10 — Poll KYB status"]
+    M -->|pending| M
+    M -->|active| DONE2(["Onboarding complete — accounts are live"])
+    M -->|rejected| REJ(["Contact support"])
 ```
 
 ---
 
 ## Step 1 — Validate Invitation Token
 
-`GET /branches/public/v1/common/invites/check`
+`GET /branches/public/v1/common/invites/check?token=<invite_token>`
 
-The invitation email contains a token. Check its validity before proceeding.
+- **Auth**: None
 
-```
-GET /branches/public/v1/common/invites/check?token=<invite_token>
-```
-
-**Response:**
+The invitation email contains a token. Validate it before showing any onboarding UI.
 
 ```json
 {
   "data": {
-    "valid": true,
-    "email": "owner@business.com"
+    "role": "businessowner",
+    "customerUid": "a1b2c3d4-0000-0000-0000-000000000001"
   }
 }
 ```
 
-If `valid` is `false` or the request returns an error, the token has expired or already been used. The Business Owner should ask their Advisor to send a new invitation.
+If the request returns an error the token has expired or already been used — the Business Owner should ask their Advisor to send a new invitation.
+
+---
+
+## Create a Scoped Session (before Step 3)
+
+Use the `customerUid` from Step 1 to open a session for this user:
+
+`POST /entrypoint/org/v1/sessions`
+
+```json
+{
+  "clientId":     "<your-client-id>",
+  "clientSecret": "<your-client-secret>",
+  "customerUid":  "<customerUid from Step 1>"
+}
+```
+
+```json
+{
+  "data": {
+    "sessionId": "4bdfca21-461e-45a2-9d26-64f4176267c7",
+    "expiresAt": "2026-06-24T12:00:00Z"
+  }
+}
+```
+
+Include these headers on **every request from Step 3 onward**:
+
+```
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
+```
 
 ---
 
@@ -57,59 +97,97 @@ If `valid` is `false` or the request returns an error, the token has expired or 
 
 `GET /branches/public/v1/common/agreements`
 
-Retrieve the list of agreements the Business Owner must accept before proceeding.
+- **Auth**: None
+
+Retrieve the list of agreements the Business Owner must accept before proceeding. Display each agreement; all must be acknowledged to continue.
+
+---
+
+## Step 3 — Accept Invitation
+
+`POST /branches/public/v1/businessowner/invites/accept?token=<invite_token>`
+
+- **Auth**: Session headers
+- No request body required.
+
+| HTTP | Meaning |
+|------|---------|
+| `200` | Account is immediately active — onboarding complete. |
+| `403` | Account created; continue with Steps 4–10. |
+
+---
+
+## Step 4 — Review W9 Terms
+
+`GET /branches/private/v1/limited/w9/terms`
+
+- **Auth**: Session headers
+
+Display the W9 tax certification text. Record the timestamp of user acceptance for use in Step 9.
+
+---
+
+## Step 5 — List Security Questions
+
+`GET /users/private/v1/limited/security-questions`
+
+- **Auth**: Session headers
+
+Present the available questions for the user to choose from.
+
+---
+
+## Step 6 — Submit Security Answers
+
+`POST /users/private/v1/limited/security-questions/answers`
+
+- **Auth**: Session headers. Exactly 3 distinct question IDs required.
 
 ```json
 {
-  "data": [
-    {
-      "id": "1",
-      "title": "Terms of Service",
-      "url": "https://..."
-    }
+  "answers": [
+    { "questionId": 1, "answer": "Seattle" },
+    { "questionId": 5, "answer": "Buddy" },
+    { "questionId": 9, "answer": "Blue" }
   ]
 }
 ```
 
-Display each agreement to the user. All must be accepted to continue.
+---
+
+## Step 7 — Send Phone OTP
+
+`POST /users/private/v1/limited/generate-new-phone-code`
+
+- **Auth**: Session headers
+
+Triggers an SMS to the phone number registered during invitation.
 
 ---
 
-## Step 3 — Accept Invitation and Set Password
+## Step 8 — Verify Phone OTP
 
-`POST /branches/public/v1/business-owner/invites/accept`
+`PUT /users/private/v1/limited/check-phone-code`
 
-Submit the invite token, accepted agreement IDs, and chosen password.
-
-```json
-{
-  "token": "<invite_token>",
-  "password": "SecurePassword123!",
-  "agreements": ["1", "2"]
-}
-```
-
-**Response:** Returns a `temporaryAccessToken` (HTTP 403 scope). Store this token — it is used for the KYB submission step.
+- **Auth**: Session headers
 
 ```json
-{
-  "data": {
-    "temporaryAccessToken": "eyJ..."
-  }
-}
+{ "code": "ABC12" }
 ```
+
+On success, the phone number is confirmed.
 
 ---
 
-## Step 4 — Complete KYB
+## Step 9 — Submit KYB Information
 
-`POST /branches/private/v1/business-owner/kyb`
+`POST /branches/private/v1/limited/businessowner/signup`
 
-- **Auth**: `temporaryAccessToken` from Step 3
+- **Auth**: Session headers
+- **On success (200)**: KYB submitted — account enters `pending` review.
+- **On error (400)**: Check `errors` array for field-level failures, correct and resubmit.
 
-Submit the business entity details and beneficial owner information.
-
-**Business details:**
+Submit the business entity details and all beneficial owners (individuals who own 25% or more of the business).
 
 ```json
 {
@@ -123,6 +201,11 @@ Submit the business entity details and beneficial owner information.
     "zipCode": "78701",
     "country": "USA"
   },
+  "w9": {
+    "isSubjectToBackupWithholding": false,
+    "accepted": true,
+    "timestamp": "2024-03-15T14:22:00Z"
+  },
   "beneficialOwners": [
     {
       "firstName": "Jane",
@@ -134,39 +217,20 @@ Submit the business entity details and beneficial owner information.
 }
 ```
 
-Beneficial owners are individuals who own 25% or more of the business. Include all qualifying owners.
-
 ---
 
-## Step 5 — Exchange for Full Access Token
+## Step 10 — Poll KYB Status
 
-`POST /users/private/v1/limited/token-exchange`
+`GET /branches/private/v1/limited/businessowner/kyb-status`
 
-- **Auth**: `temporaryAccessToken`
+- **Auth**: Session headers
 
-Once KYB is submitted, exchange the temporary token for a full `accessToken` and `refreshToken`.
+Poll this endpoint after Step 9 to track the review outcome.
 
-```json
-{
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
-  }
-}
-```
+| Status | Meaning |
+|--------|---------|
+| `pending` | KYB submitted, review in progress |
+| `active` | KYB approved — accounts are fully usable |
+| `rejected` | KYB rejected — contact support |
 
-Store both tokens. The `accessToken` expires after **30 minutes**; use `POST /users/public/v1/auth/refresh` to renew it.
-
----
-
-## KYB Review
-
-After submission, KYB enters a review state. The platform team verifies the business entity and beneficial ownership details.
-
-| Status      | Meaning                                                              |
-|-------------|----------------------------------------------------------------------|
-| `pending`   | KYB submitted and under review                                       |
-| `approved`  | Verification passed — business accounts are fully active             |
-| `rejected`  | Verification failed — Business Owner will be contacted for next steps|
-
-The Business Owner can sign in and use limited features while KYB is pending. Full account access (transfers, external accounts) requires KYB approval.
+The session used during onboarding remains valid throughout the KYB review period.

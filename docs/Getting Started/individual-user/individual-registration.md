@@ -3,7 +3,7 @@ title: Registration
 hidden: false
 ---
 
-After an Advisor sends an invitation, the individual user completes a guided 10-step flow — covering invitation acceptance, agreements, password setup, W9, security questions, phone OTP, KYC submission, and token exchange — to activate their accounts.
+After an Advisor sends an invitation, the individual user completes a guided onboarding flow — covering invitation acceptance, agreements, W9, security questions, phone OTP, and KYC submission — to activate their accounts.
 
 ---
 
@@ -19,17 +19,18 @@ flowchart TD
 
     B --> C[Step 1 — Validate token]
     C -->|invalid / expired| ERR1([Show error — ask manager to re-send])
-    C -->|valid| D[Step 2 — Fetch platform agreements]
+    C -->|valid — returns customerUid| SESSION[Create scoped session with customerUid]
 
+    SESSION --> D[Step 2 — Fetch platform agreements]
     D --> E[User reads and accepts each agreement]
-    E --> F[Step 3 — Accept invitation and set password]
 
-    F -->|HTTP 403 + temporaryAccessToken| G{{Store temporaryAccessToken}}
+    E --> F[Step 3 — Accept invitation]
+    F -->|200 — immediately active| Q([Onboarding complete — accounts are live])
+    F -->|403 — additional steps required| G[Step 4 — Review W9 terms]
 
-    G --> H[Step 4 — Review W9 terms]
-    H --> I[User acknowledges W9 certification]
+    G --> H[User acknowledges W9 certification]
 
-    I --> J[Step 5 — List security questions]
+    H --> J[Step 5 — List security questions]
     J --> K[Step 6 — Submit security answers]
 
     K --> L[Step 7 — Send phone OTP]
@@ -38,25 +39,61 @@ flowchart TD
     M --> N[Step 9 — Submit KYC information]
     N -->|400 – field errors| ERR2[Show validation errors and let user correct]
     ERR2 --> N
-
-    N -->|200 – KYC pending| O[Step 10 — Exchange for full access token]
-    O --> P{{Store accessToken and refreshToken}}
-    P --> Q([Onboarding complete — accounts are live])
+    N -->|200 – KYC submitted| Q2([Onboarding complete — accounts are live])
 ```
 
 ---
 
-## Steps 1–10
+## Steps
 
 ### Step 1: Validate the invitation token
-
-Before rendering any UI, confirm the invite link is still valid.
 
 `GET /branches/public/v1/common/invites/check?token=<invite_token>`
 
 - **Auth**: None
-- **On success (200)**: Token is valid — proceed to step 2.
-- **On error (400/404)**: Show "Invitation expired or not found."
+- **On success (200)**: Returns `role` and `customerUid` — proceed to session creation.
+- **On error (400)**: Show "Invitation expired or not found."
+
+```json
+{
+  "data": {
+    "role": "individual",
+    "customerUid": "a1b2c3d4-0000-0000-0000-000000000001"
+  }
+}
+```
+
+---
+
+### Create a scoped session (before Step 3)
+
+Use the `customerUid` from Step 1 to open a session for this user:
+
+`POST /entrypoint/org/v1/sessions`
+
+```json
+{
+  "clientId":     "<your-client-id>",
+  "clientSecret": "<your-client-secret>",
+  "customerUid":  "<customerUid from Step 1>"
+}
+```
+
+```json
+{
+  "data": {
+    "sessionId": "4bdfca21-461e-45a2-9d26-64f4176267c7",
+    "expiresAt": "2026-06-24T12:00:00Z"
+  }
+}
+```
+
+Include these headers on **every request from Step 3 onward**:
+
+```
+X-Session-Id: <sessionId>
+X-Client-Id:  <clientId>
+```
 
 ---
 
@@ -65,42 +102,35 @@ Before rendering any UI, confirm the invite link is still valid.
 `GET /branches/public/v1/common/agreements`
 
 - **Auth**: None
-- Display each agreement's title and content. Require the user to tick "I agree" for each before continuing.
+- Display each agreement's title and content. Require the user to acknowledge each one before continuing.
 
 ---
 
 ### Step 3: Accept the invitation
 
-`POST /branches/public/v1/individual/invites/accept`
+`POST /branches/public/v1/individual/invites/accept?token=<invite_token>`
 
-```json
-{
-  "token": "<invite_token>",
-  "password": "SecurePassword#2024",
-  "confirmPassword": "SecurePassword#2024",
-  "agreementIds": [1, 2, 3]
-}
-```
+- **Auth**: Session headers
+- No request body required.
 
-**On success (403 with body):**
+| HTTP | Meaning |
+|------|---------|
+| `200` | Account is immediately active — onboarding complete. |
+| `403` | Account created; continue with Steps 4–9. |
 
-```json
-{
-  "data": { "temporaryAccessToken": "eyJ..." },
-  "errors": [{ "code": "required additional actions", "meta": { "fields": ["phoneNumber", "kyc"] } }]
-}
-```
-
-> HTTP 403 here is intentional. Extract `data.temporaryAccessToken` and store it. Use it for steps 4–9. The `meta.fields` array tells you which steps are still required.
+> **Path differs per user type:**
+> - **Individual**: `/branches/public/v1/individual/invites/accept`
+> - **Business Owner**: `/branches/public/v1/businessowner/invites/accept`
+> - **Operator**: `/branches/public/v1/operator/invites/accept`
 
 ---
 
-### Step 4: Show W9 terms
+### Step 4: Review W9 terms
 
 `GET /branches/private/v1/limited/w9/terms`
 
-- **Auth**: Temporary token
-- Display the W9 tax certification text. Record the timestamp of user acceptance for step 9.
+- **Auth**: Session headers
+- Display the W9 tax certification text. Record the timestamp of user acceptance for Step 9.
 
 ---
 
@@ -108,8 +138,8 @@ Before rendering any UI, confirm the invite link is still valid.
 
 `GET /users/private/v1/limited/security-questions`
 
-- **Auth**: Temporary token
-- Present 3 questions for the user to choose and answer.
+- **Auth**: Session headers
+- Present questions for the user to choose from and answer.
 
 ---
 
@@ -127,7 +157,7 @@ Before rendering any UI, confirm the invite link is still valid.
 }
 ```
 
-- **Auth**: Temporary token. Exactly 3 distinct question IDs required.
+- **Auth**: Session headers. Exactly 3 distinct question IDs required.
 
 ---
 
@@ -135,7 +165,7 @@ Before rendering any UI, confirm the invite link is still valid.
 
 `POST /users/private/v1/limited/generate-new-phone-code`
 
-- **Auth**: Temporary token
+- **Auth**: Session headers
 - Triggers an SMS to the phone number registered during invitation.
 
 ---
@@ -148,7 +178,7 @@ Before rendering any UI, confirm the invite link is still valid.
 { "code": "ABC12" }
 ```
 
-- **Auth**: Temporary token. On success, the phone is confirmed.
+- **Auth**: Session headers. On success, the phone is confirmed.
 
 ---
 
@@ -185,25 +215,11 @@ Before rendering any UI, confirm the invite link is still valid.
 }
 ```
 
-- **Auth**: Temporary token
-- **On success (200)**: KYC submitted, processing asynchronously.
-- **On error (400)**: Check `errors` array for field-level failures.
+- **Auth**: Session headers
+- **On success (200)**: KYC submitted — onboarding complete. Accounts are live.
+- **On error (400)**: Check `errors` array for field-level failures, correct and resubmit.
 
----
-
-### Step 10: Exchange temporary token for full access
-
-`PUT /users/private/v1/limited/token-exchange`
-
-- **Auth**: Temporary token
-
-```json
-{
-  "data": {
-    "accessToken": "eyJ...",
-    "refreshToken": "LUF..."
-  }
-}
-```
-
-Store both tokens. Onboarding is complete and the user's accounts are immediately available.
+> **Path differs per user type:**
+> - **Individual** (KYC): `/branches/private/v1/limited/individual/signup`
+> - **Business Owner** (KYB): `/branches/private/v1/limited/businessowner/signup`
+> - **Operator** (KYC): `/branches/private/v1/limited/operator/signup`

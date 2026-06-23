@@ -727,6 +727,15 @@ paths:
           ClientIdAuth: []
       parameters:
         - $ref: '#/components/parameters/DeviceId'
+        - name: backupWithholding
+          in: query
+          required: false
+          schema:
+            type: boolean
+            example: true
+          description: >
+            Pass `true` if the Business Owner is subject to backup withholding.
+            Affects the W9 terms content returned.
       responses:
         '200':
           description: W9 terms content
