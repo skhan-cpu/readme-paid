@@ -5,6 +5,10 @@ hidden: false
 
 These endpoints handle the onboarding flow for Business Owner clients.
 
+> For a full walkthrough with code examples, see the guides:
+> - [Individual Registration](doc:individual-registration)
+> - [Business Owner Registration & KYB](doc:business-registration)
+
 ## Flow at a Glance
 
 | # | Step | Endpoint | Auth |
@@ -18,8 +22,7 @@ These endpoints handle the onboarding flow for Business Owner clients.
 | 6 | Submit security answers | `POST /users/private/v1/limited/security-questions/answers` | Session headers |
 | 7 | Send phone OTP | `POST /users/private/v1/limited/generate-new-phone-code` | Session headers |
 | 8 | Verify phone OTP | `PUT /users/private/v1/limited/check-phone-code` | Session headers |
-| 9 | Submit KYB information | `POST /branches/private/v1/limited/businessowner/signup` | Session headers |
-| 10 | Poll KYB status | `GET /branches/private/v1/limited/businessowner/kyb-status` | Session headers |
+| 9 | Submit KYC/KYB | `POST /branches/private/v1/limited/businessowner/signup` | Session headers |
 
 ---
 
