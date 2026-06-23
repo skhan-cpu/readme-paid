@@ -1,5 +1,5 @@
 ---
-title: Step 2 — Fetch Platform Agreements
+title: Get Agreements
 api:
   file: openapi-business-v1.yaml
   operationId: boGetAgreements

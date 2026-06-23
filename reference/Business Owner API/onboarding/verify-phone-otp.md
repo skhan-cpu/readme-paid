@@ -1,5 +1,5 @@
 ---
-title: Step 8 — Verify Phone OTP
+title: Verify Phone OTP
 api:
   file: openapi-business-v1.yaml
   operationId: boVerifyPhoneOTP

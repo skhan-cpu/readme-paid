@@ -117,13 +117,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com
     description: Production
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
@@ -455,7 +455,7 @@ paths:
 
         Use this endpoint to:
 
-        - **Confirm a session is valid** before making business API calls.
+        - **Confirm a session is valid** before making API calls.
 
         - **Inspect scope** — see whether the session is a `System` session or
           is scoped to a specific `customerUid`.

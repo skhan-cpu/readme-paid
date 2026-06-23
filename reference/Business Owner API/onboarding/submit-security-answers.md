@@ -1,5 +1,5 @@
 ---
-title: Step 6 — Submit Security Answers
+title: Submit Security Answers
 api:
   file: openapi-business-v1.yaml
   operationId: boSubmitSecurityAnswers

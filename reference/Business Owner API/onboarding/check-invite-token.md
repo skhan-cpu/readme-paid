@@ -1,5 +1,5 @@
 ---
-title: Step 1 — Validate Invite Token
+title: Check Invitation Token
 api:
   file: openapi-business-v1.yaml
   operationId: boCheckInviteToken

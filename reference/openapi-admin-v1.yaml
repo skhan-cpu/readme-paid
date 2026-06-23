@@ -107,13 +107,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com/org
     description: Production
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
@@ -1181,8 +1181,7 @@ paths:
       operationId: createBranch
       summary: Create a branch
       description: >
-        Creates a new branch. After creating a branch, assign admin roles to it
-        using the branch hierarchy endpoints.
+        Creates a new branch. Once created, assign admin roles to it using the branch hierarchy endpoints.
 
 
         **Access:** Root Advisor only.

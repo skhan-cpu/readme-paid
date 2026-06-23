@@ -1,5 +1,5 @@
 ---
-title: Step 7 — Send Phone OTP
+title: Send Phone OTP
 api:
   file: openapi-business-v1.yaml
   operationId: boSendPhoneOTP

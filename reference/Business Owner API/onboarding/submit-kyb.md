@@ -1,5 +1,5 @@
 ---
-title: Step 9 — Submit KYB Information
+title: Complete Signup
 api:
   file: openapi-business-v1.yaml
   operationId: submitKYB

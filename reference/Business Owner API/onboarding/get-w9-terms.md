@@ -1,5 +1,5 @@
 ---
-title: Step 4 — Get W9 Terms
+title: Get W9 Terms and Conditions
 api:
   file: openapi-business-v1.yaml
   operationId: boGetW9Terms

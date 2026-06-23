@@ -78,13 +78,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com/org
     description: Production
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
 
 components:
@@ -323,7 +323,7 @@ components:
           type: boolean
         legalStructure:
           type: string
-          enum: [CORPORATION, LLC, PARTNERSHIP, SOLE_PROPRIETORSHIP, NON_PROFIT]
+          enum: [CORPORATION, LLC, PARTNERSHIP, NON-PROFIT, TRUST, SOLE PROPRIETORSHIP]
         phoneNumber:
           type: string
           pattern: "^\\+1\\d{10}$"
@@ -353,15 +353,15 @@ components:
 
     BusinessOwnerSignupRequest:
       type: object
-      required: [businessOwner, controllingParty, business]
+      required: [businessOwner, controllingParty, business, w9]
       description: >
         Complete KYB signup request. Requires at minimum one Business Owner,
-        one Controlling Party, and a Business entity. The Authorized Signer is
+        one Controlling Party, a Business entity, and W9 certification. The Authorized Signer is
         optional.
       properties:
         businessOwner:
           $ref: '#/components/schemas/BusinessOwnerSignupPerson'
-          description: "Primary business owner (must include ownershipPercentage and w9)"
+          description: "Primary business owner (must include ownershipPercentage)"
         controllingParty:
           $ref: '#/components/schemas/BusinessOwnerSignupPerson'
           description: "Person with control over business operations (must include businessTitle)"
@@ -370,6 +370,9 @@ components:
           description: "Optional — person authorized to sign business transactions"
         business:
           $ref: '#/components/schemas/BusinessSignupInfo'
+        w9:
+          $ref: '#/components/schemas/W9Certification'
+          description: "W9 tax certification — accepted on behalf of the business"
 
     Account:
       type: object
@@ -912,93 +915,145 @@ paths:
               $ref: '#/components/schemas/BusinessOwnerSignupRequest'
             example:
               businessOwner:
-                firstName: "John"
-                lastName: "Smith"
-                dateOfBirth: "01/15/1980"
+                middleName: "test"
+                phoneNumber: "+13218271965"
+                dateOfBirth: "01/01/1987"
                 socialSecurityNumber: "478-37-4837"
-                phoneNumber: "+12025550104"
-                email: "john.smith@acmecorp.com"
-                ownershipPercentage: "51"
+                ownershipPercentage: "26"
+                businessTitle: "title"
                 usCitizenshipStatus: "Citizen"
-                address:
-                  address: "123 Business Ave"
-                  city: "Austin"
-                  state: "TX"
-                  zipCode: "78701"
-                  country: "US"
                 isSameAddress: true
+                address:
+                  address: "test"
+                  city: "city"
+                  state: "MI"
+                  zipCode: "22222"
+                  country: "US"
+                mailingAddress:
+                  address: "test"
+                  city: "city"
+                  state: "MI"
+                  zipCode: "22222"
+                  country: "US"
                 employment:
                   isCurrentlyEmployed: true
-                  occupation: "CEO"
-                  employer: "Acme Corp"
-                  annualIncome: "150000.00"
-                  employmentStartDate: "01/01/2010"
+                  occupation: "string"
+                  employer: "string"
+                  annualIncome: "10000.00"
+                  employmentStartDate: "04/06/2025"
                   incomeSources:
-                    - name: "Business income"
-                      amount: "150000.00"
-                      frequency: "Annually"
-                w9:
-                  isSubjectToBackupWithholding: false
-                  accepted: true
-                  timestamp: "2024-01-15T10:30:00Z"
+                    - name: "string"
+                      amount: "10000.00"
+                      frequency: "Monthly"
               controllingParty:
-                firstName: "Jane"
-                lastName: "Smith"
-                dateOfBirth: "03/22/1982"
-                socialSecurityNumber: "378-27-3827"
-                phoneNumber: "+12025550105"
-                email: "jane.smith@acmecorp.com"
-                businessTitle: "CFO"
+                middleName: "Party"
+                dateOfBirth: "12/12/2002"
+                socialSecurityNumber: "738-27-3827"
+                phoneNumber: "+13126352635"
+                businessTitle: "title"
                 isBeneficialOwner: false
                 usCitizenshipStatus: "Citizen"
-                address:
-                  address: "123 Business Ave"
-                  city: "Austin"
-                  state: "TX"
-                  zipCode: "78701"
-                  country: "US"
                 isSameAddress: true
+                address:
+                  address: "test"
+                  city: "test"
+                  state: "MI"
+                  zipCode: "11111"
+                  country: "US"
+                mailingAddress:
+                  address: "test"
+                  city: "test"
+                  state: "MI"
+                  zipCode: "11111"
+                  country: "US"
                 employment:
                   isCurrentlyEmployed: true
-                  occupation: "CFO"
-                  employer: "Acme Corp"
-                  annualIncome: "120000.00"
-                  employmentStartDate: "06/01/2012"
+                  occupation: "title"
+                  employer: "test"
+                  annualIncome: "100000.00"
+                  employmentStartDate: "05/06/2025"
                   incomeSources:
-                    - name: "Salary"
-                      amount: "120000.00"
+                    - name: "Test"
+                      amount: "100000.00"
                       frequency: "Annually"
-              business:
-                businessLegalName: "Acme Corporation LLC"
-                natureOfBusiness: "Software development and consulting"
-                employerIdentificationNumber: "12-3456789"
-                taxIdentificationNumberType: "EIN"
-                hasEmployees: true
-                legalStructure: "LLC"
-                phoneNumber: "+12025550100"
-                email: "info@acmecorp.com"
-                stateOfIncorporation: "TX"
-                naicsCode: "541512"
-                website: "https://acmecorp.com"
-                address:
-                  address: "456 Corporate Blvd"
-                  city: "Austin"
-                  state: "TX"
-                  zipCode: "78702"
-                  country: "US"
+              authorizedSigner:
+                middleName: "Signer"
+                dateOfBirth: "12/12/2002"
+                socialSecurityNumber: "378-27-3827"
+                phoneNumber: "+13126352635"
+                businessTitle: "title"
+                usCitizenshipStatus: "Citizen"
                 isSameAddress: true
+                address:
+                  address: "test"
+                  city: "test"
+                  state: "MI"
+                  zipCode: "11111"
+                  country: "US"
+                mailingAddress:
+                  address: "test"
+                  city: "test"
+                  state: "MI"
+                  zipCode: "11111"
+                  country: "US"
+                employment:
+                  isCurrentlyEmployed: true
+                  occupation: "test1"
+                  employer: "test"
+                  annualIncome: "100000.00"
+                  employmentStartDate: "05/06/2025"
+                  incomeSources: []
+              business:
+                businessLegalName: "businessUser"
+                natureOfBusiness: "Lorem"
+                tradeName: "trade"
+                employerIdentificationNumber: "37-2837283"
+                taxIdentificationNumberType: "EIN"
+                hasEmployees: false
+                legalStructure: "CORPORATION"
+                phoneNumber: "+13126352632"
+                stateOfIncorporation: "MI"
+                naicsCode: "441222"
+                website: "https://google.com"
+                isSameAddress: true
+                address:
+                  address: "test"
+                  city: "test"
+                  state: "MI"
+                  zipCode: "17272"
+                  country: "US"
+                mailingAddress:
+                  address: "test"
+                  city: "test"
+                  state: "MI"
+                  zipCode: "17272"
+                  country: "US"
                 transferActivity:
-                  internationalTransferExpected: false
+                  internationalTransferExpected: true
+                  internationalTransferFrequency: "SeveralPerMonth"
+                  internationalTransferAmountRange: "from_50000_to_99999"
+                  internationalTransferCountries:
+                    - "ABW"
+                    - "AFG"
                   cryptocurrencyTransactionExpected: false
-                  cashTransactionExpected: false
+                  cashTransactionExpected: true
+                  cashTransactionFrequency: "OncePerMonth"
+                  cashTransactionAmountRange: "from_10000_to_49999"
                 businessActivity:
                   isHempOrCbdRelated: false
                   isMarijuanaRelated: false
-                  isLotteryTicketSales: false
-                  isCheckCashingService: false
-                  isMoneyTransferForOthers: false
-                  isNoneOfTheAbove: true
+                  isLotteryTicketSales: true
+                  isCheckCashingService: true
+                  isMoneyTransferForOthers: true
+                  isNoneOfTheAbove: false
+                  isMoneyServiceBusinessRegulatedByFinCen: true
+                  isOperatingPrivateAtm: true
+                  isProcessingInternationalTransfers: true
                   consent: true
+              w9:
+                isSubjectToBackupWithholding: true
+                accepted: true
+                timestamp: "2017-07-21T17:32:28Z"
       responses:
         '200':
           description: KYB submission accepted — review is processing asynchronously

@@ -1,5 +1,5 @@
 ---
-title: Step 3 — Accept Invitation
+title: Accept Invitation
 api:
   file: openapi-business-v1.yaml
   operationId: boAcceptInvite

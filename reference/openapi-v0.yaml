@@ -313,13 +313,13 @@ servers:
     description: Staging
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
   - url: https://api-{tenant}.tappcash.com/org
     description: Production
     variables:
       tenant:
-        default: testing
+        default: test
         description: Your organization's subdomain (e.g. wire-network)
 paths:
   /branches/public/v1/common/invites/check:
@@ -1193,52 +1193,44 @@ paths:
             schema:
               $ref: '#/components/schemas/IndividualSignupParams'
             example:
-              middleName: Michael
-              dateOfBirth: '03/20/1990'
-              socialSecurityNumber: 987-65-4321
-              usCitizenshipStatus: Citizen
+              middleName: v3
+              phoneNumber: '+12316785266'
+              dateOfBirth: '12/12/2002'
+              socialSecurityNumber: 737-37-3782
+              consent: null
+              taxIdentificationNumber: EIN
+              usCitizenshipStatus: ResidentAlien
+              isSameAddress: true
               address:
-                address: 789 Pine Street
-                city: Seattle
-                state: WA
-                zipCode: '98101'
+                address: test
+                city: test
+                state: MI
+                zipCode: '13242'
                 country: US
               mailingAddress:
-                address: 321 Cedar Avenue
-                city: Seattle
-                state: WA
-                zipCode: '98109'
+                address: test
+                city: test
+                state: MI
+                zipCode: '13242'
                 country: US
-              w9:
-                isSubjectToBackupWithholding: false
-                accepted: true
-                timestamp: '2017-07-21T17:32:28Z'
               employment:
                 isCurrentlyEmployed: true
-                occupation: Marketing Manager
-                employer: Digital Solutions Inc
-                annualIncome: '65000.00'
-                employmentStartDate: '09/01/2018'
+                occupation: string
+                employer: string
+                annualIncome: '12.11'
+                employmentStartDate: '02/02/1991'
                 incomeSources:
-                  - name: Base Salary
-                    amount: '4500.00'
+                  - name: string
+                    amount: '1000.00'
                     frequency: Monthly
-                  - name: Annual Bonus
-                    amount: '2000.00'
-                    frequency: Annually
               transferActivity:
-                internationalTransferExpected: true
-                internationalTransferFrequency: OnceEveryFewMonths
-                internationalTransferAmountRange: from_10000_to_49999
-                internationalTransferCountries:
-                  - CAN
-                  - MEX
+                internationalTransferExpected: false
                 cryptocurrencyTransactionExpected: false
-                cryptocurrencyTransactionFrequency: null
-                cryptocurrencyTransactionAmountRange: null
-                cashTransactionExpected: true
-                cashTransactionFrequency: OncePerMonth
-                cashTransactionAmountRange: from_0_to_9999
+                cashTransactionExpected: false
+              w9:
+                isSubjectToBackupWithholding: true
+                accepted: true
+                timestamp: '2017-07-21T17:32:28Z'
       responses:
         '200':
           description: >-
@@ -3402,10 +3394,40 @@ components:
         - employment
         - transferActivity
       properties:
+        firstName:
+          type: string
+          description: First name.
+          example: John
         middleName:
           type: string
           description: Optional middle name.
           example: Michael
+        lastName:
+          type: string
+          description: Last name.
+          example: Smith
+        email:
+          type: string
+          format: email
+          description: Email address.
+          example: john.smith@example.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format.
+          example: '+12316785266'
+        consent:
+          type: string
+          nullable: true
+          description: Consent value. Pass `null` if not applicable.
+          example: null
+        taxIdentificationNumber:
+          type: string
+          description: Tax identification number type (e.g. `EIN`).
+          example: EIN
+        isSameAddress:
+          type: boolean
+          description: Whether the mailing address is the same as the primary address.
+          example: true
         dateOfBirth:
           type: string
           description: Date of birth in `MM/DD/YYYY` format. Must be a past date.

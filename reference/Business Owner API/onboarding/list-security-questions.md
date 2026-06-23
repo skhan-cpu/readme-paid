@@ -1,5 +1,5 @@
 ---
-title: Step 5 — List Security Questions
+title: List Security Questions
 api:
   file: openapi-business-v1.yaml
   operationId: boListSecurityQuestions
