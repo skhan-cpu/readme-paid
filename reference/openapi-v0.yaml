@@ -1531,7 +1531,10 @@ paths:
           ClientIdAuth: []
       tags:
         - Transactions
-      summary: Fetch transaction by id.
+      summary: Get Transaction
+      description: >
+        Returns the full details of a single transaction by its ID, including
+        amount, status, type, timestamps, and associated account information.
       operationId: individualGetTransaction
       parameters:
         - name: id
@@ -1572,7 +1575,29 @@ paths:
           ClientIdAuth: []
       tags:
         - Transactions
-      summary: Shows list of transactions for current user.
+      summary: List Transactions
+      description: >
+        Returns a paginated transaction history for the authenticated user's
+        accounts. Use `filter[accountId]` to scope results to a specific
+        account.
+
+
+        **Role-based access:**
+
+
+        | Role | Transactions returned |
+
+        |------|-----------------------|
+
+        | Individual / Business Owner | Own account transactions only |
+
+        | Advisor | Transactions for clients in their assigned portfolio |
+
+        | Branch Manager | Transactions for all clients within their branch |
+
+        | Head Branch Manager | Transactions across branches under their management |
+
+        | Root Advisor | All transactions organization-wide |
       operationId: individualListTransactions
       parameters:
         - name: sort
@@ -2187,9 +2212,16 @@ paths:
           ClientIdAuth: []
       tags:
         - Internal Transfers
-      summary: Makes request evaluation for TBA.
-      description: |
-        Available for users.
+      summary: Preview TBA Transfer
+      description: >
+        Calculates the fee and final amounts for a **Transfer Between Accounts
+        (TBA)** — an internal transfer between the user's own accounts (e.g.
+        Checking to Savings or vice versa).
+
+
+        Always call this endpoint before submitting a TBA transfer. Display the
+        returned fee breakdown to the user so they can confirm before the
+        transfer is created.
       operationId: individualPreviewTBATransfer
       requestBody:
         content:
@@ -2847,7 +2879,17 @@ paths:
           ClientIdAuth: []
       tags:
         - External Accounts
-      summary: Makes evaluation of EXT request.
+      summary: Preview ACH Transfer
+      description: >
+        Calculates the fee and final amounts for an **ACH transfer** between the
+        user's TAPP Cash account and a linked external bank account. Supports
+        both outbound (account → external) and inbound (external → account)
+        directions.
+
+
+        Always call this endpoint before submitting an ACH transfer. Display the
+        returned fee breakdown to the user so they can confirm before the
+        transfer is created.
       operationId: individualCreateACHTransferPreview
       requestBody:
         content:

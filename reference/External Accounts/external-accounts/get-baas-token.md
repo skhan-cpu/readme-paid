@@ -1,5 +1,5 @@
 ---
-title: Get BaaS Auth Token
+title: Get Linking Auth Token
 api:
   file: openapi-v0.yaml
   operationId: individualGetBaaSToken

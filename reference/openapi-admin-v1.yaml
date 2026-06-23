@@ -1604,6 +1604,18 @@ paths:
       responses:
         '201':
           description: Branch Manager created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      customerUid:
+                        type: string
+                        description: Unique identifier for the newly created Branch Manager user.
+                        example: "user:4f8a2c1d-9b3e-4d7f-a6c5-2e1b0f9d8a7c"
         '400':
           description: Validation error
           content:
@@ -1641,6 +1653,18 @@ paths:
       responses:
         '201':
           description: Advisor created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      customerUid:
+                        type: string
+                        description: Unique identifier for the newly created Advisor user.
+                        example: "user:4f8a2c1d-9b3e-4d7f-a6c5-2e1b0f9d8a7c"
         '400':
           description: Validation error
           content:
@@ -1888,7 +1912,19 @@ paths:
                   example: "550e8400-e29b-41d4-a716-446655440000"
       responses:
         '201':
-          description: Invitation sent successfully. No response body is returned.
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      customerUid:
+                        type: string
+                        description: Unique identifier for the newly invited Individual client.
+                        example: "user:4f8a2c1d-9b3e-4d7f-a6c5-2e1b0f9d8a7c"
         '400':
           description: Validation error or duplicate email
           content:
@@ -2020,7 +2056,12 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/BusinessOwnerClient'
+                    type: object
+                    properties:
+                      customerUid:
+                        type: string
+                        description: Unique identifier for the newly invited Business Owner client.
+                        example: "user:4f8a2c1d-9b3e-4d7f-a6c5-2e1b0f9d8a7c"
         '400':
           description: Validation error
           content:
@@ -2166,77 +2207,6 @@ paths:
           description: Operator updated
         '404':
           description: Operator not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  # ─────────────────────────────────────────────
-  # Approval Settings
-  # ─────────────────────────────────────────────
-
-  /branches/private/v1/approval-settings:
-    get:
-      operationId: getApprovalSettings
-      summary: Get branch approval settings
-      description: >
-        Returns the current transfer approval settings for the Branch Manager's
-        branch.
-
-
-        **Access:** Branch Manager (or higher).
-      tags: [Approval Settings]
-      security:
-        - OrgSessionAuth: []
-          ClientIdAuth: []
-      parameters:
-        - $ref: '#/components/parameters/DeviceId'
-      responses:
-        '200':
-          description: Approval settings
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ApprovalSettings'
-    put:
-      operationId: updateApprovalSettings
-      summary: Update branch approval settings
-      description: >
-        Enables or disables Branch Manager approval for transfer requests within
-        the branch. When enabled, client transfer requests move to
-        `pending_approval` before executing.
-
-
-        **Access:** Branch Manager only.
-      tags: [Approval Settings]
-      security:
-        - OrgSessionAuth: []
-          ClientIdAuth: []
-      parameters:
-        - $ref: '#/components/parameters/DeviceId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateApprovalSettingsRequest'
-            example:
-              is_bm_approval_required: true
-      responses:
-        '200':
-          description: Approval settings updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ApprovalSettings'
-        '403':
-          description: Only Branch Managers can update approval settings
           content:
             application/json:
               schema:

@@ -1307,11 +1307,16 @@ paths:
   /accounts/private/v1/tba-requests/preview:
     post:
       operationId: boPreviewTBATransfer
-      summary: Preview internal transfer (TBA)
+      summary: Preview TBA Transfer
       description: >
-        Calculates the fee and final amounts for a Transfer Between Accounts
-        (TBA). Always call preview before submitting — show the fee breakdown
-        to the user for confirmation.
+        Calculates the fee and final amounts for a **Transfer Between Accounts
+        (TBA)** — an internal transfer between the Business Owner's own accounts
+        (e.g. Checking to Savings or vice versa).
+
+
+        Always call this endpoint before submitting a TBA transfer. Display the
+        returned fee breakdown to the user so they can confirm before the
+        transfer is created.
       tags: [Transfers]
       security:
         - OrgSessionAuth: []
@@ -1478,10 +1483,17 @@ paths:
   /accounts/private/v1/ext-requests/preview:
     post:
       operationId: boPreviewACHTransfer
-      summary: Preview ACH transfer
+      summary: Preview ACH Transfer
       description: >
-        Calculates fees for an ACH transfer between a TAPP Cash account and a
-        linked external bank account. Always preview before executing.
+        Calculates the fee and final amounts for an **ACH transfer** between the
+        Business Owner's TAPP Cash account and a linked external bank account.
+        Supports both outbound (account → external) and inbound (external →
+        account) directions.
+
+
+        Always call this endpoint before submitting an ACH transfer. Display the
+        returned fee breakdown to the user so they can confirm before the
+        transfer is created.
       tags: [Transfers]
       security:
         - OrgSessionAuth: []
