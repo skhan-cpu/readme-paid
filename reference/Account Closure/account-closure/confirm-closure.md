@@ -1,5 +1,5 @@
 ---
-title: Step 2 — Confirm and Close Account
+title: Confirm and Close Account
 api:
   file: openapi-v0.yaml
   operationId: individualDeleteProfile

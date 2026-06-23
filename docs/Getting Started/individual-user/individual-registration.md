@@ -17,26 +17,26 @@ flowchart TD
 
     A --> B[User clicks invite link]
 
-    B --> C[Step 1 — Validate token]
+    B --> C[Validate token]
     C -->|invalid / expired| ERR1([Show error — ask manager to re-send])
     C -->|valid — returns customerUid| SESSION[Create scoped session with customerUid]
 
-    SESSION --> D[Step 2 — Fetch platform agreements]
+    SESSION --> D[Fetch platform agreements]
     D --> E[User reads and accepts each agreement]
 
-    E --> F[Step 3 — Accept invitation]
+    E --> F[Accept invitation]
     F -->|200 — immediately active| Q([Onboarding complete — accounts are live])
-    F -->|403 — additional steps required| G[Step 4 — Review W9 terms]
+    F -->|403 — additional steps required| G[Review W9 terms]
 
     G --> H[User acknowledges W9 certification]
 
-    H --> J[Step 5 — List security questions]
-    J --> K[Step 6 — Submit security answers]
+    H --> J[List security questions]
+    J --> K[Submit security answers]
 
-    K --> L[Step 7 — Send phone OTP]
-    L --> M[Step 8 — Verify phone OTP]
+    K --> L[Send phone OTP]
+    L --> M[Verify phone OTP]
 
-    M --> N[Step 9 — Submit KYC information]
+    M --> N[Submit KYC information]
     N -->|400 – field errors| ERR2[Show validation errors and let user correct]
     ERR2 --> N
     N -->|200 – KYC submitted| Q2([Onboarding complete — accounts are live])

@@ -1,5 +1,5 @@
 ---
-title: Step 1 — Request Account Closure OTP
+title: Request Account Closure OTP
 api:
   file: openapi-v0.yaml
   operationId: individualDeleteProfileOTP
