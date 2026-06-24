@@ -1,5 +1,6 @@
 ---
 title: Authentication
+hidden: true
 content:
   excerpt: >-
     Set up the authentication for your API to help users manage their
