@@ -1,5 +1,5 @@
 ---
-title: Onboarding
+title: Individual User
 privacy:
   view: public
 ---

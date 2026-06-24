@@ -1,5 +1,5 @@
 ---
-title: Onboarding
+title: Business Owner
 privacy:
   view: public
 ---
