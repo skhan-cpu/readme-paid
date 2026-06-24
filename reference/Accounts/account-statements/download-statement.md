@@ -3,7 +3,8 @@ title: Download Account Statement
 api:
   file: openapi-business-v1.yaml
   operationId: boDownloadAccountStatement
-hidden: false
+privacy:
+  view: public
 ---
 
 Downloads the PDF statement file for a given statement. Retrieve valid statement identifiers from [List Account Statements](/reference/list-statements).

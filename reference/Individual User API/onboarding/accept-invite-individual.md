@@ -3,7 +3,8 @@ title: Accept Invitation
 api:
   file: openapi-v0.yaml
   operationId: individualAcceptInvite
-hidden: false
+privacy:
+  view: public
 ---
 
 Activates the invited user's account. No request body is required — the password is managed internally.

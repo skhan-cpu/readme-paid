@@ -3,7 +3,8 @@ title: Get Transaction Chart
 api:
   file: openapi-v0.yaml
   operationId: individualGetTransactionChart
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns aggregated transaction data suitable for charting (e.g. spending by category over time).

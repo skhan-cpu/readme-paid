@@ -3,7 +3,8 @@ title: Get Transaction
 api:
   file: openapi-v0.yaml
   operationId: individualGetTransaction
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns full details for a specific transaction.

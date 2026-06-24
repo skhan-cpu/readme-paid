@@ -3,7 +3,8 @@ title: List Accounts
 api:
   file: openapi-v0.yaml
   operationId: individualListAccounts
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns a paginated list of accounts. The accounts returned depend on the role of the authenticated user.

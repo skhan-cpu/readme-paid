@@ -1,4 +1,6 @@
 ---
 title: Operators
-hidden: false
+privacy:
+  view: public
 ---
+

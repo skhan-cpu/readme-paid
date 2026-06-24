@@ -3,7 +3,8 @@ title: Accept Invitation
 api:
   file: openapi-org-api-v1.yaml
   operationId: advisorAcceptInvite
-hidden: false
+privacy:
+  view: public
 ---
 
 Activates the invited advisor's account. No request body is required — the password is managed internally.

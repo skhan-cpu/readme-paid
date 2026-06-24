@@ -3,7 +3,8 @@ title: Confirm and Close Account
 api:
   file: openapi-v0.yaml
   operationId: individualDeleteProfile
-hidden: false
+privacy:
+  view: public
 ---
 
 Submits the OTP from Step 1 to permanently close the account.

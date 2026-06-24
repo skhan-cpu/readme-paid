@@ -1,4 +1,6 @@
 ---
 title: Account Management
-hidden: false
+privacy:
+  view: public
 ---
+

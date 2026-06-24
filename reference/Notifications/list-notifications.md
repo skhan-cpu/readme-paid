@@ -3,7 +3,8 @@ title: List Notifications
 api:
   file: openapi-v0.yaml
   operationId: individualListNotifications
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns a paginated list of notifications for the authenticated user, ordered newest first.

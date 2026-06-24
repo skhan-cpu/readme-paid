@@ -3,7 +3,8 @@ title: Delete External Account
 api:
   file: openapi-v0.yaml
   operationId: individualDeleteExternalAccount
-hidden: false
+privacy:
+  view: public
 ---
 
 Unlinks a previously connected external bank account.

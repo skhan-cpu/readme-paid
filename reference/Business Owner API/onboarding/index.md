@@ -1,6 +1,7 @@
 ---
 title: Onboarding
-hidden: false
+privacy:
+  view: public
 ---
 
 These endpoints handle the onboarding flow for Business Owner clients.

@@ -1,4 +1,6 @@
 ---
 title: Branches
-hidden: false
+privacy:
+  view: public
 ---
+

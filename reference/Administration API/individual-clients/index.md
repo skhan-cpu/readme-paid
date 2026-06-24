@@ -1,4 +1,6 @@
 ---
 title: Individual Clients
-hidden: false
+privacy:
+  view: public
 ---
+

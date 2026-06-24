@@ -3,7 +3,8 @@ title: Get Transfer Limits
 api:
   file: openapi-v0.yaml
   operationId: individualGetTransferLimits
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the ACH transfer limits applicable to the authenticated user's account.

@@ -1,6 +1,7 @@
 ---
 title: Account Statements
-hidden: false
+privacy:
+  view: public
 ---
 
 Monthly account statement endpoints shared across Individual and Business Owner user types.

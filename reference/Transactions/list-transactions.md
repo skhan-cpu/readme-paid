@@ -3,7 +3,8 @@ title: List Transactions
 api:
   file: openapi-v0.yaml
   operationId: individualListTransactions
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns a paginated transaction history for the authenticated user's accounts.

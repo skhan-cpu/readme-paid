@@ -3,7 +3,8 @@ title: Get KYC / KYB Status
 api:
   file: openapi-v0.yaml
   operationId: individualGetKYCStatus
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the most recent identity verification request for the authenticated user.

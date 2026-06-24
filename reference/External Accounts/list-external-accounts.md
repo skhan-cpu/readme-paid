@@ -3,7 +3,8 @@ title: List External Accounts
 api:
   file: openapi-v0.yaml
   operationId: individualListExternalAccounts
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns a paginated list of external bank accounts linked via Plaid.

@@ -1,6 +1,7 @@
 ---
 title: Advisor Onboarding
-hidden: false
+privacy:
+  view: public
 ---
 
 These endpoints handle the onboarding flow for Advisor users invited by a branch super-advisor or admin.

@@ -1,4 +1,6 @@
 ---
 title: Admin Hierarchy
-hidden: false
+privacy:
+  view: public
 ---
+

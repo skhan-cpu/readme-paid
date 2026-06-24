@@ -3,7 +3,8 @@ title: List Security Questions
 api:
   file: openapi-business-v1.yaml
   operationId: boListSecurityQuestions
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the available security questions for the Business Owner to choose from. The user selects questions and provides answers in Step 6.

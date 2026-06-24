@@ -1,6 +1,7 @@
 ---
 title: KYC / KYB Status
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the latest identity verification request for the authenticated user. The same endpoint serves all three user types — the response content reflects the verification type relevant to that user:

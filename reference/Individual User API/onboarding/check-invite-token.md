@@ -3,7 +3,8 @@ title: Check Invitation Token
 api:
   file: openapi-v0.yaml
   operationId: individualCheckInviteToken
-hidden: false
+privacy:
+  view: public
 ---
 
 ## How to Get an Invitation Token

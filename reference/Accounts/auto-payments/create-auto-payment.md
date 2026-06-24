@@ -3,7 +3,8 @@ title: Create Auto-Payment
 api:
   file: openapi-business-v1.yaml
   operationId: boCreateAutoPayment
-hidden: false
+privacy:
+  view: public
 ---
 
 Schedules a recurring automatic payment. Call [Preview Auto-Payment](/reference/preview-auto-payment) first to confirm fees.

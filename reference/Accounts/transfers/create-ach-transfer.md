@@ -3,7 +3,8 @@ title: Create ACH Transfer
 api:
   file: openapi-v0.yaml
   operationId: individualCreateACHTransfer
-hidden: false
+privacy:
+  view: public
 ---
 
 > Available to Individual, Business Owner, and Operator users for their own accounts, and to admin roles (Advisor, Root Advisor, Branch Manager, etc.) to initiate transfers on behalf of their clients.

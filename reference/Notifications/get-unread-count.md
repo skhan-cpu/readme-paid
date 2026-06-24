@@ -3,7 +3,8 @@ title: Get Unread Notification Count
 api:
   file: openapi-business-v1.yaml
   operationId: boGetUnreadNotificationCount
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the count of unread notifications. Use this to display the badge number on the notification bell icon.

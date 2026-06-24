@@ -1,6 +1,7 @@
 ---
 title: Account Closure
-hidden: false
+privacy:
+  view: public
 ---
 
 Two-step account closure flow shared across Individual and Business Owner user types.

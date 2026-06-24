@@ -3,7 +3,8 @@ title: Get Account Statement
 api:
   file: openapi-v0.yaml
   operationId: individualGetMonthStatement
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the account statement for a specified month.

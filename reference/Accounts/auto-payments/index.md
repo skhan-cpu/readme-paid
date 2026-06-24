@@ -1,6 +1,7 @@
 ---
 title: Auto-Payments
-hidden: false
+privacy:
+  view: public
 ---
 
 Scheduled automatic payment endpoints shared across Business Owner and Operator user types.

@@ -3,7 +3,8 @@ title: Get Auto-Payment
 api:
   file: openapi-business-v1.yaml
   operationId: boGetAutoPayment
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns details for a specific scheduled auto-payment.

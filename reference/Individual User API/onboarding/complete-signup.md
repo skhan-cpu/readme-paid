@@ -3,7 +3,8 @@ title: Complete Signup
 api:
   file: openapi-v0.yaml
   operationId: individualSignup
-hidden: false
+privacy:
+  view: public
 ---
 
 Completes registration by submitting the user's profile and identity verification data. This is the final onboarding step before the account is activated.

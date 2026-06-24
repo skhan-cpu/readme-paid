@@ -1,4 +1,6 @@
 ---
 title: Business Owner Clients
-hidden: false
+privacy:
+  view: public
 ---
+

@@ -3,7 +3,8 @@ title: Accept Invitation
 api:
   file: openapi-business-v1.yaml
   operationId: boAcceptInvite
-hidden: false
+privacy:
+  view: public
 ---
 
 Activates the Business Owner's account. Pass the invitation `token` in the request body.

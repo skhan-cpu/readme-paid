@@ -3,7 +3,8 @@ title: Get Balance Chart
 api:
   file: openapi-v0.yaml
   operationId: individualGetBalanceChart
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns time-series balance data for charting balance changes over time for one or more accounts.

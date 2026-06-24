@@ -3,7 +3,8 @@ title: List Auto-Payments
 api:
   file: openapi-business-v1.yaml
   operationId: boListAutoPayments
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns all scheduled auto-payments for the authenticated user.

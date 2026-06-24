@@ -3,7 +3,8 @@ title: Mark Notification as Read
 api:
   file: openapi-v0.yaml
   operationId: individualReadNotification
-hidden: false
+privacy:
+  view: public
 ---
 
 Marks a single notification as read.

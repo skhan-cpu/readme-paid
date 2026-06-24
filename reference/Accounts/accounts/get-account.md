@@ -3,7 +3,8 @@ title: Get Account
 api:
   file: openapi-v0.yaml
   operationId: individualGetAccount
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns full details for a specific account including balance, available balance, and account settings.

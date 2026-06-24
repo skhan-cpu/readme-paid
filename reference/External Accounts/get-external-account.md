@@ -3,7 +3,8 @@ title: Get External Account
 api:
   file: openapi-v0.yaml
   operationId: individualGetExternalAccount
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns details for a specific linked external bank account.

@@ -3,7 +3,8 @@ title: Check Invitation Token
 api:
   file: openapi-business-v1.yaml
   operationId: boCheckInviteToken
-hidden: false
+privacy:
+  view: public
 ---
 
 The `token` query parameter is delivered automatically via **email and SMS** when an Advisor invites a Business Owner client using the Administration API. The client extracts the token from the invitation link and passes it here to verify it before starting onboarding.

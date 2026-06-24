@@ -3,7 +3,8 @@ title: Complete Signup
 api:
   file: openapi-business-v1.yaml
   operationId: submitKYB
-hidden: false
+privacy:
+  view: public
 ---
 
 Submits the Business Owner's Know Your Business (KYB) information including business details, beneficial owners, and supporting documentation. This triggers the compliance review process.

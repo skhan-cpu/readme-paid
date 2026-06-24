@@ -3,7 +3,8 @@ title: Preview Auto-Payment
 api:
   file: openapi-business-v1.yaml
   operationId: boPreviewAutoPayment
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns a fee preview for a scheduled auto-payment before committing.

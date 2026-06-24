@@ -3,7 +3,8 @@ title: Request Account Closure OTP
 api:
   file: openapi-v0.yaml
   operationId: individualDeleteProfileOTP
-hidden: false
+privacy:
+  view: public
 ---
 
 Sends an OTP to the user's registered phone or email to verify the account closure request.

@@ -3,7 +3,8 @@ title: Cancel Auto-Payment
 api:
   file: openapi-business-v1.yaml
   operationId: boCancelAutoPayment
-hidden: false
+privacy:
+  view: public
 ---
 
 Cancels a scheduled auto-payment.

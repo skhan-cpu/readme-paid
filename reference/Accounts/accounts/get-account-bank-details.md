@@ -3,7 +3,8 @@ title: Get Account Bank Details
 api:
   file: openapi-v0.yaml
   operationId: individualGetAccountDetails
-hidden: false
+privacy:
+  view: public
 ---
 
 Returns the routing number, account number, IBAN, and SWIFT code for a specific account. Use this to display incoming wire transfer details to the user.

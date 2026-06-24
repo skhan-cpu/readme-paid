@@ -1,4 +1,6 @@
 ---
 title: Sessions
-hidden: false
+privacy:
+  view: public
 ---
+
