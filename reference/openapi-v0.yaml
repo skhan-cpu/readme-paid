@@ -454,6 +454,9 @@ paths:
 
         | `REQUIRED_INVITATION_TOKEN` | 400 | `token` query parameter is missing
         |
+      security:
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
         - in: query
           name: token
@@ -462,20 +465,6 @@ paths:
           required: true
           description: Invitation token (same value from step 1).
           example: gjjnds8v
-        - in: header
-          name: X-Session-Id
-          schema:
-            type: string
-          required: true
-          description: Session ID obtained by creating a session scoped to the invited user's `customerUid`.
-          example: f2990a32-dcd8-4cfb-b6ff-1a15cdffc6e2
-        - in: header
-          name: X-Client-Id
-          schema:
-            type: string
-          required: true
-          description: Your API client ID.
-          example: ci_test_a1b2c3d4-0000-0000-0000-000000000002
         - in: header
           name: V-Client-Device-Id
           schema:
@@ -3275,11 +3264,13 @@ components:
       in: header
       name: X-Session-Id
       description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+      x-default: f2990a32-dcd8-4cfb-b6ff-1a15cdffc6e2
     ClientIdAuth:
       type: apiKey
       in: header
       name: X-Client-Id
       description: The ClientId (ci_test_… or ci_live_…) used to create the session.
+      x-default: ci_test_a1b2c3d4-0000-0000-0000-000000000002
 
   schemas:
     ResponseError:
