@@ -468,14 +468,14 @@ paths:
             type: string
           required: true
           description: Session ID obtained by creating a session scoped to the invited user's `customerUid`.
-          example: ses_01966b4e749274d6a3bc5b3dfd3d9e47
+          example: f2990a32-dcd8-4cfb-b6ff-1a15cdffc6e2
         - in: header
           name: X-Client-Id
           schema:
             type: string
           required: true
           description: Your API client ID.
-          example: cs_live_abc123
+          example: ci_test_a1b2c3d4-0000-0000-0000-000000000002
         - in: header
           name: V-Client-Device-Id
           schema:
