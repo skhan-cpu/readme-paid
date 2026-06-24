@@ -1099,7 +1099,7 @@ components:
     DeviceId:
       name: V-Client-Device-Id
       in: header
-      required: true
+      required: false
       schema:
         type: string
         format: uuid
@@ -1495,7 +1495,7 @@ paths:
       operationId: updateBranch
       summary: Update a branch
       description: >
-        Updates branch details. Send only the fields you want to change.
+        Updates branch details. Send the required fields.
 
 
         **Access:** Root Advisor only.

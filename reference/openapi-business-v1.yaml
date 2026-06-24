@@ -544,7 +544,7 @@ components:
     DeviceId:
       name: V-Client-Device-Id
       in: header
-      required: true
+      required: false
       schema:
         type: string
         format: uuid
