@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: TAPP Cash Head Branch Manager API
+  version: 1.0.0
+  description: >
+    The **Head Branch Manager API** covers the onboarding flow for Head Branch
+    Manager users invited by an admin.
+
+x-readme:
+  proxy-enabled: true
+
+servers:
+  - url: https://api-{tenant}.stage2.tappbank.com
+    description: Staging
+    variables:
+      tenant:
+        default: testing
+        description: Your organization's subdomain (e.g. wire-network)
+  - url: https://api-{tenant}.tappcash.com
+    description: Production
+    variables:
+      tenant:
+        default: testing
+        description: Your organization's subdomain (e.g. wire-network)
+
+components:
+  securitySchemes:
+    OrgSessionAuth:
+      type: apiKey
+      in: header
+      name: X-Session-Id
+      description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+    ClientIdAuth:
+      type: apiKey
+      in: header
+      name: X-Client-Id
+      description: The ClientId (ci_test_… or ci_live_…) used to create the session.
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              title:
+                type: string
+              target:
+                type: string
+
+paths:
+
+  /branches/public/v1/common/invites/check:
+    get:
+      operationId: superAdvisorCheckInviteToken
+      summary: Step 1 — Validate invite token
+      description: >
+        Validates the invite token from the invitation email and returns the
+        Head Branch Manager's `customerUid` and role.
+
+
+        Call this endpoint first to confirm the token is valid. The `customerUid`
+        returned here is required to create a user-scoped session in Step 2.
+      tags: [Onboarding]
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            example: AB3Z9F
+          description: The 6-character invitation token from the invitation email.
+      responses:
+        '200':
+          description: Token is valid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        example: superadvisor
+                      customerUid:
+                        type: string
+                        example: 01966b4e-7492-7b7f-ab47-2f6a41c1f200
+        '400':
+          description: Invalid or missing token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /org/branches/public/v1/superadvisor/invites/accept:
+    post:
+      operationId: superAdvisorAcceptInvite
+      summary: Step 2 — Accept invitation
+      description: >
+        Activates the invited Head Branch Manager's account. No request body is
+        required — the password is managed internally.
+
+
+        Before calling this endpoint, use the `customerUid` from Step 1 to
+        create a user-scoped session (`POST /entrypoint/org/v1/sessions`), then
+        include `X-Session-Id` and `X-Client-Id` on this request.
+
+
+        On `200`, the account is immediately active.
+
+
+        On `403`, the account is created but additional verifications are
+        required. A `temporaryAccessToken` is returned — use it on `/limited/`
+        endpoints to complete verification.
+      tags: [Onboarding]
+      security:
+        - OrgSessionAuth: []
+          ClientIdAuth: []
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            example: AB3Z9F
+          description: The 6-character invitation token from the invitation email.
+        - name: X-Session-Id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: 550e8400-e29b-41d4-a716-446655440000
+        - name: X-Client-Id
+          in: header
+          required: true
+          schema:
+            type: string
+            example: ci_test_a1b2c3d4-0000-0000-0000-000000000001
+      responses:
+        '200':
+          description: Account activated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+              example:
+                success: true
+        '400':
+          description: Invalid or missing invitation token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Account created but additional verifications are required.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      temporaryAccessToken:
+                        type: string
+                  errors:
+                    type: array
+                    items:
+                      type: object
+              example:
+                data:
+                  temporaryAccessToken: "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9..."
+                errors:
+                  - code: required additional actions
+                    title: Forbidden
+                    target: common
+                    meta:
+                      fields: ["phoneNumber"]
