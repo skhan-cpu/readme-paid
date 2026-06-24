@@ -2755,12 +2755,6 @@ paths:
             type: string
             example: ext_acc_12345
           required: true
-        - in: header
-          schema:
-            type: string
-          required: true
-          name: Authorization
-          description: Must be a token string with `Bearer` eg. `Bearer refreshtoken123`
       responses:
         '200':
           description: Bank logo image retrieved successfully
