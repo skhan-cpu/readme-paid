@@ -4,6 +4,6 @@
 - get-w9-terms
 - list-security-questions
 - submit-security-answers-business-owner
-- send-phone-otp
+- send-phone-otp-business-owner
 - verify-phone-otp
 - submit-kyb

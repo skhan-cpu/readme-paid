@@ -5,6 +5,6 @@
 - list-security-questions
 - submit-security-answers-individual
 - get-security-answer-status
-- send-phone-otp
+- send-phone-otp-individual
 - verify-phone-otp
 - complete-signup

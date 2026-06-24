@@ -3386,7 +3386,8 @@ components:
       properties:
         questionId:
           type: integer
-          format: int64
+          minimum: 1
+          maximum: 1000
           description: The `id` of the security question being answered.
           example: 1
         answer:
@@ -3427,27 +3428,10 @@ components:
         - employment
         - transferActivity
       properties:
-        firstName:
-          type: string
-          description: First name.
-          example: John
         middleName:
           type: string
           description: Optional middle name.
           example: Michael
-        lastName:
-          type: string
-          description: Last name.
-          example: Smith
-        email:
-          type: string
-          format: email
-          description: Email address.
-          example: john.smith@example.com
-        phoneNumber:
-          type: string
-          description: Phone number in E.164 format.
-          example: '+12316785266'
         consent:
           type: string
           nullable: true
@@ -4889,7 +4873,8 @@ components:
                   properties:
                     questionId:
                       type: integer
-                      format: int64
+                      minimum: 1
+                      maximum: 1000
                       description: The `id` of the security question being answered.
                       example: 1
                     answer:
