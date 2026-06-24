@@ -1591,12 +1591,10 @@ paths:
       parameters:
         - name: sort
           in: query
-          description: Sorts records. Can be sorted in DESC direction by adding "-" prefix.
+          description: Sorts records. Can be sorted in DESC direction by adding "-" prefix. Example values&#58; `id`, `createdAt`, `-createdAt`.
           schema:
             type: string
-            enum:
-              - id
-              - createdAt
+            example: '-createdAt'
         - name: filter[id]
           in: query
           description: Applies filter by id.
@@ -1736,19 +1734,11 @@ paths:
       parameters:
         - name: accountIds
           in: query
-          description: Array of account IDs (comma-separated)
+          description: Account ID to fetch the balance chart for.
           required: true
           schema:
-            type: array
-            items:
-              type: integer
-              format: int64
-            example:
-              - 1
-              - 2
-              - 3
-          style: form
-          explode: false
+            type: integer
+            example: 26424
         - name: period
           in: query
           description: >
