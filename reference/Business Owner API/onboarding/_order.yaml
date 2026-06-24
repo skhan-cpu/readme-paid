@@ -3,7 +3,7 @@
 - accept-invite-business-owner
 - get-w9-terms
 - list-security-questions
-- submit-security-answers
+- submit-security-answers-business-owner
 - send-phone-otp
 - verify-phone-otp
 - submit-kyb

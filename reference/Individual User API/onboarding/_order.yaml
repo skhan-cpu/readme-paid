@@ -3,7 +3,7 @@
 - accept-invite-individual
 - get-w9-terms
 - list-security-questions
-- submit-security-answers
+- submit-security-answers-individual
 - get-security-answer-status
 - send-phone-otp
 - verify-phone-otp

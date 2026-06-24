@@ -4884,7 +4884,19 @@ components:
                 minItems: 3
                 maxItems: 3
                 items:
-                  $ref: '#/components/schemas/SecurityAnswerInput'
+                  type: object
+                  required: [questionId, answer]
+                  properties:
+                    questionId:
+                      type: integer
+                      format: int64
+                      description: The `id` of the security question being answered.
+                      example: 1
+                    answer:
+                      type: string
+                      maxLength: 200
+                      description: The user's answer. Must not be blank, max 200 characters.
+                      example: Seattle
           examples:
             Three distinct answers:
               value:
