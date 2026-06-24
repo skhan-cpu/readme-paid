@@ -95,11 +95,13 @@ components:
       in: header
       name: X-Session-Id
       description: Session ID obtained from POST /entrypoint/org/v1/sessions.
+      x-default: f2990a32-dcd8-4cfb-b6ff-1a15cdffc6e2
     ClientIdAuth:
       type: apiKey
       in: header
       name: X-Client-Id
       description: The ClientId (ci_test_… or ci_live_…) used to create the session.
+      x-default: ci_test_a1b2c3d4-0000-0000-0000-000000000002
 
   schemas:
     ErrorResponse:
@@ -651,6 +653,9 @@ paths:
     post:
       operationId: boAcceptInvite
       summary: Step 3 — Accept invitation and set password
+      security:
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       description: >
         Accepts the invitation and sets the Business Owner's password. Returns
         HTTP **403** on success (this is by design — not an error).
