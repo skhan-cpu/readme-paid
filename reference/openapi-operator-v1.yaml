@@ -490,9 +490,22 @@ paths:
                     required: [questionId, answer]
                     properties:
                       questionId:
-                        type: string
+                        type: integer
+                        format: int64
+                        example: 1
                       answer:
                         type: string
+                        example: Seattle
+          examples:
+            Three distinct answers:
+              value:
+                answers:
+                  - questionId: 1
+                    answer: Seattle
+                  - questionId: 5
+                    answer: Buddy
+                  - questionId: 9
+                    answer: Blue
       responses:
         '200':
           description: Answers accepted
