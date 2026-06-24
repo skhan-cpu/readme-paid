@@ -136,6 +136,11 @@ components:
       description: >
         Session ID obtained from `POST /entrypoint/org/v1/sessions`.
         Must be combined with the `X-Client-Id` header on every request.
+    ClientIdAuth:
+      type: apiKey
+      in: header
+      name: X-Client-Id
+      description: The ClientId (`ci_test_…` or `ci_live_…`) used to create the session.
 
   parameters:
     ClientId:
@@ -473,9 +478,9 @@ paths:
         required to call it.
       tags:
         - Sessions
-      parameters:
-        - $ref: '#/components/parameters/SessionId'
-        - $ref: '#/components/parameters/ClientId'
+      security:
+        - OrgSessionAuth: []
+          ClientIdAuth: []
       responses:
         '200':
           description: Session is active.
@@ -514,9 +519,8 @@ paths:
         - Sessions
       security:
         - OrgSessionAuth: []
+          ClientIdAuth: []
       parameters:
-        - $ref: '#/components/parameters/SessionId'
-        - $ref: '#/components/parameters/ClientId'
         - name: id
           in: path
           required: true
@@ -567,9 +571,7 @@ paths:
         - Sessions
       security:
         - OrgSessionAuth: []
-      parameters:
-        - $ref: '#/components/parameters/SessionId'
-        - $ref: '#/components/parameters/ClientId'
+          ClientIdAuth: []
       responses:
         '200':
           description: User profile returned successfully.
