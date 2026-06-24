@@ -1166,6 +1166,14 @@ paths:
 
         | `INAPPROPRIATE_RIGHT` | 403 | — | User role is not allowed to call
         this endpoint |
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: Temporary access token with `Bearer` prefix.
+          example: Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9...
       requestBody:
         required: true
         description: Complete individual KYC information.
@@ -3520,7 +3528,6 @@ components:
       type: object
       required:
         - isCurrentlyEmployed
-        - occupation
         - annualIncome
       properties:
         isCurrentlyEmployed:
