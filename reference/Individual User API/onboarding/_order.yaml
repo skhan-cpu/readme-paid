@@ -1,6 +1,6 @@
 - check-invite-token
 - get-agreements
-- accept-invite
+- accept-invite-individual
 - get-w9-terms
 - list-security-questions
 - submit-security-answers
