@@ -544,6 +544,131 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /org/branches/public/v1/advisor/invites/accept:
+    post:
+      operationId: advisorAcceptInvite
+      summary: Accept advisor invitation
+      description: >
+        Activates the invited advisor's account. No request body is required —
+        the password is managed internally.
+
+
+        **Before calling this endpoint**, call `GET
+        /branches/public/v1/common/invites/check?token=<token>` to retrieve the
+        advisor's `customerUid`, then create a session scoped to that user
+        (`POST /entrypoint/org/v1/sessions` with `customerUid`). Include the
+        returned `sessionId` as `X-Session-Id` and your `clientId` as
+        `X-Client-Id` on this request.
+
+
+        On `200`, the advisor account is immediately active.
+
+
+        On `403`, the account is created but additional verifications are
+        required (phone confirmation, KYC). Continue using the same session
+        headers for the `/limited/` endpoints.
+
+
+        **Possible error codes:**
+
+
+        | Code | Status | Description |
+
+        |------|--------|-------------|
+
+        | `INVITATION_DOES_NOT_EXIST` | 400 | Token is invalid or already used |
+
+        | `REQUIRED_INVITATION_TOKEN` | 400 | `token` query parameter is missing |
+      tags:
+        - Advisor Onboarding
+      security:
+        - OrgSessionAuth: []
+          ClientIdAuth: []
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+            example: AB3Z9F
+          description: The 6-character invitation code from the advisor's invitation email.
+        - $ref: '#/components/parameters/SessionId'
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Advisor account activated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+              example:
+                success: true
+        '400':
+          description: Invalid or missing invitation token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                INVITATION_DOES_NOT_EXIST:
+                  value:
+                    errors:
+                      - code: INVITATION_DOES_NOT_EXIST
+                        title: Invitation does not exist
+                        target: common
+                REQUIRED_INVITATION_TOKEN:
+                  value:
+                    errors:
+                      - code: REQUIRED_INVITATION_TOKEN
+                        title: Invitation token is required
+                        target: common
+        '403':
+          description: Account created but additional verifications are required.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      temporaryAccessToken:
+                        type: string
+                        description: >
+                          Short-lived JWT. Use as Bearer token for `/limited/`
+                          verification endpoints.
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        title:
+                          type: string
+                        target:
+                          type: string
+                        meta:
+                          type: object
+                          properties:
+                            fields:
+                              type: array
+                              items:
+                                type: string
+              example:
+                data:
+                  temporaryAccessToken: "eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCJ9..."
+                errors:
+                  - code: required additional actions
+                    title: Forbidden
+                    target: common
+                    meta:
+                      fields: ["phoneNumber", "kyc"]
+
   /org/users/private/v1/auth/me:
     get:
       operationId: getUserProfile
