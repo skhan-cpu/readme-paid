@@ -205,28 +205,28 @@ components:
 
     TransferActivity:
       type: object
+      description: >
+        Transfer activity disclosures. International transfer fields are **not**
+        collected during KYB — submitting `internationalTransferExpected` will
+        return an `INTERNATIONAL_TRANSFER_NOT_EXPECTED` validation error.
+      required: [cryptocurrencyTransactionExpected, cashTransactionExpected]
       properties:
-        internationalTransferExpected:
-          type: boolean
-        internationalTransferFrequency:
-          type: string
-          enum: [OncePerMonth, SeveralPerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
-        internationalTransferAmountRange:
-          type: string
-          example: "from_10000_to_49999"
-        internationalTransferCountries:
-          type: array
-          items:
-            type: string
-          description: "ISO 3166-1 alpha-3 country codes"
         cryptocurrencyTransactionExpected:
           type: boolean
+        cryptocurrencyTransactionFrequency:
+          type: string
+          enum: [OncePerMonth, SeveralPerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
+        cryptocurrencyTransactionAmountRange:
+          type: string
+          example: "from_10000_to_49999"
         cashTransactionExpected:
           type: boolean
         cashTransactionFrequency:
           type: string
+          enum: [OncePerMonth, SeveralPerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
         cashTransactionAmountRange:
           type: string
+          example: "from_10000_to_49999"
 
     BusinessActivity:
       type: object
@@ -255,7 +255,7 @@ components:
 
     BusinessOwnerSignupPerson:
       type: object
-      required: [firstName, lastName, dateOfBirth, socialSecurityNumber, phoneNumber, email, address, employment, usCitizenshipStatus]
+      required: [firstName, lastName, dateOfBirth, socialSecurityNumber, phoneNumber, email, address, usCitizenshipStatus]
       properties:
         firstName:
           type: string
@@ -296,14 +296,19 @@ components:
           $ref: '#/components/schemas/Employment'
         usCitizenshipStatus:
           type: string
-          enum: [Citizen, ResidentAlien, NonResidentAlien]
+          enum: [Citizen, ResidentAlien, NonResidentAlien, Other]
+          description: "US citizenship/residency status. Use 'Other' for any status not covered by the other values."
+        usCitizenshipStatusDetails:
+          type: string
+          maxLength: 255
+          description: "Required when usCitizenshipStatus is 'Other'. Free-text description of citizenship status."
         w9:
           $ref: '#/components/schemas/W9Certification'
           description: "Required for Business Owner role"
 
     BusinessSignupInfo:
       type: object
-      required: [businessLegalName, employerIdentificationNumber, legalStructure, phoneNumber, email, address, transferActivity, businessActivity, taxIdentificationNumberType]
+      required: [businessLegalName, employerIdentificationNumber, legalStructure, phoneNumber, address, transferActivity, businessActivity, taxIdentificationNumberType]
       properties:
         businessLegalName:
           type: string
@@ -332,16 +337,18 @@ components:
         email:
           type: string
           format: email
+          description: "Business email address (optional)"
         stateOfIncorporation:
           type: string
           example: "TX"
         naicsCode:
           type: string
           example: "441222"
-          description: "NAICS industry classification code"
+          description: "6-digit NAICS industry classification code. At least one of naicsCode or website must be provided."
         website:
           type: string
           format: uri
+          description: "Business website URL. At least one of naicsCode or website must be provided."
         address:
           $ref: '#/components/schemas/Address'
         isSameAddress:
@@ -957,16 +964,6 @@ paths:
                   state: "MI"
                   zipCode: "22222"
                   country: "US"
-                employment:
-                  isCurrentlyEmployed: true
-                  occupation: "string"
-                  employer: "string"
-                  annualIncome: "10000.00"
-                  employmentStartDate: "04/06/2025"
-                  incomeSources:
-                    - name: "string"
-                      amount: "10000.00"
-                      frequency: "Monthly"
               controllingParty:
                 middleName: "Party"
                 dateOfBirth: "12/12/2002"
@@ -988,16 +985,6 @@ paths:
                   state: "MI"
                   zipCode: "11111"
                   country: "US"
-                employment:
-                  isCurrentlyEmployed: true
-                  occupation: "title"
-                  employer: "test"
-                  annualIncome: "100000.00"
-                  employmentStartDate: "05/06/2025"
-                  incomeSources:
-                    - name: "Test"
-                      amount: "100000.00"
-                      frequency: "Annually"
               authorizedSigner:
                 middleName: "Signer"
                 dateOfBirth: "12/12/2002"
@@ -1018,13 +1005,6 @@ paths:
                   state: "MI"
                   zipCode: "11111"
                   country: "US"
-                employment:
-                  isCurrentlyEmployed: true
-                  occupation: "test1"
-                  employer: "test"
-                  annualIncome: "100000.00"
-                  employmentStartDate: "05/06/2025"
-                  incomeSources: []
               business:
                 businessLegalName: "businessUser"
                 natureOfBusiness: "Lorem"
@@ -1051,12 +1031,6 @@ paths:
                   zipCode: "17272"
                   country: "US"
                 transferActivity:
-                  internationalTransferExpected: true
-                  internationalTransferFrequency: "SeveralPerMonth"
-                  internationalTransferAmountRange: "from_50000_to_99999"
-                  internationalTransferCountries:
-                    - "ABW"
-                    - "AFG"
                   cryptocurrencyTransactionExpected: false
                   cashTransactionExpected: true
                   cashTransactionFrequency: "OncePerMonth"

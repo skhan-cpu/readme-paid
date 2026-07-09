@@ -3441,10 +3441,16 @@ components:
         usCitizenshipStatus:
           type: string
           description: >-
-            US citizenship status (e.g., `Citizen`, `ResidentAlien`,
-            `NonResidentAlien`).
-          enum: [Citizen, ResidentAlien, NonResidentAlien]
+            US citizenship status. Use `Other` for any status not covered by
+            the other values — provide details in `usCitizenshipStatusDetails`.
+          enum: [Citizen, ResidentAlien, NonResidentAlien, Other]
           example: Citizen
+        usCitizenshipStatusDetails:
+          type: string
+          maxLength: 255
+          description: >-
+            Free-text description of citizenship status. Provide when
+            `usCitizenshipStatus` is `Other`.
         address:
           $ref: '#/components/schemas/SignupAddress'
         mailingAddress:
