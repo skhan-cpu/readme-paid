@@ -206,27 +206,55 @@ components:
     TransferActivity:
       type: object
       description: >
-        Transfer activity disclosures. International transfer fields are **not**
-        collected during KYB — submitting `internationalTransferExpected` will
-        return an `INTERNATIONAL_TRANSFER_NOT_EXPECTED` validation error.
+        Transfer activity disclosures. Conditional sub-field rules:
+
+        `internationalTransferExpected: true` → frequency, amountRange, countries **required**.
+        `internationalTransferExpected: false` → those fields must not be sent (error: `INTERNATIONAL_TRANSFER_NOT_EXPECTED`).
+        `internationalTransferExpected` omitted → no validation on its sub-fields.
+
+        `cryptocurrencyTransactionExpected: true` → frequency and amountRange **required**.
+        `cryptocurrencyTransactionExpected: false` → those fields must not be sent (error: `CRYPTOCURRENCY_TRANSFER_NOT_EXPECTED`).
+
+        `cashTransactionExpected: true` → frequency and amountRange **required**.
+        `cashTransactionExpected: false` → those fields must not be sent (error: `CASH_TRANSFER_NOT_EXPECTED`).
       required: [cryptocurrencyTransactionExpected, cashTransactionExpected]
       properties:
+        internationalTransferExpected:
+          type: boolean
+          description: "Optional. Whether the business expects international wire transfers."
+        internationalTransferFrequency:
+          type: string
+          enum: [SeveralPerMonth, OncePerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
+          description: "Required when internationalTransferExpected is true."
+        internationalTransferAmountRange:
+          type: string
+          enum: [from_0_to_9999, from_10000_to_49999, from_50000_to_99999, from_100000_to_249999, from_250000_to_499999, from_500000_to_max]
+          description: "Required when internationalTransferExpected is true."
+        internationalTransferCountries:
+          type: array
+          items:
+            type: string
+          description: "ISO 3166-1 alpha-3 country codes. Required when internationalTransferExpected is true."
         cryptocurrencyTransactionExpected:
           type: boolean
         cryptocurrencyTransactionFrequency:
           type: string
-          enum: [OncePerMonth, SeveralPerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
+          enum: [SeveralPerMonth, OncePerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
+          description: "Required when cryptocurrencyTransactionExpected is true."
         cryptocurrencyTransactionAmountRange:
           type: string
-          example: "from_10000_to_49999"
+          enum: [from_0_to_9999, from_10000_to_49999, from_50000_to_99999, from_100000_to_249999, from_250000_to_499999, from_500000_to_max]
+          description: "Required when cryptocurrencyTransactionExpected is true."
         cashTransactionExpected:
           type: boolean
         cashTransactionFrequency:
           type: string
-          enum: [OncePerMonth, SeveralPerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
+          enum: [SeveralPerMonth, OncePerMonth, OnceEveryFewMonths, OnceOrTwicePerYear]
+          description: "Required when cashTransactionExpected is true."
         cashTransactionAmountRange:
           type: string
-          example: "from_10000_to_49999"
+          enum: [from_0_to_9999, from_10000_to_49999, from_50000_to_99999, from_100000_to_249999, from_250000_to_499999, from_500000_to_max]
+          description: "Required when cashTransactionExpected is true."
 
     BusinessActivity:
       type: object
@@ -349,6 +377,10 @@ components:
           type: string
           format: uri
           description: "Business website URL. At least one of naicsCode or website must be provided."
+        businessStartDate:
+          type: string
+          description: "Date the business was started or incorporated, in MM/DD/YYYY format. Optional."
+          example: "01/15/2010"
         address:
           $ref: '#/components/schemas/Address'
         isSameAddress:
@@ -1031,7 +1063,15 @@ paths:
                   zipCode: "17272"
                   country: "US"
                 transferActivity:
-                  cryptocurrencyTransactionExpected: false
+                  internationalTransferExpected: true
+                  internationalTransferFrequency: "SeveralPerMonth"
+                  internationalTransferAmountRange: "from_50000_to_99999"
+                  internationalTransferCountries:
+                    - "ABW"
+                    - "AFG"
+                  cryptocurrencyTransactionExpected: true
+                  cryptocurrencyTransactionFrequency: "OncePerMonth"
+                  cryptocurrencyTransactionAmountRange: "from_0_to_9999"
                   cashTransactionExpected: true
                   cashTransactionFrequency: "OncePerMonth"
                   cashTransactionAmountRange: "from_10000_to_49999"
