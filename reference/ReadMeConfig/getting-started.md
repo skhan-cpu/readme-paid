@@ -31,7 +31,7 @@ TAPP Cash is split into several API definitions. Pick the one that matches your 
 ## Quickstart
 
 <Cards>
-  <Card title="1. Get Credentials" icon="fa-duotone fa-key">A Tech Admin enables API access for your organization and issues a `clientId` + `clientSecret`.</Card>
+  <Card title="1. Get Credentials" icon="fa-duotone fa-key">Email [support@tappcash.com](mailto:support@tappcash.com) to request account access — you'll receive your `clientId` + `clientSecret`.</Card>
   <Card title="2. Create a Session" href="/reference/create-session" icon="fa-duotone fa-server">POST your credentials to `/entrypoint/org/v1/sessions` — receive a `sessionId` valid for 24 hours.</Card>
   <Card title="3. Call Endpoints" href="/docs/authentication" icon="fa-duotone fa-plug">Send `X-Session-Id` and `X-Client-Id` headers (or a user `Authorization: Bearer` token) on every request.</Card>
   <Card title="4. Revoke Session" href="/reference/revoke-session" icon="fa-duotone fa-right-from-bracket">Call `DELETE /entrypoint/org/v1/sessions/{id}` on logout or job completion.</Card>
