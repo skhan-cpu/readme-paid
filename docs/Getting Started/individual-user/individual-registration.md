@@ -186,11 +186,21 @@ X-Client-Id:  <clientId>
 
 `POST /branches/private/v1/limited/individual/signup`
 
+- **Auth**: Session headers
+- **On success (200)**: KYC submitted — onboarding complete. Accounts are live.
+- **On error (400)**: Check `errors` array for field-level failures, correct and resubmit.
+
+> Identity fields such as `firstName`, `lastName`, `email`, and `phoneNumber` are **not** sent here — they are captured earlier in the invitation flow. Only `middleName` is part of this body.
+
+#### Request body
+
 ```json
 {
+  "usCitizenshipStatus": "Citizen",
+  "usCitizenshipStatusDetails": null,
+  "middleName": "Lee",
   "dateOfBirth": "03/20/1990",
   "socialSecurityNumber": "987-65-4321",
-  "usCitizenshipStatus": "Citizen",
   "address": {
     "address": "123 Main Street",
     "city": "New York",
@@ -198,26 +208,102 @@ X-Client-Id:  <clientId>
     "zipCode": "10001",
     "country": "USA"
   },
+  "mailingAddress": {
+    "address": "123 Main Street",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "USA"
+  },
+  "employment": {
+    "isCurrentlyEmployed": true,
+    "occupation": "Engineer",
+    "employer": "Acme Corp",
+    "annualIncome": "85000.00",
+    "employmentStartDate": "02/02/2015",
+    "incomeSources": [
+      { "name": "Salary", "amount": "7000.00", "frequency": "Monthly" }
+    ]
+  },
+  "transferActivity": {
+    "internationalTransferExpected": false,
+    "cryptocurrencyTransactionExpected": false,
+    "cashTransactionExpected": false
+  },
   "w9": {
     "isSubjectToBackupWithholding": false,
     "accepted": true,
     "timestamp": "2024-03-15T14:22:00Z"
   },
-  "employment": {
-    "status": "employed",
-    "employer": "Acme Corp",
-    "occupation": "Engineer"
-  },
-  "transferActivity": {
-    "expectedMonthlyTransactions": 10,
-    "expectedMonthlyVolume": "5000.00"
-  }
+  "termsConsentTimeStamp": "2024-03-15T14:22:00Z"
 }
 ```
 
-- **Auth**: Session headers
-- **On success (200)**: KYC submitted — onboarding complete. Accounts are live.
-- **On error (400)**: Check `errors` array for field-level failures, correct and resubmit.
+#### Top-level fields
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `usCitizenshipStatus` | string (enum) | ✅ | `Citizen`, `ResidentAlien`, `NonResidentAlien`, `Other` |
+| `usCitizenshipStatusDetails` | string | — | Free text (max 255); use to explain when status is `Other` |
+| `middleName` | string | — | 2–255 chars |
+| `dateOfBirth` | string | ✅ | `MM/DD/YYYY`; must be in the past |
+| `socialSecurityNumber` | string | ✅ | SSN format, e.g. `987-65-4321` |
+| `address` | object | ✅ | Residential address — see **Address** |
+| `mailingAddress` | object | — | Send only when different from `address` |
+| `employment` | object | ✅ | See **Employment** |
+| `transferActivity` | object | ✅ | See **Transfer activity** |
+| `w9` | object | ✅ | See **W9** |
+| `termsConsentTimeStamp` | string | — | Timestamp of terms acceptance |
+
+#### Address (`address` / `mailingAddress`)
+
+All fields required when the object is present.
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `address` | string | ✅ | Max 255; no PO Box |
+| `city` | string | ✅ | 2–60 chars |
+| `state` | string | ✅ | 2–50 chars |
+| `zipCode` | string | ✅ | Valid ZIP code |
+| `country` | string | ✅ | Valid country |
+
+#### Employment
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `isCurrentlyEmployed` | boolean | ✅ | |
+| `occupation` | string | ✅ | 2–255 chars |
+| `employer` | string | — | 2–255 chars |
+| `annualIncome` | string | Conditional | Required when `isCurrentlyEmployed` is `true`; decimal ≥ 0 |
+| `employmentStartDate` | string | — | `MM/DD/YYYY`; must be in the past |
+| `incomeSources` | array | — | Each item requires all fields below |
+
+**`incomeSources[]` item**
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `name` | string | ✅ | 2–255 chars |
+| `amount` | string | ✅ | Decimal ≥ 0 |
+| `frequency` | string (enum) | ✅ | `Monthly`, `Annually` |
+
+#### Transfer activity
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `cryptocurrencyTransactionExpected` | boolean | ✅ | |
+| `cashTransactionExpected` | boolean | ✅ | |
+| `internationalTransferExpected` | boolean | — | |
+| `internationalTransferFrequency`<br>`cryptocurrencyTransactionFrequency`<br>`cashTransactionFrequency` | string (enum) | — | `SeveralPerMonth`, `OncePerMonth`, `OnceEveryFewMonths`, `OnceOrTwicePerYear` |
+| `internationalTransferAmountRange`<br>`cryptocurrencyTransactionAmountRange`<br>`cashTransactionAmountRange` | string (enum) | — | `from_0_to_9999`, `from_10000_to_49999`, `from_50000_to_99999`, `from_100000_to_249999`, `from_250000_to_499999`, `from_500000_to_max` |
+| `internationalTransferCountries` | string[] | — | Valid 3-letter country codes |
+
+#### W9
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `isSubjectToBackupWithholding` | boolean | ✅ | |
+| `accepted` | boolean | ✅ | Must be `true` |
+| `timestamp` | string | ✅ | Timestamp of W9 acceptance from Step 4 |
 
 > **Path differs per user type:**
 > - **Individual** (KYC): `/branches/private/v1/limited/individual/signup`
