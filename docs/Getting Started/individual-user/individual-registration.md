@@ -197,7 +197,6 @@ X-Client-Id:  <clientId>
 ```json
 {
   "usCitizenshipStatus": "Citizen",
-  "usCitizenshipStatusDetails": null,
   "middleName": "Lee",
   "dateOfBirth": "03/20/1990",
   "socialSecurityNumber": "987-65-4321",
@@ -220,10 +219,7 @@ X-Client-Id:  <clientId>
     "occupation": "Engineer",
     "employer": "Acme Corp",
     "annualIncome": "85000.00",
-    "employmentStartDate": "02/02/2015",
-    "incomeSources": [
-      { "name": "Salary", "amount": "7000.00", "frequency": "Monthly" }
-    ]
+    "durationInMonths": 120
   },
   "transferActivity": {
     "internationalTransferExpected": false,
@@ -235,6 +231,12 @@ X-Client-Id:  <clientId>
     "accepted": true,
     "timestamp": "2024-03-15T14:22:00Z"
   },
+  "identification": {
+    "type": "DriversLicense",
+    "number": "D12345678",
+    "issuedBy": "MI",
+    "expirationDate": "2027-01-01"
+  },
   "termsConsentTimeStamp": "2024-03-15T14:22:00Z"
 }
 ```
@@ -243,8 +245,7 @@ X-Client-Id:  <clientId>
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
-| `usCitizenshipStatus` | string (enum) | ✅ | `Citizen`, `ResidentAlien`, `NonResidentAlien`, `Other` |
-| `usCitizenshipStatusDetails` | string | — | Free text (max 255); use to explain when status is `Other` |
+| `usCitizenshipStatus` | string (enum) | ✅ | `Citizen`, `ResidentAlien`, `NonResidentAlien` |
 | `middleName` | string | — | 2–255 chars |
 | `dateOfBirth` | string | ✅ | `MM/DD/YYYY`; must be in the past |
 | `socialSecurityNumber` | string | ✅ | SSN format, e.g. `987-65-4321` |
@@ -275,16 +276,7 @@ All fields required when the object is present.
 | `occupation` | string | ✅ | 2–255 chars |
 | `employer` | string | — | 2–255 chars |
 | `annualIncome` | string | Conditional | Required when `isCurrentlyEmployed` is `true`; decimal ≥ 0 |
-| `employmentStartDate` | string | — | `MM/DD/YYYY`; must be in the past |
-| `incomeSources` | array | — | Each item requires all fields below |
-
-**`incomeSources[]` item**
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `name` | string | ✅ | 2–255 chars |
-| `amount` | string | ✅ | Decimal ≥ 0 |
-| `frequency` | string (enum) | ✅ | `Monthly`, `Annually` |
+| `durationInMonths` | integer | — | Duration of employment in months (≥ 0) |
 
 #### Transfer activity
 
@@ -304,6 +296,15 @@ All fields required when the object is present.
 | `isSubjectToBackupWithholding` | boolean | ✅ | |
 | `accepted` | boolean | ✅ | Must be `true` |
 | `timestamp` | string | ✅ | Timestamp of W9 acceptance from Step 4 |
+
+#### Identification
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `type` | string (enum) | ✅ | `DriversLicense`, `Passport` |
+| `number` | string | ✅ | Identification document number |
+| `issuedBy` | string | ✅ | Issuing authority (e.g. US state code) |
+| `expirationDate` | string | ✅ | `YYYY-MM-DD` |
 
 > **Path differs per user type:**
 > - **Individual** (KYC): `/branches/private/v1/limited/individual/signup`

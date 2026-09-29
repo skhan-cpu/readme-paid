@@ -228,7 +228,7 @@ info:
     ## Date and Format Rules
 
 
-    - **Dates**: `MM/DD/YYYY` (e.g., `03/20/1990`) — applies to `dateOfBirth`, `employmentStartDate`, and other date fields
+    - **Dates**: `MM/DD/YYYY` (e.g., `03/20/1990`) — applies to `dateOfBirth` and other date fields
 
     - **Timestamps**: `YYYY-MM-DDTHH:MM:SSZ` (e.g., `2017-07-21T17:32:28Z`)
 
@@ -1207,11 +1207,7 @@ paths:
                 occupation: string
                 employer: string
                 annualIncome: '12.11'
-                employmentStartDate: '02/02/1991'
-                incomeSources:
-                  - name: string
-                    amount: '1000.00'
-                    frequency: Monthly
+                durationInMonths: 84
               transferActivity:
                 internationalTransferExpected: false
                 cryptocurrencyTransactionExpected: false
@@ -3440,17 +3436,9 @@ components:
           example: 987-65-4321
         usCitizenshipStatus:
           type: string
-          description: >-
-            US citizenship status. Use `Other` for any status not covered by
-            the other values — provide details in `usCitizenshipStatusDetails`.
-          enum: [Citizen, ResidentAlien, NonResidentAlien, Other]
+          description: US citizenship status.
+          enum: [Citizen, ResidentAlien, NonResidentAlien]
           example: Citizen
-        usCitizenshipStatusDetails:
-          type: string
-          maxLength: 255
-          description: >-
-            Free-text description of citizenship status. Provide when
-            `usCitizenshipStatus` is `Other`.
         address:
           $ref: '#/components/schemas/SignupAddress'
         mailingAddress:
@@ -3483,6 +3471,37 @@ components:
           $ref: '#/components/schemas/SignupEmployment'
         transferActivity:
           $ref: '#/components/schemas/SignupTransferActivity'
+        identification:
+          $ref: '#/components/schemas/SignupIdentification'
+    SignupIdentification:
+      description: Government-issued identification document (required at onboarding).
+      type: object
+      required:
+        - type
+        - number
+        - issuedBy
+        - expirationDate
+      properties:
+        type:
+          type: string
+          enum:
+            - DriversLicense
+            - Passport
+          description: Identification document type.
+          example: DriversLicense
+        number:
+          type: string
+          description: Identification document number.
+          example: D12345678
+        issuedBy:
+          type: string
+          description: Issuing authority (e.g. US state code).
+          example: MI
+        expirationDate:
+          type: string
+          format: date
+          description: Expiration date in YYYY-MM-DD.
+          example: '2027-01-01'
     SignupAddress:
       description: Physical or mailing address.
       type: object
@@ -3536,35 +3555,11 @@ components:
           type: string
           description: Total annual income as a decimal string (e.g., `"65000.00"`).
           example: '65000.00'
-        employmentStartDate:
-          type: string
-          description: Employment start date in `MM/DD/YYYY` format.
-          example: '09/01/2018'
-        incomeSources:
-          type: array
-          description: Breakdown of income sources.
-          items:
-            type: object
-            required:
-              - name
-              - amount
-              - frequency
-            properties:
-              name:
-                type: string
-                description: Name of the income source.
-                example: Base Salary
-              amount:
-                type: string
-                description: Amount as a decimal string.
-                example: '4500.00'
-              frequency:
-                type: string
-                description: How often this income is received.
-                enum:
-                  - Monthly
-                  - Annually
-                example: Monthly
+        durationInMonths:
+          type: integer
+          minimum: 0
+          description: Duration of employment in months.
+          example: 84
     SignupTransferActivity:
       description: Expected financial transaction activity for compliance purposes.
       type: object

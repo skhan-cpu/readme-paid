@@ -211,11 +211,22 @@ Submit the business entity details and all beneficial owners (individuals who ow
       "firstName": "Jane",
       "lastName": "Doe",
       "dateOfBirth": "06/15/1985",
-      "ownershipPercentage": 51
+      "ownershipPercentage": 51,
+      "identification": {
+        "type": "DriversLicense",
+        "number": "D12345678",
+        "issuedBy": "TX",
+        "expirationDate": "2027-01-01"
+      }
     }
   ]
 }
 ```
+
+> **Identification is required for every person** on a business application
+> (business owner, controlling party, authorized signer). `type` must be
+> `DriversLicense` or `Passport`; `number`, `issuedBy`, and `expirationDate`
+> (`YYYY-MM-DD`) are all required.
 
 ---
 

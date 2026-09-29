@@ -160,6 +160,10 @@ components:
 
     Employment:
       type: object
+      required:
+        - isCurrentlyEmployed
+        - occupation
+        - annualIncome
       properties:
         isCurrentlyEmployed:
           type: boolean
@@ -170,26 +174,13 @@ components:
         annualIncome:
           type: string
           format: decimal
+          description: Annual income in decimal format (required).
           example: "75000.00"
-        employmentStartDate:
-          type: string
-          example: "01/15/2020"
-          description: "MM/DD/YYYY"
-        incomeSources:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: "Salary"
-              amount:
-                type: string
-                format: decimal
-              frequency:
-                type: string
-                example: "Monthly"
-
+        durationInMonths:
+          type: integer
+          minimum: 0
+          example: 60
+          description: Duration of employment in months
     W9Certification:
       type: object
       required: [accepted, timestamp]
@@ -324,15 +315,37 @@ components:
           $ref: '#/components/schemas/Employment'
         usCitizenshipStatus:
           type: string
-          enum: [Citizen, ResidentAlien, NonResidentAlien, Other]
-          description: "US citizenship/residency status. Use 'Other' for any status not covered by the other values."
-        usCitizenshipStatusDetails:
-          type: string
-          maxLength: 255
-          description: "Required when usCitizenshipStatus is 'Other'. Free-text description of citizenship status."
+          enum: [Citizen, ResidentAlien, NonResidentAlien]
+          description: "US citizenship/residency status."
         w9:
           $ref: '#/components/schemas/W9Certification'
           description: "Required for Business Owner role"
+        identification:
+          $ref: '#/components/schemas/Identification'
+
+    Identification:
+      type: object
+      description: Government-issued identification document (required at onboarding).
+      required: [type, number, issuedBy, expirationDate]
+      properties:
+        type:
+          type: string
+          enum: [DriversLicense, Passport]
+          description: Identification document type.
+          example: DriversLicense
+        number:
+          type: string
+          description: Identification document number.
+          example: D12345678
+        issuedBy:
+          type: string
+          description: Issuing authority (e.g. US state code).
+          example: MI
+        expirationDate:
+          type: string
+          format: date
+          description: Expiration date in YYYY-MM-DD.
+          example: "2027-01-01"
 
     BusinessSignupInfo:
       type: object
